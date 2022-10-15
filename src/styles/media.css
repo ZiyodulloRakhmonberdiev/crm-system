@@ -1,0 +1,13 @@
+@media(max-width: 768px) {
+  .container {
+    /* padding: 15px !important; */
+  }
+
+  .header {
+    /* padding: 15px 0 !important; */
+  }
+
+  .hero__text-content {
+    /* padding: 30px 0 0 0 !important; */
+  }
+}

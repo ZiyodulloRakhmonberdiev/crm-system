@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;500;600&display=swap');
+@import 'antd/dist/antd.css';
+@import './styles/media.css';
+@import './styles/style.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --white: #ffffff;
+  --text-green: #18ba77;
+  --text-light: #838886;
+  --text-light-2: #667272;
+  --text-dark: #292d34;
+  --bg-yellow: #ffb107;
+  --bg-light: #f1f3f4;
+  --bg-dark: #070e0b;
+  --bg-green: #133f2d;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-light);
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 1920px;
+  /* padding: 0 40px; */
+}

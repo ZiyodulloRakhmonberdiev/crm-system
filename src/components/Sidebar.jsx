@@ -32,7 +32,7 @@ export default function Sidebar () {
       getItem('To`lov qo`shish', 'payment')
     ]),
     getItem('Arizalar', 'application', <Download />),
-    getItem('O`quvchilar', 'pupils', <Mortarboard />),
+    getItem(<Link to='/students'>O'quvchilar</Link>, 'pupils', <Mortarboard />),
     getItem(
       <Link to='/teachers'>O'qituvchilar</Link>,
       'teachers',
@@ -74,7 +74,7 @@ export default function Sidebar () {
           console.log(collapsed, type)
         }}
         style={{ height: '100vh' }}
-        className='mt-14 pt-4 absolute overflow-y-scroll'
+        className='mt-14 pt-4 fixed overflow-y-scroll pb-24'
       >
         <Menu
           theme='dark'

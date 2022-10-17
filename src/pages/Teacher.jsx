@@ -4,7 +4,7 @@ import { Button, Table, Modal, Input, Space } from 'antd'
 import { useRef, useState } from 'react'
 import { PencilSquare, Trash } from 'react-bootstrap-icons'
 export default function Teacher () {
-  // Search functions which is in the heading on table
+  // Search functions which is in the heading on the table
   const [searchText, setSearchText] = useState('')
   const [searchedColumn, setSearchedColumn] = useState('')
   const searchInput = useRef(null)
@@ -78,7 +78,6 @@ export default function Teacher () {
         />
         <Space>
           <Button
-            type='primary'
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
             size='small'
@@ -214,8 +213,8 @@ export default function Teacher () {
   }
   const onDeleteStudent = record => {
     Modal.confirm({
-      title: 'Are you sure, you want to delete this student record?',
-      okText: 'Yes',
+      title: 'O`chirilsinmi?',
+      okText: 'Ha',
       okType: 'danger',
       onOk: () => {
         setDataSource(pre => {
@@ -243,10 +242,11 @@ export default function Teacher () {
       <Button onClick={handleModal} className='my-4'>
         Yangi o'qituvchi qo'shish
       </Button>
+      {/* This Modal for adding new teacher */}
       <Modal
         title='Yangi o`qituvchi qo`shish'
         visible={openModal}
-        okText={<span className='text-sky-500 hover:text-white'>Qo'shish</span>}
+        okText={<span className='text-black hover:text-white'>Qo'shish</span>}
         onCancel={() => {
           handleModal()
         }}
@@ -267,6 +267,8 @@ export default function Teacher () {
           y: 400
         }}
       ></Table>
+
+      {/* This modal for editing teacher */}
       <Modal
         title='Tahrirlash'
         visible={isEditing}

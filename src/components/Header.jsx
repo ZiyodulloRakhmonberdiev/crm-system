@@ -1,5 +1,5 @@
 import { Dropdown, Menu, Space } from 'antd'
-import { BookmarkPlus, CashStack, Person, Search } from 'react-bootstrap-icons'
+import { BookmarkPlus, CashStack, Person } from 'react-bootstrap-icons'
 import { Select } from 'antd'
 import { Link } from 'react-router-dom'
 import logo from '../assets/img/logo.png'
@@ -45,7 +45,8 @@ export default function Header () {
   return (
     <header
       style={{
-        width: '100%'
+        width: '100%',
+        maxWidth: 1920
       }}
       className='fixed bg-white h-14 flex align-center px-4 lg:px-8 z-20'
     >

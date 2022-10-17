@@ -1,13 +1,15 @@
 import { PieChartOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons'
-import { Layout, Menu } from 'antd'
+import { Input, Layout, Menu, Modal } from 'antd'
+import { useState } from 'react'
 import {
   CashStack,
   Download,
   MicrosoftTeams,
   Mortarboard,
-  PlusCircle
+  PlusCircle,
+  Search
 } from 'react-bootstrap-icons'
-import SearchInput from './SearchInput'
+import { Link } from 'react-router-dom'
 
 export default function Sidebar () {
   function getItem (label, key, icon, children) {
@@ -19,6 +21,7 @@ export default function Sidebar () {
     }
   }
   const { Sider } = Layout
+  const [isOpenSearchModal, setIsOpenSearchModal] = useState(false)
   const items = [
     getItem('Hisob', 'account', <UserOutlined />, [
       getItem('Mening hisobim', 'myAccount'),
@@ -30,28 +33,49 @@ export default function Sidebar () {
     ]),
     getItem('Arizalar', 'application', <Download />),
     getItem('O`quvchilar', 'pupils', <Mortarboard />),
-    getItem('O`qituvchilar', 'teachers', <MicrosoftTeams />),
+    getItem(
+      <Link to='/teachers'>O'qituvchilar</Link>,
+      'teachers',
+      <MicrosoftTeams />
+    ),
     getItem('Guruhlar', 'groups', <TeamOutlined />),
     getItem('Moliya', 'finance', <CashStack />),
-    getItem('Hisobot', 'report', <PieChartOutlined />)
+    getItem('Hisobot', 'report', <PieChartOutlined />),
+    getItem(
+      <span
+        onClick={() => {
+          setIsOpenSearchModal(!isOpenSearchModal)
+        }}
+      >
+        Qidiruv
+      </span>,
+      'search',
+      <Search
+        onClick={() => {
+          setIsOpenSearchModal(!isOpenSearchModal)
+        }}
+      />
+    )
   ]
+
+  // Modal Search Function
+  const resetEditing = () => {
+    setIsOpenSearchModal(false)
+  }
   return (
     <Layout>
       <Sider
         breakpoint='lg'
-        collapsedWidth='0'
+        collapsedWidth='60'
         onBreakpoint={broken => {
           console.log(broken)
         }}
         onCollapse={(collapsed, type) => {
           console.log(collapsed, type)
         }}
-        style={{ minHeight: '100vh', height: '100%' }}
-        className='mt-14 pt-4 absolute'
+        style={{ height: '100vh' }}
+        className='mt-14 pt-4 absolute overflow-y-scroll'
       >
-        <div className='lg:hidden mt-2 lg:mt-0 w-40 mx-auto'>
-          <SearchInput />
-        </div>
         <Menu
           theme='dark'
           mode='inline'
@@ -59,6 +83,16 @@ export default function Sidebar () {
           items={items}
         />
       </Sider>
+      <Modal
+        title='Qidirish'
+        visible={isOpenSearchModal}
+        okText={<span className='text-sky-500 hover:text-white'>Qidirish</span>}
+        onCancel={() => {
+          resetEditing()
+        }}
+      >
+        <Input placeholder='Qidirish' className='mb-2' />
+      </Modal>
     </Layout>
   )
 }

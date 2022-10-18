@@ -27,9 +27,9 @@ export default function Sidebar () {
       getItem('Mening hisobim', 'myAccount'),
       getItem('Chiqish', 'exit')
     ]),
-    getItem('Qo`shish', 'add', <PlusCircle />, [
-      getItem('User qo`shish', 'user'),
-      getItem('To`lov qo`shish', 'payment')
+    getItem(`Qo'shish`, 'add', <PlusCircle />, [
+      getItem(`User qo'shish`, 'user'),
+      getItem(`To'lov qo'shish`, 'payment')
     ]),
     getItem('Arizalar', 'application', <Download />),
     getItem(<Link to='/students'>O'quvchilar</Link>, 'pupils', <Mortarboard />),
@@ -38,8 +38,8 @@ export default function Sidebar () {
       'teachers',
       <MicrosoftTeams />
     ),
-    getItem('Guruhlar', 'groups', <TeamOutlined />),
-    getItem('Moliya', 'finance', <CashStack />),
+    getItem(<Link to='/groups'>Guruhlar</Link>, 'groups', <TeamOutlined />),
+    getItem(<Link to='/finance'>Moliya</Link>, 'finance', <CashStack />),
     getItem('Hisobot', 'report', <PieChartOutlined />),
     getItem(
       <span
@@ -66,7 +66,7 @@ export default function Sidebar () {
     <Layout>
       <Sider
         breakpoint='lg'
-        collapsedWidth='60'
+        collapsedWidth='56'
         onBreakpoint={broken => {
           console.log(broken)
         }}

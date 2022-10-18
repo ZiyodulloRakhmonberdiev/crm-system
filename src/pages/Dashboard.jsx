@@ -1,10 +1,10 @@
 import HeaderLayout from '../components/HeaderLayout'
-import Teacher from './Teacher'
+import Teachers from './Teachers'
 export default function Dashboard () {
   return (
     <div className='container'>
       <HeaderLayout />
-      <Teacher />
+      <Teachers />
     </div>
   )
 }

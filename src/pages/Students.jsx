@@ -1,7 +1,7 @@
-import { Button, Table, Modal, Input, Select } from 'antd'
+import { Button, Table, Modal, Input, Select, Divider } from 'antd'
 import { useState } from 'react'
 import { PencilSquare, Trash } from 'react-bootstrap-icons'
-export default function Student () {
+export default function Students () {
   // Multi Select input which is on the heading
   const courses = [
     'English',
@@ -215,6 +215,9 @@ export default function Student () {
 
   return (
     <div>
+      <Divider orientation='center'>
+        <span className='text-2xl'>O'quvchilar</span>
+      </Divider>
       <header className='flex gap-2'>
         <Input.Search
           placeholder='Ism, email yoki telefon orqali qidirish'

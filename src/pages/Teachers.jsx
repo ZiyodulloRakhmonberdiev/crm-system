@@ -1,9 +1,10 @@
 import { SearchOutlined } from '@ant-design/icons'
 import Highlighter from 'react-highlight-words'
-import { Button, Table, Modal, Input, Space } from 'antd'
+import { Button, Table, Modal, Input, Space, Divider } from 'antd'
 import { useRef, useState } from 'react'
 import { PencilSquare, Trash } from 'react-bootstrap-icons'
-export default function Teacher () {
+
+export default function Teachers () {
   // Search functions which is in the heading on the table
   const [searchText, setSearchText] = useState('')
   const [searchedColumn, setSearchedColumn] = useState('')
@@ -239,6 +240,9 @@ export default function Teacher () {
   }
   return (
     <div>
+      <Divider orientation='center'>
+        <span className='text-2xl'>O'qituvchilar</span>
+      </Divider>
       <Button onClick={handleModal} className='my-4'>
         Yangi o'qituvchi qo'shish
       </Button>

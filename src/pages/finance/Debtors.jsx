@@ -1,7 +1,7 @@
 import { Button, Table, Modal, Input, Select, Divider } from 'antd'
 import { useState } from 'react'
 import { PencilSquare, Trash } from 'react-bootstrap-icons'
-export default function Students () {
+export default function Debtors () {
   // Multi Select input which is on the heading
   const courses = [
     'English',
@@ -28,55 +28,42 @@ export default function Students () {
     {
       id: 1,
       name: 'Umar Abdulazizov',
-      email: 'umar@yandex.com',
       course: ['android', 'english'],
       teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
       phone: '88 855 86 85',
-      balance: '500 000'
+      debet: '500 000'
     },
     {
       id: 2,
       name: 'Yoqub Abdulazizov',
-      email: 'yoqub@yandex.com',
       course: ['android', 'english'],
       teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
       phone: '88 855 13 49',
-      balance: '1 500 000'
+      debet: '1 500 000'
     },
     {
       id: 3,
       name: 'Temur Abdulazizov',
-      email: 'umar@yandex.com',
       course: ['android', 'english'],
       teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
       phone: '88 855 86 85',
-      balance: '500 000'
+      debet: '500 000'
     },
     {
       id: 4,
       name: 'Jahongir Abdulazizov',
-      email: 'umar@yandex.com',
       course: ['android', 'english'],
       teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
       phone: '88 855 86 85',
-      balance: '500 000'
+      debet: '500 000'
     }
   ])
 
   // Table headers
   const columns = [
     {
-      key: '1',
-      title: 'ID',
-      dataIndex: 'id',
-      width: 80,
-      render: record => {
-        return <span className='pl-1'>{record}</span>
-      }
-    },
-    {
       key: '2',
-      title: 'Name',
+      title: 'Ism',
       dataIndex: 'name',
       fixed: 'top',
       filteredValue: [searchText],
@@ -92,15 +79,6 @@ export default function Students () {
             .toLowerCase()
             .includes(value.toLowerCase())
         )
-      }
-    },
-    {
-      key: '3',
-      title: 'Email',
-      dataIndex: 'email',
-      fixed: 'top',
-      render: record => {
-        return <span className='text-xs'>{record}</span>
       }
     },
     {
@@ -145,8 +123,8 @@ export default function Students () {
     },
     {
       key: '7',
-      title: 'Balansi',
-      dataIndex: 'balance',
+      title: 'Qarz miqdori',
+      dataIndex: 'debet',
       fixed: 'top'
     },
     {
@@ -179,7 +157,6 @@ export default function Students () {
     const newStudent = {
       id: randomNumber,
       name: 'Name ' + randomNumber,
-      email: randomNumber + '@gmail.com',
       address: 'Address ' + randomNumber
     }
     setDataSource(pre => {
@@ -217,7 +194,7 @@ export default function Students () {
   return (
     <div>
       <Divider orientation='center'>
-        <span className='text-2xl'>O'quvchilar</span>
+        <span className='text-2xl'>Qarzdorlar</span>
       </Divider>
       <header className='flex gap-2'>
         <Input.Search
@@ -329,9 +306,7 @@ export default function Students () {
         <Input
           value={editingStudent?.email}
           onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, email: e.target.value }
-            })
+            setEditingStudent(pre => {})
           }}
           className='mb-2'
         />

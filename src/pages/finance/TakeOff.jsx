@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons'
-import { Button, Input, DatePicker, Divider, Space, Table } from 'antd'
+import { Button, Input, DatePicker, Divider, Space, Table, Modal } from 'antd'
 import Highlighter from 'react-highlight-words'
 import { useRef, useState } from 'react'
 
@@ -165,26 +165,48 @@ export default function Payment () {
     },
     {
       key: 5,
-      title: `To'lov turi`,
-      dataIndex: 'paymentMethods',
-      fixed: 'top',
-      ...getColumnSearchProps('paymentMethods')
-    },
-    {
-      key: 6,
       title: 'Izoh',
       dataIndex: 'comment',
       fixed: 'top',
       ...getColumnSearchProps('comment')
     },
     {
-      key: 7,
+      key: 6,
       title: 'Hodim',
       dataIndex: 'employee',
       fixed: 'top',
       ...getColumnSearchProps('employee')
+    },
+    {
+      key: 7,
+      title: 'Amallar',
+      fixed: 'top',
+      render: record => {
+        return (
+          <span
+            className='cursor-pointer text-red-500'
+            onClick={() => {
+              onDeleteStudent(record)
+            }}
+          >
+            O'chirish
+          </span>
+        )
+      }
     }
   ]
+  const onDeleteStudent = record => {
+    Modal.confirm({
+      title: 'O`chirilsinmi?',
+      okText: 'Ha',
+      okType: 'danger',
+      onOk: () => {
+        setDataSource(pre => {
+          return pre.filter(student => student.id !== record.id)
+        })
+      }
+    })
+  }
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm()
     setSearchText(selectedKeys[0])
@@ -197,19 +219,14 @@ export default function Payment () {
   return (
     <div>
       <Divider orientation='center'>
-        <span className='text-2xl'>Barcha to'lovlar</span>
+        <span className='text-2xl'>Yechib olinish</span>
       </Divider>
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8'>
         <div className='w-full text-xl flex flex-col justify-start items-start bg-white rounded-2xl p-6 lg:p-12 flex-wrap space-y-4'>
-          <span>To'lovlar miqdori:</span>
+          <span>Jami yechib olinishlar:</span>
           <span className='text-2xl font-bold lg:text-4xl'>
-            52.555.000 so'm
+            10.900.000 so'm
           </span>
-          <span>(01.10.2022 - 31.10.2022)</span>
-        </div>
-        <div className='w-full text-xl flex flex-col justify-start items-start bg-white rounded-2xl p-8 lg:p-12 flex-wrap space-y-4'>
-          <span>Sof foyda miqdori:</span>
-          <span className='text-2xl font-bold lg:text-4xl'>6.555.000 so'm</span>
           <span>(01.10.2022 - 31.10.2022)</span>
         </div>
       </div>

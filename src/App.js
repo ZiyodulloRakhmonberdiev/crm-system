@@ -9,6 +9,10 @@ import Groups from './pages/Groups'
 import ScrollToTop from './ScrollToTop'
 import Finance from './pages/Finance'
 import Payment from './pages/finance/Payment'
+import TakeOff from './pages/finance/TakeOff'
+import Spend from './pages/finance/Spend'
+import Salary from './pages/finance/Salary'
+import Debtors from './pages/finance/Debtors'
 
 export default function App () {
   return (
@@ -26,6 +30,10 @@ export default function App () {
             <Route path='/groups' element={<Groups />} />
             <Route path='/finance' element={<Finance />} />
             <Route path='/finance/payment' element={<Payment />} />
+            <Route path='/finance/takeoff' element={<TakeOff />} />
+            <Route path='/finance/spend' element={<Spend />} />
+            <Route path='/finance/salary' element={<Salary />} />
+            <Route path='/finance/debtors' element={<Debtors />} />
           </Routes>
         </div>
       </div>

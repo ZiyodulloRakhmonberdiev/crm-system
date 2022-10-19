@@ -217,6 +217,7 @@ export default function Teachers () {
       title: 'O`chirilsinmi?',
       okText: 'Ha',
       okType: 'danger',
+      cancelText: "Yo'q",
       onOk: () => {
         setDataSource(pre => {
           return pre.filter(student => student.id !== record.id)
@@ -251,6 +252,7 @@ export default function Teachers () {
         title='Yangi o`qituvchi qo`shish'
         visible={openModal}
         okText={<span className='text-black hover:text-white'>Qo'shish</span>}
+        cancelText='Yopish'
         onCancel={() => {
           handleModal()
         }}
@@ -277,6 +279,7 @@ export default function Teachers () {
         title='Tahrirlash'
         visible={isEditing}
         okText={<span className='text-sky-500 hover:text-white'>Saqlash</span>}
+        cancelText='Yopish'
         onCancel={() => {
           resetEditing()
         }}

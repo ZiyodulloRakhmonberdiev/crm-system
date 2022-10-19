@@ -21,37 +21,25 @@ export default function Finance () {
       id: 2,
       name: 'Yechib olinish',
       icon: <Coin />,
-      direction: '/'
+      direction: '/finance/takeoff'
     },
     {
       id: 3,
       name: 'Ish haqi',
       icon: <Wallet />,
-      direction: '/'
+      direction: '/finance/salary'
     },
     {
       id: 4,
-      name: "To'lovlar guruhi",
-      icon: <Collection />,
-      direction: '/'
+      name: 'Harajatlar',
+      icon: <ArrowUpLeftCircle />,
+      direction: '/finance/spend'
     },
     {
       id: 5,
-      name: "Kurs to'lovlar",
-      icon: <CollectionPlay />,
-      direction: '/'
-    },
-    {
-      id: 6,
-      name: 'Harajatlar',
-      icon: <ArrowUpLeftCircle />,
-      direction: '/'
-    },
-    {
-      id: 1,
       name: 'Qarzdorlar',
       icon: <ExclamationCircle />,
-      direction: '/'
+      direction: '/finance/debtors'
     }
   ]
   return (

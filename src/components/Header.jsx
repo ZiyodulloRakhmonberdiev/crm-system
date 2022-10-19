@@ -48,7 +48,7 @@ export default function Header () {
         width: '100%',
         maxWidth: 1920
       }}
-      className='fixed bg-white h-14 flex align-center px-4 lg:px-8 z-20'
+      className='fixed bg-white h-14 flex align-center px-4 lg:px-8 z-20 border-b'
     >
       <div className='flex justify-between items-center container'>
         <div className='flex align-center justify-between'>

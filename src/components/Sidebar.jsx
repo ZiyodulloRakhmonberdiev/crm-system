@@ -31,7 +31,7 @@ export default function Sidebar () {
       getItem(`User qo'shish`, 'user'),
       getItem(`To'lov qo'shish`, 'payment')
     ]),
-    getItem('Arizalar', 'application', <Download />),
+    getItem(<Link to='/leads'>Arizalar</Link>, 'application', <Download />),
     getItem(<Link to='/students'>O'quvchilar</Link>, 'pupils', <Mortarboard />),
     getItem(
       <Link to='/teachers'>O'qituvchilar</Link>,
@@ -40,7 +40,7 @@ export default function Sidebar () {
     ),
     getItem(<Link to='/groups'>Guruhlar</Link>, 'groups', <TeamOutlined />),
     getItem(<Link to='/finance'>Moliya</Link>, 'finance', <CashStack />),
-    getItem('Hisobot', 'report', <PieChartOutlined />),
+    getItem(<Link to='/report'>Hisobot</Link>, 'report', <PieChartOutlined />),
     getItem(
       <span
         onClick={() => {

@@ -17,6 +17,8 @@ import Debtors from './pages/finance/Debtors'
 import Report from './pages/Report'
 import Conversion from './pages/report/Conversion'
 import Messages from './pages/report/Messages'
+import TeacherProfile from './components/TeacherProfile'
+import StudentProfile from './components/StudentProfile'
 
 export default function App () {
   return (
@@ -34,14 +36,19 @@ export default function App () {
             <Route path='/teachers' element={<Teachers />} />
             <Route path='/groups' element={<Groups />} />
             <Route path='/finance' element={<Finance />} />
+
             <Route path='/finance/payment' element={<Payment />} />
             <Route path='/finance/takeoff' element={<TakeOff />} />
             <Route path='/finance/spend' element={<Spend />} />
             <Route path='/finance/salary' element={<Salary />} />
             <Route path='/finance/debtors' element={<Debtors />} />
+
             <Route path='/report' element={<Report />} />
             <Route path='/report/conversion' element={<Conversion />} />
             <Route path='/report/messages' element={<Messages />} />
+
+            <Route path='/teachers/profile' element={<TeacherProfile />} />
+            <Route path='/students/profile' element={<StudentProfile />} />
           </Routes>
         </div>
       </div>

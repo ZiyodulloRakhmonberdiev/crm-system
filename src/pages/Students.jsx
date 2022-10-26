@@ -1,6 +1,7 @@
 import { Button, Table, Modal, Input, Select, Divider } from 'antd'
 import { useState } from 'react'
 import { PencilSquare, Trash } from 'react-bootstrap-icons'
+import { Link } from 'react-router-dom'
 export default function Students () {
   // Multi Select input which is on the heading
   const courses = [
@@ -27,7 +28,7 @@ export default function Students () {
   const [dataSource, setDataSource] = useState([
     {
       id: 1,
-      name: 'Umar Abdulazizov',
+      name: <Link to='/students/profile'>Yoqub Abdulazizov</Link>,
       email: 'umar@yandex.com',
       course: ['android', 'english'],
       teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
@@ -36,7 +37,7 @@ export default function Students () {
     },
     {
       id: 2,
-      name: 'Yoqub Abdulazizov',
+      name: <Link to='/students/profile'>Yoqub Abdulazizov</Link>,
       email: 'yoqub@yandex.com',
       course: ['android', 'english'],
       teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
@@ -45,7 +46,7 @@ export default function Students () {
     },
     {
       id: 3,
-      name: 'Temur Abdulazizov',
+      name: <Link to='/students/profile'>Temur Abdulazizov</Link>,
       email: 'umar@yandex.com',
       course: ['android', 'english'],
       teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
@@ -54,7 +55,7 @@ export default function Students () {
     },
     {
       id: 4,
-      name: 'Jahongir Abdulazizov',
+      name: <Link to='/students/profile'>Jahon Abdulazizov</Link>,
       email: 'umar@yandex.com',
       course: ['android', 'english'],
       teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],

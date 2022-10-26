@@ -3,6 +3,7 @@ import Highlighter from 'react-highlight-words'
 import { Button, Table, Modal, Input, Space, Divider } from 'antd'
 import { useRef, useState } from 'react'
 import { PencilSquare, Trash } from 'react-bootstrap-icons'
+import { Link } from 'react-router-dom'
 
 export default function Teachers () {
   // Search functions which is in the heading on the table
@@ -14,31 +15,31 @@ export default function Teachers () {
   const [dataSource, setDataSource] = useState([
     {
       id: 1,
-      name: 'Anvar Akbarxodjaev',
+      name: <Link to='/teachers/profile'>Anvar Akbarxodjaev</Link>,
       email: 'anvar@gmail.com',
       phone: '+998906706555'
     },
     {
       id: 2,
-      name: 'Anvar Akbarxodjaev',
+      name: <Link to='/teachers/profile'>Anvar Akbarxodjaev</Link>,
       email: 'anvar@gmail.com',
       phone: '+998906706555'
     },
     {
       id: 3,
-      name: 'Anvar Akbarxodjaev',
+      name: <Link to='/teachers/profile'>Anvar Akbarxodjaev</Link>,
       email: 'anvar@gmail.com',
       phone: '+998906706555'
     },
     {
       id: 4,
-      name: 'Anvar Akbarxodjaev',
+      name: <Link to='/teachers/profile'>Anvar Akbarxodjaev</Link>,
       email: 'anvar@gmail.com',
       phone: '+998906706555'
     },
     {
       id: 5,
-      name: 'Anvar Akbarxodjaev',
+      name: <Link to='/teachers/profile'>Anvar Akbarxodjaev</Link>,
       email: 'anvar@gmail.com',
       phone: '+998906706555'
     }
@@ -156,7 +157,7 @@ export default function Teachers () {
     },
     {
       key: '2',
-      title: 'Name',
+      title: 'Ism',
       dataIndex: 'name',
       fixed: 'top',
       ...getColumnSearchProps('name')
@@ -177,7 +178,7 @@ export default function Teachers () {
     },
     {
       key: '5',
-      title: 'Actions',
+      title: 'Amallar',
       render: record => {
         return (
           <div className='flex space-x-4'>

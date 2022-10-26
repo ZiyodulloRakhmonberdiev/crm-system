@@ -94,24 +94,32 @@ export default function Leads () {
     <div className='grid grid-cols-3 gap-4'>
       {boards.map(board => (
         <div
-          className='board'
+          className='board relative max-w-full'
           onDragOver={e => dragOverHandler(e)}
           onDrop={e => dropCardHandler(e, board)}
         >
-          <div className='board__title text-2xl mb-2'>{board.title}</div>
-          {board.items.map(item => (
-            <div
-              className='item p-4 bg-white rounded-lg mb-2 cursor-grab'
-              draggable={true}
-              onDragOver={e => dragOverHandler(e)}
-              onDragLeave={e => dragLeaveHandler(e)}
-              onDragStart={e => dragStartHandler(e, board, item)}
-              onDragEnd={e => dragEndHandler(e)}
-              onDrop={e => dropHandler(e, board, item)}
-            >
-              {item.title}
-            </div>
-          ))}
+          <div className='text-lg lg:text-2xl rounded-sm bg-slate-300 p-2'>
+            {board.title}
+          </div>
+          <div
+            style={{ height: '100vh' }}
+            className='mt-8 fixed overflow-y-scroll w-full'
+          >
+            {board.items.map(item => (
+              <div
+                className='item p-4 mb-2 cursor-grab border-b'
+                style={{ maxWidth: 350 }}
+                draggable={true}
+                onDragOver={e => dragOverHandler(e)}
+                onDragLeave={e => dragLeaveHandler(e)}
+                onDragStart={e => dragStartHandler(e, board, item)}
+                onDragEnd={e => dragEndHandler(e)}
+                onDrop={e => dropHandler(e, board, item)}
+              >
+                {item.title}
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>

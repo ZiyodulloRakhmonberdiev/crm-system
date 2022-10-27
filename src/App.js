@@ -19,39 +19,37 @@ import Conversion from './pages/report/Conversion'
 import Messages from './pages/report/Messages'
 import TeacherProfile from './components/TeacherProfile'
 import StudentProfile from './components/StudentProfile'
+import Layout from './components/Layout'
 
 export default function App () {
   return (
-    <div style={{ maxWidth: 1920 }} className='mx-auto'>
-      <div>
-        <Header />
-        <Sidebar />
-        <div className='ml-14 lg:ml-48 mt-14 p-2 lg:p-8 pb-16 mx-auto z-0'>
+    <div >
           <ScrollToTop />
           <Routes>
-            <Route path='/' element={<Dashboard />} />
+            <Route path='/' element={<Layout />}>
+              <Route path='/' element={<Dashboard />} />
+              <Route path='/leads' element={<Leads />} />
+              <Route path='/students' element={<Students />} />
+              <Route path='/teachers' element={<Teachers />} />
+              <Route path='/groups' element={<Groups />} />
+              <Route path='/finance' element={<Finance />} />
+
+              <Route path='/finance/payment' element={<Payment />} />
+              <Route path='/finance/takeoff' element={<TakeOff />} />
+              <Route path='/finance/spend' element={<Spend />} />
+              <Route path='/finance/salary' element={<Salary />} />
+              <Route path='/finance/debtors' element={<Debtors />} />
+
+              <Route path='/report' element={<Report />} />
+              <Route path='/report/conversion' element={<Conversion />} />
+              <Route path='/report/messages' element={<Messages />} />
+
+              <Route path='/teachers/profile' element={<TeacherProfile />} />
+              <Route path='/students/profile' element={<StudentProfile />} />
+            </Route>
+
             <Route path='/login' element={<Login />} />
-            <Route path='/leads' element={<Leads />} />
-            <Route path='/students' element={<Students />} />
-            <Route path='/teachers' element={<Teachers />} />
-            <Route path='/groups' element={<Groups />} />
-            <Route path='/finance' element={<Finance />} />
-
-            <Route path='/finance/payment' element={<Payment />} />
-            <Route path='/finance/takeoff' element={<TakeOff />} />
-            <Route path='/finance/spend' element={<Spend />} />
-            <Route path='/finance/salary' element={<Salary />} />
-            <Route path='/finance/debtors' element={<Debtors />} />
-
-            <Route path='/report' element={<Report />} />
-            <Route path='/report/conversion' element={<Conversion />} />
-            <Route path='/report/messages' element={<Messages />} />
-
-            <Route path='/teachers/profile' element={<TeacherProfile />} />
-            <Route path='/students/profile' element={<StudentProfile />} />
           </Routes>
-        </div>
-      </div>
     </div>
   )
 }

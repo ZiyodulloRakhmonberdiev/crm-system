@@ -10,6 +10,9 @@ export default function Login () {
     }, 2000)
     console.log(e)
   }
+
+
+  
   return (
     <div className='absolute mx-auto inset-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 p-2'>
       <Form

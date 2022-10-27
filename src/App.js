@@ -20,7 +20,6 @@ import Messages from './pages/report/Messages'
 import TeacherProfile from './components/TeacherProfile'
 import StudentProfile from './components/StudentProfile'
 import Layout from './components/Layout'
-
 export default function App () {
   return (
     <div >

@@ -1,16 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Card, Divider } from 'antd'
-import {
-  ArrowUpLeftCircle,
-  CardChecklist,
-  CashStack,
-  Chat,
-  Coin,
-  Collection,
-  CollectionPlay,
-  ExclamationCircle,
-  Wallet
-} from 'react-bootstrap-icons'
+import { CardChecklist, Chat } from 'react-bootstrap-icons'
 export default function Finance () {
   const data = [
     {
@@ -25,24 +15,6 @@ export default function Finance () {
       icon: <Chat />,
       direction: '/report/messages'
     }
-    // {
-    //   id: 3,
-    //   name: 'Ish haqi',
-    //   icon: <Wallet />,
-    //   direction: '/finance/salary'
-    // },
-    // {
-    //   id: 4,
-    //   name: 'Harajatlar',
-    //   icon: <ArrowUpLeftCircle />,
-    //   direction: '/finance/spend'
-    // },
-    // {
-    //   id: 5,
-    //   name: 'Qarzdorlar',
-    //   icon: <ExclamationCircle />,
-    //   direction: '/finance/debtors'
-    // }
   ]
   return (
     <div>

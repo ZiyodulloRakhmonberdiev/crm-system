@@ -94,16 +94,16 @@ export default function Leads () {
     <div className='grid grid-cols-3 gap-4'>
       {boards.map(board => (
         <div
-          className='board relative max-w-full'
+          className='board relative'
           onDragOver={e => dragOverHandler(e)}
           onDrop={e => dropCardHandler(e, board)}
         >
-          <div className='text-lg lg:text-2xl rounded-sm bg-slate-300 p-2'>
+          <div className='text-lg lg:text-2xl rounded-sm bg-blue-400 text-white p-2'>
             {board.title}
           </div>
           <div
             style={{ height: '100vh' }}
-            className='mt-8 fixed overflow-y-scroll w-full'
+            className='mt-8 fixed overflow-y-scroll'
           >
             {board.items.map(item => (
               <div

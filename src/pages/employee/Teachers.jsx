@@ -179,27 +179,38 @@ export default function Teachers () {
     {
       key: '5',
       title: 'Amallar',
+      width: 270,
+      fixed: 'top',
       render: record => {
         return (
-          <div className='flex space-x-4'>
-            <PencilSquare
+          <div className='flex gap-2 flex-wrap'>
+            <button
+              className='flex items-center rounded-full p-2 mr-6 hover:mr-0 lg:mr-0 relative hover:pl-9 lg:pl-9 hover:bg-blue-500 transition-all w-0 hover:w-auto lg:w-auto lg:bg-blue-400'
               onClick={() => {
                 onEditStudent(record)
               }}
-            />
-            <Trash
+            >
+              <span className='p-2 rounded-full bg-white flex items-center justify-center mr-2 absolute left-0 border border-blue-400 inset-y-0 '>
+                <PencilSquare className='text-blue-500' />
+              </span>
+              <span className='text-white text-xs'>Tahrirlash</span>
+            </button>
+            <button
+              className='flex items-center rounded-full p-2 relative hover:pl-9 lg:pl-9 hover:bg-red-500 transition-all w-0 hover:w-auto lg:w-auto lg:bg-red-400'
               onClick={() => {
                 onDeleteStudent(record)
               }}
-              style={{ marginLeft: 12 }}
-            />
+            >
+              <span className='p-2 rounded-full bg-white flex items-center justify-center mr-2 absolute -left-px inset-y-0 border border-red-400'>
+                <Trash className='text-red-500' />
+              </span>
+              <span className='text-white text-xs'>O'chirish</span>
+            </button>
           </div>
         )
-      },
-      fixed: 'top'
+      }
     }
   ]
-
   // Actions with table
   const onAddStudent = () => {
     const randomNumber = parseInt(Math.random() * 1000)
@@ -245,14 +256,17 @@ export default function Teachers () {
       <Divider orientation='center'>
         <span className='text-2xl'>O'qituvchilar</span>
       </Divider>
-      <Button onClick={handleModal} className='my-4'>
+      <button
+        onClick={handleModal}
+        className='my-4 py-2 px-4 lg:py-4 lg:px-8 rounded-full bg-blue-400 hover:bg-blue-500 text-white transition'
+      >
         Yangi o'qituvchi qo'shish
-      </Button>
+      </button>
       {/* This Modal for adding new teacher */}
       <Modal
-        title='Yangi o`qituvchi qo`shish'
+        title="Yangi o'qituvchi qo'shish"
         visible={openModal}
-        okText={<span className='text-black hover:text-white'>Qo'shish</span>}
+        okText={<span className=''>Qo'shish</span>}
         cancelText='Yopish'
         onCancel={() => {
           handleModal()
@@ -260,17 +274,13 @@ export default function Teachers () {
       >
         <Input placeholder='Ism Familiya' className='mb-2' />
         <Input placeholder='Email' className='mb-2' />
-        <Input
-          addonBefore='+998'
-          placeholder='Telefon raqam'
-          className='mb-2'
-        />
+        <Input placeholder='Telefon raqam' className='mb-2' />
       </Modal>
       <Table
         columns={columns}
         dataSource={dataSource}
         scroll={{
-          x: 850,
+          x: 1000,
           y: 400
         }}
       ></Table>
@@ -279,7 +289,7 @@ export default function Teachers () {
       <Modal
         title='Tahrirlash'
         visible={isEditing}
-        okText={<span className='text-sky-500 hover:text-white'>Saqlash</span>}
+        okText='Saqlash'
         cancelText='Yopish'
         onCancel={() => {
           resetEditing()

@@ -1,9 +1,8 @@
-import { Dropdown, Menu, Space } from 'antd'
+import { Dropdown, Menu, Space, Input } from 'antd'
 import { BookmarkPlus, CashStack, Person } from 'react-bootstrap-icons'
 import { Select } from 'antd'
 import { Link } from 'react-router-dom'
 import logo from '../assets/img/logo.png'
-import SearchInput from './SearchInput'
 
 export default function Header () {
   const { Option } = Select
@@ -68,27 +67,31 @@ export default function Header () {
             <Option value='urgut'>Urgut filiali</Option>
           </Select>
         </div>
-        <div className='hidden lg:block'>
-          <SearchInput />
+        <div className='w-42 hidden lg:block'>
+          <Input.Search
+            placeholder='Qidirish...'
+            allowClear
+            className='min-w-[250px]'
+          />
         </div>
         <div className='hidden lg:flex space-x-2 md:space-x-4'>
           <Dropdown overlay={menu} trigger={['click']}>
             <a onClick={e => e.preventDefault()}>
-              <Space>
+              <Space className='p-2 rounded-full border border-green-400 text-green-400 hover:bg-green-400 hover:text-white transition font-bold'>
                 <BookmarkPlus className='text-xl' />
               </Space>
             </a>
           </Dropdown>
           <Dropdown overlay={payment} trigger={['click']}>
             <a onClick={e => e.preventDefault()}>
-              <Space>
+              <Space className='p-2 rounded-full border border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white transition'>
                 <CashStack className='text-xl' />
               </Space>
             </a>
           </Dropdown>
           <Dropdown overlay={account} trigger={['click']}>
             <a onClick={e => e.preventDefault()}>
-              <Space>
+              <Space className='border border-slate-500 rounded-full p-2 bg-slate-500 text-white hover:bg-white hover:text-slate-400 transition'>
                 <Person className='text-xl' />
               </Space>
             </a>

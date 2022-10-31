@@ -63,9 +63,9 @@ export default function StudentProfile () {
               placement='bottomLeft'
               arrow
             >
-              <span className='p-2 rounded-full mb-1 border flex items-center justify-center w-10 h-10'>
-                <EditOutlined />
-              </span>
+              <button className='p-2 rounded-full mb-1 border flex items-center justify-center w-10 h-10 border-blue-400'>
+                <EditOutlined className='text-blue-400' />
+              </button>
             </Dropdown>
             <Dropdown
               overlay={
@@ -76,9 +76,9 @@ export default function StudentProfile () {
               placement='bottomLeft'
               arrow
             >
-              <span className='p-2 rounded-full mb-1 border flex items-center justify-center w-10 h-10'>
-                <Chat />
-              </span>
+              <button className='p-2 rounded-full mb-1 border border-green-400 flex items-center justify-center w-10 h-10'>
+                <Chat className='text-green-400' />
+              </button>
             </Dropdown>
             <Dropdown
               overlay={
@@ -89,16 +89,10 @@ export default function StudentProfile () {
               placement='bottomLeft'
               arrow
             >
-              <span className='p-2 rounded-full mb-1 border flex items-center justify-center w-10 h-10'>
-                <CashStack />
-              </span>
+              <button className='p-2 rounded-full mb-1 border border-red-400 flex items-center justify-center w-10 h-10'>
+                <CashStack className='text-red-400' />
+              </button>
             </Dropdown>
-            {/* <p className='text-slate-400'><EditOutlined /></p>
-            <p className='text-slate-400'><CashStack /></p>
-            <p className='text-slate-400'>Guruhga o'tkazish</p>
-            <p className='text-slate-400'>To'lov qilish</p>
-            <p className='text-slate-400'>Xabar yuborish</p>
-            <p className='text-slate-400'><Trash2 /></p> */}
           </div>
         </div>
       </div>

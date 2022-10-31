@@ -7,7 +7,8 @@ import {
   MicrosoftTeams,
   Mortarboard,
   PlusCircle,
-  Search
+  Search,
+  House
 } from 'react-bootstrap-icons'
 import { Link } from 'react-router-dom'
 
@@ -23,6 +24,7 @@ export default function Sidebar () {
   const { Sider } = Layout
   const [isOpenSearchModal, setIsOpenSearchModal] = useState(false)
   const items = [
+    getItem(<Link to='/'>Bosh sahifa</Link>, 'home', <House />),
     getItem('Hisob', 'account', <UserOutlined />, [
       getItem('Mening hisobim', 'myAccount'),
       getItem('Chiqish', 'exit')

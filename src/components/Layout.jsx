@@ -1,12 +1,10 @@
 import React from 'react'
-import { Outlet } from "react-router-dom"
+import { Outlet } from 'react-router-dom'
 import ScrollToTop from '../ScrollToTop'
 import Header from './Header'
 import Sidebar from './Sidebar'
+
 const Layout = () => {
-
-  
-
   return (
     <div style={{ maxWidth: 1920 }} className='mx-auto'>
       <div>

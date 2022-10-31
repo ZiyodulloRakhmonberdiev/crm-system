@@ -5,7 +5,7 @@ const instance = axios.create({
 })
 
 instance.interceptors.request.use(config => {
-  config.headers.Authorization = window.localStorage.getItem('crm_token')
+  config.headers.Authorization = "Bearer "+ window.localStorage.getItem('crm_token')
   return config
 })
 

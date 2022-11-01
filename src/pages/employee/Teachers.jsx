@@ -4,6 +4,8 @@ import { Button, Table, Modal, Input, Space, Divider } from 'antd'
 import { useRef, useState } from 'react'
 import { PencilSquare, Trash } from 'react-bootstrap-icons'
 import { Link } from 'react-router-dom'
+import { MyButton } from '../../UI/Button.style'
+import { IconButton } from '../../UI/IconButton.style'
 
 export default function Teachers () {
   // Search functions which is in the heading on the table
@@ -183,29 +185,23 @@ export default function Teachers () {
       fixed: 'top',
       render: record => {
         return (
-          <div className='flex gap-2 flex-wrap'>
-            <button
-              className='flex items-center rounded-full p-2 mr-6 hover:mr-0 lg:mr-0 relative hover:pl-9 lg:pl-9 hover:bg-blue-500 transition-all w-0 hover:w-auto lg:w-auto lg:bg-blue-400'
+          <div className='flex gap-2'>
+            <IconButton
+              color='primary'
               onClick={() => {
                 onEditStudent(record)
               }}
             >
-              <span className='p-2 rounded-full bg-white flex items-center justify-center mr-2 absolute left-0 border border-blue-400 inset-y-0 '>
-                <PencilSquare className='text-blue-500' />
-              </span>
-              <span className='text-white text-xs'>Tahrirlash</span>
-            </button>
-            <button
-              className='flex items-center rounded-full p-2 relative hover:pl-9 lg:pl-9 hover:bg-red-500 transition-all w-0 hover:w-auto lg:w-auto lg:bg-red-400'
+              <PencilSquare />
+            </IconButton>
+            <IconButton
+              color='danger'
               onClick={() => {
                 onDeleteStudent(record)
               }}
             >
-              <span className='p-2 rounded-full bg-white flex items-center justify-center mr-2 absolute -left-px inset-y-0 border border-red-400'>
-                <Trash className='text-red-500' />
-              </span>
-              <span className='text-white text-xs'>O'chirish</span>
-            </button>
+              <Trash />
+            </IconButton>
           </div>
         )
       }
@@ -226,7 +222,7 @@ export default function Teachers () {
   }
   const onDeleteStudent = record => {
     Modal.confirm({
-      title: 'O`chirilsinmi?',
+      title: "O'chirilsinmi?",
       okText: 'Ha',
       okType: 'danger',
       cancelText: "Yo'q",
@@ -256,13 +252,9 @@ export default function Teachers () {
       <Divider orientation='center'>
         <span className='text-2xl'>O'qituvchilar</span>
       </Divider>
-      <button
-        onClick={handleModal}
-        className='my-4 py-2 px-4 lg:py-4 lg:px-8 rounded-full bg-blue-400 hover:bg-blue-500 text-white transition'
-      >
+      <MyButton onClick={handleModal} className='my-4'>
         Yangi o'qituvchi qo'shish
-      </button>
-      {/* This Modal for adding new teacher */}
+      </MyButton>
       <Modal
         title="Yangi o'qituvchi qo'shish"
         visible={openModal}
@@ -285,7 +277,6 @@ export default function Teachers () {
         }}
       ></Table>
 
-      {/* This modal for editing teacher */}
       <Modal
         title='Tahrirlash'
         visible={isEditing}

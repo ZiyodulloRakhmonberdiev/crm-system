@@ -1,28 +1,15 @@
-import {
-  Button,
-  Table,
-  Modal,
-  Input,
-  Select,
-  Space,
-  Dropdown,
-  DatePicker,
-  Menu,
-  Divider,
-  Spin
-} from 'antd'
+import { Table, Modal, Input, Select, DatePicker, Divider } from 'antd'
 import { useEffect, useState } from 'react'
-import {
-  ChatLeftDots,
-  PencilSquare,
-  ThreeDotsVertical,
-  Trash
-} from 'react-bootstrap-icons'
+import { PencilSquare, Trash } from 'react-bootstrap-icons'
 import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
-import axios from "../../axios/axios"
+import axios from '../../axios/axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchGroups, fetchingError, fetchingGroups } from '../../redux/groupsSlice'
+import {
+  fetchGroups,
+  fetchingError,
+  fetchingGroups
+} from '../../redux/groupsSlice'
 
 export default function Groups () {
   const dispatch = useDispatch()
@@ -38,7 +25,6 @@ export default function Groups () {
     'PHP'
   ]
   const teachers = ['Amir Kamol', 'Sanjar', 'Yulduz Ahmedova', 'Mirza O`roqov']
-  const rooms = ['12 xona', '3 xona', '8 xona', '1 xona']
   const groupsStatus = [
     'Faol guruhlar',
     'Arxiv guruhlar',
@@ -52,19 +38,22 @@ export default function Groups () {
 
   // Groups static data
   let dataSource = []
-  groups?.map((item) => {
+  groups?.map(item => {
     dataSource?.push({
       id: item?.id,
-        name: item?.name,
-        course: item?.course?.name,
-        room: item?.room?.name,
-        teachers: item?.tachers?.map(teacher => teacher?.name),
-        days: item?.days?.map(day => day),
-        duration: <span>{item?.group_start_date} - {item?.group_end_date}</span>,
-        students: item?.student_count
+      name: item?.name,
+      course: item?.course?.name,
+      room: item?.room?.name,
+      teachers: item?.tachers?.map(teacher => teacher?.name),
+      days: item?.days?.map(day => day),
+      duration: (
+        <span>
+          {item?.group_start_date} - {item?.group_end_date}
+        </span>
+      ),
+      students: item?.student_count
     })
   })
-
 
   // Table headers
   const columns = [
@@ -79,7 +68,7 @@ export default function Groups () {
     },
     {
       key: '2',
-      title: 'Name',
+      title: 'Ism',
       dataIndex: 'name',
       fixed: 'top'
     },
@@ -124,12 +113,22 @@ export default function Groups () {
       title: 'Amallar',
       render: record => {
         return (
-          <div className='flex gap-2 flex-wrap'> 
-            <IconButton color='primary' >
-            <PencilSquare/>
+          <div className='flex gap-2'>
+            <IconButton
+              color='primary'
+              onClick={() => {
+                onEditStudent(record)
+              }}
+            >
+              <PencilSquare />
             </IconButton>
-            <IconButton color='danger'>
-            <Trash />
+            <IconButton
+              color='danger'
+              onClick={() => {
+                onDeleteStudent(record)
+              }}
+            >
+              <Trash />
             </IconButton>
           </div>
         )
@@ -153,9 +152,9 @@ export default function Groups () {
   }
   const onDeleteStudent = record => {
     Modal.confirm({
-      title: 'O`chirilsinmi?',
+      title: "O'chirilsinmi?",
       okText: 'Ha',
-      okType: 'danger',
+      okType: 'danger'
       // onOk: () => {
       //   setDataSource(pre => {
       //     return pre.filter(student => student.id !== record.id)
@@ -178,19 +177,18 @@ export default function Groups () {
     setOpenModal(!openModal)
   }
 
-
   // fetching groups
   useEffect(() => {
     dispatch(fetchingGroups())
-    axios.get("/api/groups")
+    axios
+      .get('/api/groups')
       .then(res => {
         dispatch(fetchGroups(res?.data?.data?.data))
       })
-      .catch((err) => {
+      .catch(err => {
         dispatch(fetchingError())
       })
   }, [])
-
 
   return (
     <div>
@@ -261,14 +259,13 @@ export default function Groups () {
           format='YYYY-MM-DD'
         />
       </header>
-      <MyButton className='my-4'>
+      <MyButton onClick={handleModal} className='my-4'>
         Guruh qo'shish
       </MyButton>
-      {/* This modal for adding a new student */}
       <Modal
         title="Yangi guruh qo'shish"
         visible={openModal}
-        okText={<span className='text-sky-500 hover:text-white'>Qo'shish</span>}
+        okText="Qo'shish"
         onCancel={() => {
           handleModal()
         }}
@@ -285,11 +282,10 @@ export default function Groups () {
           y: 400
         }}
       ></Table>
-      {/* This modal for editing group */}
       <Modal
         title='Tahrirlash'
         visible={isEditing}
-        okText={<span className='text-sky-500 hover:text-white'>Saqlash</span>}
+        okText='Saqlash'
         onCancel={() => {
           resetEditing()
         }}

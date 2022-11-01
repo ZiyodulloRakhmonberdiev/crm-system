@@ -154,19 +154,8 @@ export default function Groups () {
     Modal.confirm({
       title: "O'chirilsinmi?",
       okText: 'Ha',
-      okType: 'danger'
-      // onOk: () => {
-      //   setDataSource(pre => {
-      //     return pre.filter(student => student.id !== record.id)
-      //   })
-      // }
-      okType: 'danger',
-      cancelText: "Yo'q",
-      onOk: () => {
-        // setDataSource(pre => {
-        //   return pre.filter(student => student.id !== record.id)
-        // })
-      }
+      okType: 'danger' ,
+      cancelText: "Yo'q", 
     })
   }
   const onEditStudent = record => {

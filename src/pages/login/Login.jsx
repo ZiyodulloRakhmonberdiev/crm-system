@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, message } from 'antd'
+import { Button, Checkbox, Form, Input, message, Spin } from 'antd'
 import { useRef, useState, useEffect } from 'react'
  
 import axios from '../../axios/axios'
@@ -83,13 +83,13 @@ export default function Login () {
             />
           </Form.Item>
 
-          <a className='login-form-forgot mr-2' href='!#'>
-            | Parolni unutdingizmi?
-          </a>
-        </Form.Item>
+          
           <Form.Item>
             <Form.Item name='remember' valuePropName='checked' noStyle>
               <Checkbox>Eslab qolish</Checkbox>
+              <a className='login-form-forgot mr-2' href='!#'>
+                | Parolni unutdingizmi?
+              </a>
             </Form.Item>
           </Form.Item>
           <Form.Item>

@@ -158,9 +158,9 @@ export default function Groups () {
       okType: 'danger',
       cancelText: "Yo'q",
       onOk: () => {
-        setDataSource(pre => {
-          return pre.filter(student => student.id !== record.id)
-        })
+        // setDataSource(pre => {
+        //   return pre.filter(student => student.id !== record.id)
+        // })
       }
     })
   }

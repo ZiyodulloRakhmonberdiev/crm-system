@@ -88,7 +88,8 @@ export default function Sidebar () {
       <Modal
         title='Qidirish'
         visible={isOpenSearchModal}
-        okText={<span className='text-sky-500 hover:text-white'>Qidirish</span>}
+        okText='Qidirish'
+        cancelText='Yopish'
         onCancel={() => {
           resetEditing()
         }}

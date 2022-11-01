@@ -51,16 +51,13 @@ a {
 
 .ant-input-affix-wrapper {
   padding: 7px 8px;
-  /* border-radius: 1000px !important; */
-  border-top-left-radius: 1000px !important;
-  border-bottom-left-radius: 1000px !important;
+  border-top-left-radius: 5px !important;
+  border-bottom-left-radius: 5px !important;
 }
 
 .ant-input-search-button {
-  /* padding: 10px !important; */
-  border-top-right-radius: 1000px !important;
-  border-bottom-right-radius: 1000px !important;
-  /* border-left: none !important; */
+  border-top-right-radius: 5px !important;
+  border-bottom-right-radius: 5px !important;
   background-color: #fff !important;
   position: absolute;
   top: 0;
@@ -77,9 +74,9 @@ a {
 .ant-picker,
 .ant-picker-range {
   padding: 4px 8px !important;
-  border-radius: 1000px !important;
+  border-radius: 5px !important;
 }
 
 .ant-select-selection-item {
-  border-radius: 1000px !important;
+  border-radius: 5px !important;
 }

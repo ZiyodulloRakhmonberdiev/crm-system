@@ -226,7 +226,7 @@ export default function Teachers () {
   }
   const onDeleteStudent = record => {
     Modal.confirm({
-      title: 'O`chirilsinmi?',
+      title: "O'chirilsinmi?",
       okText: 'Ha',
       okType: 'danger',
       cancelText: "Yo'q",
@@ -266,7 +266,7 @@ export default function Teachers () {
       <Modal
         title="Yangi o'qituvchi qo'shish"
         visible={openModal}
-        okText={<span className=''>Qo'shish</span>}
+        okText="Qo'shish"
         cancelText='Yopish'
         onCancel={() => {
           handleModal()

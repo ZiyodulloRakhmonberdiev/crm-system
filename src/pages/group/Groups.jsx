@@ -79,7 +79,7 @@ export default function Groups () {
     },
     {
       key: '2',
-      title: 'Name',
+      title: 'Nomi',
       dataIndex: 'name',
       fixed: 'top'
     },
@@ -153,14 +153,15 @@ export default function Groups () {
   }
   const onDeleteStudent = record => {
     Modal.confirm({
-      title: 'O`chirilsinmi?',
+      title: "O'chirilsinmi?",
       okText: 'Ha',
       okType: 'danger',
-      // onOk: () => {
-      //   setDataSource(pre => {
-      //     return pre.filter(student => student.id !== record.id)
-      //   })
-      // }
+      cancelText: "Yo'q",
+      onOk: () => {
+        setDataSource(pre => {
+          return pre.filter(student => student.id !== record.id)
+        })
+      }
     })
   }
   const onEditStudent = record => {
@@ -242,7 +243,7 @@ export default function Groups () {
         </Select>
         <Select
           mode='multiple'
-          placeholder={`Kunlar bo'yicha`}
+          placeholder="Kunlar bo'yicha"
           maxTagCount={2}
           allowClear
         >
@@ -264,18 +265,88 @@ export default function Groups () {
       <MyButton className='my-4'>
         Guruh qo'shish
       </MyButton>
-      {/* This modal for adding a new student */}
       <Modal
         title="Yangi guruh qo'shish"
         visible={openModal}
-        okText={<span className='text-sky-500 hover:text-white'>Qo'shish</span>}
+        okText='Saqlash'
         onCancel={() => {
+          resetEditing()
           handleModal()
         }}
+        cancelText='Yopish'
       >
-        <Input placeholder='Ism Familiya' className='mb-2' />
-        <Input placeholder='Email' className='mb-2' />
-        <Input placeholder='Telefon raqam' className='mb-2' />
+        <label>Nomi:</label>
+        <Input
+          value={editingStudent?.name}
+          onChange={e => {
+            setEditingStudent(pre => {
+              return { ...pre, name: e.target.value }
+            })
+          }}
+          className='mb-2'
+        />
+        <label>Kurs:</label>
+        <Input
+          value={editingStudent?.course}
+          onChange={e => {
+            setEditingStudent(pre => {
+              return { ...pre, course: e.target.value }
+            })
+          }}
+          className='mb-2'
+        />
+        <label>Xona:</label>
+        <Input
+          value={editingStudent?.room}
+          onChange={e => {
+            setEditingStudent(pre => {
+              return { ...pre, room: e.target.value }
+            })
+          }}
+          className='mb-2'
+        />
+        <label>O'qituvchi:</label>
+        <Input
+          value={editingStudent?.teacher}
+          onChange={e => {
+            setEditingStudent(pre => {
+              return { ...pre, teacher: e.target.value }
+            })
+          }}
+          className='mb-2'
+        />
+        <label>Dars kunlari:</label>
+        <br />
+        <Select
+          block
+          mode='tabs'
+          value={editingStudent?.day}
+          onChange={e => {
+            setEditingStudent(pre => {
+              return { ...pre, day: e.value }
+            })
+          }}
+          className='mb-2 min-w-[150px]'
+        >
+          {days.map((day, index) => {
+            return (
+              <Select.Option key={index} value={day}>
+                {day}
+              </Select.Option>
+            )
+          })}
+        </Select>
+        <br />
+        <label>Davomiyligi:</label>
+        <Input
+          value={editingStudent?.duration}
+          onChange={e => {
+            setEditingStudent(pre => {
+              return { ...pre, duration: e.target.value }
+            })
+          }}
+          className='mb-2'
+        />
       </Modal>
       <Table
         columns={columns}
@@ -285,11 +356,10 @@ export default function Groups () {
           y: 400
         }}
       ></Table>
-      {/* This modal for editing group */}
       <Modal
         title='Tahrirlash'
         visible={isEditing}
-        okText={<span className='text-sky-500 hover:text-white'>Saqlash</span>}
+        okText='Saqlash'
         onCancel={() => {
           resetEditing()
         }}
@@ -346,7 +416,8 @@ export default function Groups () {
           }}
           className='mb-2'
         />
-        <label>Dars kuni:</label>
+        <label>Dars kunlari:</label>
+        <br />
         <Select
           block
           mode='tabs'
@@ -356,6 +427,7 @@ export default function Groups () {
               return { ...pre, day: e.value }
             })
           }}
+          className='mb-2 min-w-[150px]'
         >
           {days.map((day, index) => {
             return (
@@ -365,6 +437,7 @@ export default function Groups () {
             )
           })}
         </Select>
+        <br />
         <label>Davomiyligi:</label>
         <Input
           value={editingStudent?.duration}
@@ -373,6 +446,7 @@ export default function Groups () {
               return { ...pre, duration: e.target.value }
             })
           }}
+          className='mb-2'
         />
         <label>O'quvchilar:</label>
         <Input

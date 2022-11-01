@@ -91,7 +91,7 @@ export default function Leads () {
     e.target.style.boxShadow = 'none'
   }
   return (
-    <div className='grid grid-cols-3 gap-4'>
+    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
       {boards.map(board => (
         <div
           className='board relative'

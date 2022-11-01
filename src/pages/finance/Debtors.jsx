@@ -1,27 +1,10 @@
-import { Button, Table, Modal, Input, Select, Divider } from 'antd'
+import { Table, Modal, Input, Select } from 'antd'
 import { useState } from 'react'
-import { PencilSquare, Trash } from 'react-bootstrap-icons'
+import { CashStack, Chat, ExclamationCircle } from 'react-bootstrap-icons'
 export default function Debtors () {
-  // Multi Select input which is on the heading
-  const courses = [
-    'English',
-    'Russian',
-    'MobileDev',
-    'WebDev',
-    'SMM',
-    'Python',
-    'PHP'
-  ]
-  const finance = [
-    'Bu oy to`lagan',
-    'Qarzdor',
-    'Qarzdor emas',
-    'Chegirmasi mavjud',
-    'Balansida pul bor'
-  ]
-
   // Search functions which is in the heading on the page
   const [searchText, setSearchText] = useState('')
+  const [searchDebet, setSearchDebet] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [editingStudent, setEditingStudent] = useState(null)
   const [dataSource, setDataSource] = useState([
@@ -29,33 +12,33 @@ export default function Debtors () {
       id: 1,
       name: 'Umar Abdulazizov',
       course: ['android', 'english'],
-      teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
+      comment: "Shu oy to'laydi",
       phone: '88 855 86 85',
-      debet: '500 000'
+      debet: '500.00'
     },
     {
       id: 2,
       name: 'Yoqub Abdulazizov',
       course: ['android', 'english'],
-      teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
+      comment: "Shu oy to'laydi",
       phone: '88 855 13 49',
-      debet: '1 500 000'
+      debet: '1500.00'
     },
     {
       id: 3,
       name: 'Temur Abdulazizov',
       course: ['android', 'english'],
-      teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
+      comment: "Shu oy to'laydi",
       phone: '88 855 86 85',
-      debet: '500 000'
+      debet: '500.00'
     },
     {
       id: 4,
       name: 'Jahongir Abdulazizov',
       course: ['android', 'english'],
-      teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
+      comment: "Shu oy to'laydi",
       phone: '88 855 86 85',
-      debet: '500 000'
+      debet: '500.00'
     }
   ])
 
@@ -96,7 +79,7 @@ export default function Debtors () {
         return (
           <div className='flex gap-1 flex-wrap'>
             {record.map(c => (
-              <span className='border rounded-sm text-xs border-slate-100 p-0.5'>
+              <span className='border rounded-sm text-xs border-violet-400 p-0.5'>
                 {c}
               </span>
             ))}
@@ -106,76 +89,44 @@ export default function Debtors () {
     },
     {
       key: '6',
-      title: 'Ustozlari',
-      dataIndex: 'teachers',
+      title: 'Qarz miqdori',
+      dataIndex: 'debet',
       fixed: 'top',
-      render: record => {
-        return (
-          <div className='flex gap-1 flex-wrap'>
-            {record.map(c => (
-              <span className='border rounded-sm text-xs border-slate-100 p-0.5'>
-                {c}
-              </span>
-            ))}
-          </div>
-        )
+      filteredValue: [searchDebet],
+      onFilter: (value, record) => {
+        return String(record.debet)
+          .toLowerCase()
+          .includes(value.toLowerCase())
       }
     },
     {
       key: '7',
-      title: 'Qarz miqdori',
-      dataIndex: 'debet',
+      title: 'Izoh',
+      dataIndex: 'comment',
       fixed: 'top'
     },
     {
       key: '8',
-      title: 'Actions',
+      title: 'Amallar',
       render: record => {
         return (
-          <div className='flex space-x-4'>
-            <PencilSquare
-              onClick={() => {
-                onEditStudent(record)
-              }}
-            />
-            <Trash
-              onClick={() => {
-                onDeleteStudent(record)
-              }}
-              style={{ marginLeft: 12 }}
-            />
-          </div>
+          <button
+            className='flex items-center rounded-full p-2 relative hover:pl-9 lg:pl-9 hover:bg-violet-500 transition-all w-0 hover:w-auto lg:w-auto lg:bg-violet-400 outline-none'
+            onClick={() => {
+              onEditStudent(record)
+            }}
+          >
+            <span className='p-2 rounded-full bg-white flex items-center justify-center mr-2 absolute -left-px inset-y-0 border border-violet-400'>
+              <Chat className='text-violet-500' />
+            </span>
+            <span className='text-white text-xs'>Izoh qoldirish</span>
+          </button>
         )
       },
       fixed: 'top'
     }
   ]
 
-  // Actions with table
-  const onAddStudent = () => {
-    const randomNumber = parseInt(Math.random() * 1000)
-    const newStudent = {
-      id: randomNumber,
-      name: 'Name ' + randomNumber,
-      address: 'Address ' + randomNumber
-    }
-    setDataSource(pre => {
-      return [...pre, newStudent]
-    })
-  }
-  const onDeleteStudent = record => {
-    Modal.confirm({
-      title: 'O`chirilsinmi?',
-      okText: 'Ha',
-      okType: 'danger',
-      cancelText: "Yo'q",
-      onOk: () => {
-        setDataSource(pre => {
-          return pre.filter(student => student.id !== record.id)
-        })
-      }
-    })
-  }
   const onEditStudent = record => {
     setIsEditing(true)
     setEditingStudent({ ...record })
@@ -185,84 +136,52 @@ export default function Debtors () {
     setEditingStudent(null)
   }
 
-  // Add a new teacher
-  const [openModal, setOpenModal] = useState(false)
-  const handleModal = () => {
-    setOpenModal(!openModal)
-  }
-
   return (
     <div>
-      <Divider orientation='center'>
-        <span className='text-2xl'>Qarzdorlar</span>
-      </Divider>
-      <header className='flex gap-2'>
-        <Input.Search
-          placeholder='Ism, email yoki telefon orqali qidirish'
-          onSearch={value => {
-            setSearchText(value)
-          }}
-          onChange={e => {
-            setSearchText(e.target.value)
-          }}
-          allowClear
-        />
-        <Select
-          mode='multiple'
-          maxTagCount={2}
-          style={{
-            width: '100%'
-          }}
-          placeholder='Kurslar bo`yicha'
-          allowClear
-        >
-          {courses.map((course, index) => {
-            return (
-              <Select.Option key={index} value={course}>
-                {course}
-              </Select.Option>
-            )
-          })}
-        </Select>
-        <Select
-          mode='multiple'
-          style={{
-            width: '100%'
-          }}
-          placeholder='Moliyaviy holati'
-          maxTagCount={2}
-          allowClear
-        >
-          {finance.map((item, index) => {
-            return (
-              <Select.Option key={index} value={item}>
-                {item}
-              </Select.Option>
-            )
-          })}
-        </Select>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-8'>
+        <div className='bg-white flex flex-col p-4 rounded-lg items-start justify-between'>
+          <div className='text-2xl text-red-400 bg-red-50 p-2 rounded-md'>
+            <ExclamationCircle />
+          </div>
+          <p className='text-red-400 my-4'>Jami qarzdor o'quvchilar soni</p>
+          <p className='text-red-400 text-2xl'>3 ta</p>
+        </div>
+        <div className='bg-white flex flex-col p-4 rounded-lg items-start justify-between'>
+          <div className='text-2xl text-slate-400 bg-slate-50 p-2 rounded-md'>
+            <CashStack />
+          </div>
+          <p className='text-slate-400 my-4'>Jami qarzlar miqdori</p>
+          <p className='text-slate-500 text-2xl'>4 600.000 so'm</p>
+        </div>
+      </div>
+      <header className='flex flex-wrap gap-2 mb-8'>
+        <div className='w-42 sm:mr-8'>
+          <Input.Search
+            placeholder='Ism yoki telefon orqali qidirish'
+            onSearch={value => {
+              setSearchText(value)
+            }}
+            onChange={e => {
+              setSearchText(e.target.value)
+            }}
+            allowClear
+            className='min-w-[200px] md:min-w-[250px]'
+          />
+        </div>
+        <div className='w-42 sm:mr-8'>
+          <Input.Search
+            placeholder="Qarz miqdori bo'yicha qidirish"
+            onSearch={value => {
+              setSearchDebet(value)
+            }}
+            onChange={e => {
+              setSearchDebet(e.target.value)
+            }}
+            allowClear
+            className='min-w-[200px] md:min-w-[250px]'
+          />
+        </div>
       </header>
-      <Button onClick={handleModal} className='my-4'>
-        Yangi o'quvchi qo'shish
-      </Button>
-      {/* This modal for adding a new student */}
-      <Modal
-        title='Yangi o`quvchi qo`shish'
-        visible={openModal}
-        okText={<span className='text-sky-500 hover:text-white'>Qo'shish</span>}
-        cancelText='Yopish'
-        onCancel={() => {
-          handleModal()
-        }}
-      >
-        <Input placeholder='Ism Familiya' className='mb-2' />
-        <Input placeholder='Email' className='mb-2' />
-        <Input
-          addonBefore='+998'
-          placeholder='Telefon raqam'
-          className='mb-2'
-        />
-      </Modal>
       <Table
         columns={columns}
         dataSource={dataSource}
@@ -272,11 +191,10 @@ export default function Debtors () {
           y: 400
         }}
       ></Table>
-      {/* This modal for editing a student */}
       <Modal
         title='Tahrirlash'
         visible={isEditing}
-        okText={<span className='text-sky-500 hover:text-white'>Saqlash</span>}
+        okText='Saqlash'
         cancelText='Yopish'
         onCancel={() => {
           resetEditing()
@@ -295,26 +213,10 @@ export default function Debtors () {
         }}
       >
         <Input
-          value={editingStudent?.name}
+          value={editingStudent?.comment}
           onChange={e => {
             setEditingStudent(pre => {
-              return { ...pre, name: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <Input
-          value={editingStudent?.email}
-          onChange={e => {
-            setEditingStudent(pre => {})
-          }}
-          className='mb-2'
-        />
-        <Input
-          value={editingStudent?.phone}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, phone: e.target.value }
+              return { ...pre, comment: e.target.value }
             })
           }}
         />

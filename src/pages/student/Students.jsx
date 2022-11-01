@@ -201,7 +201,7 @@ export default function Students () {
   }
   const onDeleteStudent = record => {
     Modal.confirm({
-      title: 'O`chirilsinmi?',
+      title: "O'chirilsinmi?",
       okText: 'Ha',
       okType: 'danger',
       cancelText: "Yo'q",
@@ -283,11 +283,10 @@ export default function Students () {
       >
         Yangi o'quvchi qo'shish
       </button>
-      {/* This modal for adding a new student */}
       <Modal
-        title="Yangi o'quvchi qo`shish"
+        title="Yangi o'quvchi qo'shish"
         visible={openModal}
-        okText={<span className='text-sky-500 hover:text-white'>Qo'shish</span>}
+        okText="Qo'shish"
         cancelText='Yopish'
         onCancel={() => {
           handleModal()
@@ -307,11 +306,10 @@ export default function Students () {
         }}
         className='overflow-auto'
       ></Table>
-      {/* This modal for editing a student */}
       <Modal
         title='Tahrirlash'
         visible={isEditing}
-        okText={<span className='text-sky-500 hover:text-white'>Saqlash</span>}
+        okText='Saqlash'
         cancelText='Yopish'
         onCancel={() => {
           resetEditing()

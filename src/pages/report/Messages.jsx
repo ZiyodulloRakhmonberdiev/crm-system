@@ -10,7 +10,7 @@ export default function Messages () {
         <DatePicker></DatePicker>
         <DatePicker></DatePicker>
       </div>
-      <div className='flex flex-col w-1/2 mt-4'>
+      <div className='flex flex-col mt-4'>
         <div className='p-4 flex justify-between items-start mb-2 rounded-lg bg-white'>
           <span className='border mr-2 rounded-lg text-blue-500 p-1'>
             System:

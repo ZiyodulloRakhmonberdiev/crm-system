@@ -48,17 +48,17 @@ a {
 .ant-btn-primary {
   color: #40a9ff;
 }
-/* 
+
 .ant-input-affix-wrapper {
   padding: 7px 8px;
-  
-  border-top-left-radius: 1000px !important;
-  border-bottom-left-radius: 1000px !important;
+  border-top-left-radius: 5px !important;
+  border-bottom-left-radius: 5px !important;
 }
 
 .ant-input-search-button {
-  border-top-right-radius: 1000px !important;
-  border-bottom-right-radius: 1000px !important;
+  border-top-right-radius: 5px !important;
+  border-bottom-right-radius: 5px !important;
+
   background-color: #fff !important;
   position: absolute;
   top: 0;
@@ -66,8 +66,8 @@ a {
 }
 
 .ant-input-group .ant-input-affix-wrapper:not(:last-child) {
-  border-top-left-radius: 1rem;
-  border-bottom-left-radius: 1rem;
+  border-top-left-radius: 5px !important;
+  border-bottom-left-radius: 5px !important;
 }
 
 .ant-select-multiple .ant-select-selector,
@@ -75,9 +75,10 @@ a {
 .ant-picker,
 .ant-picker-range {
   padding: 4px 8px !important;
-  border-radius: 1000px !important;
+  border-radius: 5px !important;
 }
 
 .ant-select-selection-item {
-  border-radius: 1000px !important;
-} */
+  border-radius: 5px !important;
+}
+

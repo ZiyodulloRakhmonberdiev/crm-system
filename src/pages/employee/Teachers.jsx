@@ -258,7 +258,7 @@ export default function Teachers () {
       <Modal
         title="Yangi o'qituvchi qo'shish"
         visible={openModal}
-        okText={<span className=''>Qo'shish</span>}
+        okText="Qo'shish"
         cancelText='Yopish'
         onCancel={() => {
           handleModal()

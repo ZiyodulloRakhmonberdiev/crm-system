@@ -58,6 +58,7 @@ a {
 .ant-input-search-button {
   border-top-right-radius: 5px !important;
   border-bottom-right-radius: 5px !important;
+
   background-color: #fff !important;
   position: absolute;
   top: 0;
@@ -65,8 +66,8 @@ a {
 }
 
 .ant-input-group .ant-input-affix-wrapper:not(:last-child) {
-  border-top-left-radius: 1rem;
-  border-bottom-left-radius: 1rem;
+  border-top-left-radius: 5px !important;
+  border-bottom-left-radius: 5px !important;
 }
 
 .ant-select-multiple .ant-select-selector,
@@ -80,3 +81,4 @@ a {
 .ant-select-selection-item {
   border-radius: 5px !important;
 }
+

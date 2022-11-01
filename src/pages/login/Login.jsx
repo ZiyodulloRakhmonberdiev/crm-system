@@ -1,6 +1,6 @@
-import { Button, Checkbox, Form, Input, message, Spin } from 'antd'
-import { useRef, useState, useEffect, useContext } from 'react'
-import AuthContext from '../../context/AuthProvider'
+import { Button, Checkbox, Form, Input, message } from 'antd'
+import { useRef, useState, useEffect } from 'react'
+ 
 import axios from '../../axios/axios'
 import { useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
@@ -8,13 +8,11 @@ import { checkUserIdLoggedIn, login } from '../../redux/loginSlice'
 
 const LOGIN_URL = 'https://crm.my-project.site/api/signIn'
 
-export default function Login() {
-  const { setAuth } = useContext(AuthContext)
+export default function Login () { 
   const userRef = useRef()
   const [user, setUser] = useState('')
   const [password, setPassword] = useState('')
   const [errMsg, setErrMsg] = useState('')
-  const [success, setSuccess] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
@@ -28,7 +26,7 @@ export default function Login() {
     setErrMsg('')
   }, [user, password])
 
-  const onFinish = async e => {
+  const onFinish = async e => { 
     setLoading(true)
     axios.post(
       LOGIN_URL,
@@ -42,18 +40,16 @@ export default function Login() {
         dispatch(login({ token: response?.data?.data?.token, user: { name: response?.data?.data?.name, id: response?.data?.data?.id, role: response?.data?.data?.role } }))
         setUser('')
         setPassword('')
-        setSuccess(true)
-        localStorage.setItem("crm_token", response?.data?.data?.token)
+        localStorage.setItem('crm_token', response?.data?.data?.token)
         message.success('Muvaffaqiyatli')
-        navigate("/", { replace: true })
+        navigate('/', { replace: true })
       })
       .catch(err => {
-        message.error('Xatolik yuz berdi')
+        message.error('Telefon raqam yoki parol xato!')
       })
       .finally(() => {
         setLoading(false)
       })
-
   }
 
   return (
@@ -87,16 +83,15 @@ export default function Login() {
             />
           </Form.Item>
 
+          <a className='login-form-forgot mr-2' href='!#'>
+            | Parolni unutdingizmi?
+          </a>
+        </Form.Item>
           <Form.Item>
             <Form.Item name='remember' valuePropName='checked' noStyle>
               <Checkbox>Eslab qolish</Checkbox>
             </Form.Item>
-
-            <a className='login-form-forgot mr-2' href=''>
-              | Parolni unutdingizmi?
-            </a>
           </Form.Item>
-
           <Form.Item>
             <Button htmlType='submit' className='bg-sky-500 text-white'>
               Kirish

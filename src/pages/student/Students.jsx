@@ -2,6 +2,8 @@ import { Table, Modal, Input, Select, Divider } from 'antd'
 import { useState } from 'react'
 import { PencilSquare, Trash } from 'react-bootstrap-icons'
 import { Link } from 'react-router-dom'
+import { MyButton } from '../../UI/Button.style'
+import { IconButton } from '../../UI/IconButton.style'
 export default function Students () {
   // Multi Select input which is on the heading
   const courses = [
@@ -157,29 +159,23 @@ export default function Students () {
       fixed: 'top',
       render: record => {
         return (
-          <div className='flex gap-2 flex-wrap'>
-            <button
-              className='flex items-center rounded-full p-2 mr-6 hover:mr-0 lg:mr-0 relative hover:pl-9 lg:pl-9 hover:bg-blue-500 transition-all w-0 hover:w-auto lg:w-auto lg:bg-blue-400'
+          <div className='flex gap-2'>
+            <IconButton
+              color='primary'
               onClick={() => {
                 onEditStudent(record)
               }}
             >
-              <span className='p-2 rounded-full bg-white flex items-center justify-center mr-2 absolute left-0 border border-blue-400 inset-y-0 '>
-                <PencilSquare className='text-blue-500' />
-              </span>
-              <span className='text-white text-xs'>Tahrirlash</span>
-            </button>
-            <button
-              className='flex items-center rounded-full p-2 relative hover:pl-9 lg:pl-9 hover:bg-red-500 transition-all w-0 hover:w-auto lg:w-auto lg:bg-red-400'
+              <PencilSquare />
+            </IconButton>
+            <IconButton
+              color='danger'
               onClick={() => {
                 onDeleteStudent(record)
               }}
             >
-              <span className='p-2 rounded-full bg-white flex items-center justify-center mr-2 absolute -left-px inset-y-0 border border-red-400'>
-                <Trash className='text-red-500' />
-              </span>
-              <span className='text-white text-xs'>O'chirish</span>
-            </button>
+              <Trash />
+            </IconButton>
           </div>
         )
       }
@@ -233,7 +229,7 @@ export default function Students () {
         <span className='text-2xl'>O'quvchilar</span>
       </Divider>
       <header className='flex flex-wrap gap-2'>
-        <div className='w-42 sm:mr-8'>
+        <div className='w-42'>
           <Input.Search
             placeholder='Qidirish - ism, email, telefon'
             onSearch={value => {
@@ -277,12 +273,9 @@ export default function Students () {
           })}
         </Select>
       </header>
-      <button
-        onClick={handleModal}
-        className='my-4 py-2 px-4 lg:py-4 lg:px-8 rounded-full bg-blue-400 hover:bg-blue-500 text-white transition'
-      >
+      <MyButton onClick={handleModal} className='my-4'>
         Yangi o'quvchi qo'shish
-      </button>
+      </MyButton> 
       <Modal
         title="Yangi o'quvchi qo'shish"
         visible={openModal}

@@ -1,6 +1,22 @@
-import { Table, Modal, Input, Select, Drawer } from 'antd'
+import {
+  Table,
+  Modal,
+  Input,
+  Select,
+  Drawer,
+  DatePicker,
+  Form,
+  Radio,
+  message
+} from 'antd'
 import { useState, useEffect } from 'react'
-import { PencilSquare, Trash, Mortarboard } from 'react-bootstrap-icons'
+import {
+  PencilSquare,
+  Trash,
+  Mortarboard,
+  Telephone,
+  Person
+} from 'react-bootstrap-icons'
 import { Link } from 'react-router-dom'
 import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
@@ -71,45 +87,17 @@ export default function Students () {
   const [searchText, setSearchText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [editingStudent, setEditingStudent] = useState(null)
-  // const [dataSource, setDataSource] = useState([
-  //   {
-  //     id: 1,
-  //     name: <Link to='/students/profile'>Yoqub Abdulazizov</Link>,
-  //     email: 'umar@yandex.com',
-  //     course: ['android', 'english'],
-  //     teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
-  //     phone: '88 855 86 85',
-  //     balance: '500 000'
-  //   },
-  //   {
-  //     id: 2,
-  //     name: <Link to='/students/profile'>Yoqub Abdulazizov</Link>,
-  //     email: 'yoqub@yandex.com',
-  //     course: ['android', 'english'],
-  //     teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
-  //     phone: '88 855 13 49',
-  //     balance: '1 500 000'
-  //   },
-  //   {
-  //     id: 3,
-  //     name: <Link to='/students/profile'>Temur Abdulazizov</Link>,
-  //     email: 'umar@yandex.com',
-  //     course: ['android', 'english'],
-  //     teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
-  //     phone: '88 855 86 85',
-  //     balance: '500 000'
-  //   },
-  //   {
-  //     id: 4,
-  //     name: <Link to='/students/profile'>Jahon Abdulazizov</Link>,
-  //     email: 'umar@yandex.com',
-  //     course: ['android', 'english'],
-  //     teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
-  //     phone: '88 855 86 85',
-  //     balance: '500 000'
-  //   }
-  // ])
 
+  // Add a new student
+  const [formLoading, setFormLoading] = useState(false)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [password, setPassword] = useState('')
+  const [address, setAddress] = useState('')
+  const [birthday, setBirthday] = useState('')
+  const [gender, setGender] = useState('')
+  const [additionPhone, setAdditionPhone] = useState([])
   // Table headers
   const columns = [
     {
@@ -225,17 +213,47 @@ export default function Students () {
 
   // Actions with table
   const onAddStudent = () => {
+    // const
     const randomNumber = parseInt(Math.random() * 1000)
     const newStudent = {
-      id: randomNumber,
-      name: 'Name ' + randomNumber,
-      email: randomNumber + '@gmail.com',
-      address: 'Address ' + randomNumber
+      // id: randomNumber,
+      first_name: firstName,
+      last_name: lastName,
+      phone,
+      password,
+      address,
+      birthday,
+      gender,
+      addition_phone: additionPhone
     }
-    // setDataSource(pre => {
-    //   return [...pre, newStudent]
-    // })
+    axios
+      .post('https://crm.my-project.site/api/students', newStudent, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: false
+      })
+      .then(response => {
+        // setFirstName('')
+        // setLastName('')
+        // setPhone('')
+        // setPassword('')
+        // setAddress('')
+        // setBirthday('')
+        // setGender('')
+        // setAdditionPhone('')
+
+        message.success('Muvaffaqiyatli')
+      })
+      .catch(err => {
+        message.error('Xatolik yuz berdi')
+      })
+      .finally(() => {
+        setFormLoading(false)
+      })
+    dataSource(pre => {
+      return [...pre, newStudent]
+    })
   }
+
   const onDeleteStudent = record => {
     Modal.confirm({
       title: "O'chirilsinmi?",
@@ -260,9 +278,6 @@ export default function Students () {
 
   // Add a new teacher
   const [visible, setVisible] = useState(false)
-  const handleVisible = () => {
-    setVisible(!visible)
-  }
 
   // fetching students
   useEffect(() => {
@@ -338,6 +353,7 @@ export default function Students () {
           Yangi o'quvchi qo'shish
         </MyButton>
       </header>
+      {/* Add a new student with Drawer */}
       <Drawer
         visible={visible}
         title="Yangi o'quvchi qo'shish"
@@ -346,10 +362,74 @@ export default function Students () {
         }}
         maskClosable={true}
       >
-        <label>Telefon</label>
-        <Input type='text' addonBefore='+998' className='mb-4 mt-2' />
-        <label>Ism</label>
-        <Input type='text' className='mb-4 mt-2' />
+        <Form>
+          <p>Telefon</p>
+          <Input
+            onChange={e => {
+              setPhone(e.target.value)
+            }}
+            type='text'
+            addonBefore='+998'
+            className='mb-4 mt-2'
+          />
+          <p>Ism</p>
+          <Input
+            onChange={e => {
+              setFirstName(e.target.value)
+            }}
+            type='text'
+            className='mb-4 mt-2'
+          />
+          <p>Familiya</p>
+          <Input
+            onChange={e => {
+              setLastName(e.target.value)
+            }}
+            type='text'
+            className='mb-4 mt-2'
+          />
+          <p>Manzil</p>
+          <Input
+            onChange={e => {
+              setAddress(e.target.value)
+            }}
+            type='text'
+            className='mb-4 mt-2'
+          />
+          <p>Tug'ilgan sana</p>
+          <DatePicker
+            onChange={e => {
+              setBirthday(e.target.value)
+            }}
+            className='mb-4 mt-2'
+          />
+          <p>Jinsi</p>
+          <Radio.Group
+            className='mb-4 mt-2'
+            onChange={e => {
+              setGender(e.target.value)
+            }}
+          >
+            <Radio value='erkak'> Erkak </Radio>
+            <Radio value='Ayol'> Ayol </Radio>
+          </Radio.Group>
+          <p>Izoh</p>
+          <Input.TextArea rows={4} className='mb-4 mt-2' />
+          <p>Qo'shimcha aloqa</p>
+          <div className='flex gap-2'>
+            <IconButton color='success' className='mb-4 mt-2'>
+              <Telephone />
+            </IconButton>
+            <IconButton color='primary' className='mb-4 mt-2'>
+              <Person />
+            </IconButton>
+          </div>
+          <Form.Item>
+            <MyButton htmlType='submit' onClick={onAddStudent} color='primary'>
+              Yuborish
+            </MyButton>
+          </Form.Item>
+        </Form>
       </Drawer>
       <Table
         columns={columns}
@@ -362,54 +442,72 @@ export default function Students () {
         rowSelection={rowSelection}
         className='overflow-auto'
       ></Table>
-      <Modal
-        title='Tahrirlash'
+      {/* Edit the student with Drawer */}
+      <Drawer
         visible={isEditing}
-        okText='Saqlash'
-        cancelText='Yopish'
-        onCancel={() => {
-          resetEditing()
+        title='Tahrirlash'
+        onClose={() => {
+          setIsEditing(!isEditing)
         }}
-        // onOk={() => {
-        //   setDataSource(pre => {
-        //     return pre.map(student => {
-        //       if (student.id === editingStudent.id) {
-        //         return editingStudent
-        //       } else {
-        //         return student
-        //       }
-        //     })
-        //   })
-        //   resetEditing()
-        // }}
+        maskClosable={true}
       >
-        <Input
-          value={editingStudent?.name}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, name: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <Input
-          value={editingStudent?.email}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, email: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <Input
-          value={editingStudent?.phone}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, phone: e.target.value }
-            })
-          }}
-        />
-      </Modal>
+        <Form>
+          <p>Telefon</p>
+          <Input
+            onChange={e => {
+              setPhone(e.target.value)
+            }}
+            type='text'
+          />
+          <p>Ism</p>
+          <Input
+            onChange={e => {
+              setFirstName(e.target.value)
+            }}
+            type='text'
+            className='mb-4 mt-2'
+          />
+          <p>Familiya</p>
+          <Input
+            onChange={e => {
+              setLastName(e.target.value)
+            }}
+            type='text'
+            className='mb-4 mt-2'
+          />
+          <p>Tug'ilgan sana</p>
+          <DatePicker
+            onChange={e => {
+              setBirthday(e.target.value)
+            }}
+            className='mb-4 mt-2'
+          />
+          <p>Jinsi</p>
+          <Radio.Group
+            className='mb-4 mt-2'
+            onChange={e => {
+              setGender(e.target.value)
+            }}
+          >
+            <Radio value='erkak'> Erkak </Radio>
+            <Radio value='Ayol'> Ayol </Radio>
+          </Radio.Group>
+          <p>Qo'shimcha aloqa</p>
+          <div className='flex gap-2'>
+            <IconButton color='success' className='mb-4 mt-2'>
+              <Telephone />
+            </IconButton>
+            <IconButton color='primary' className='mb-4 mt-2'>
+              <Person />
+            </IconButton>
+          </div>
+          <Form.Item>
+            <MyButton htmlType='submit' color='primary'>
+              Yuborish
+            </MyButton>
+          </Form.Item>
+        </Form>
+      </Drawer>
     </div>
   )
 }

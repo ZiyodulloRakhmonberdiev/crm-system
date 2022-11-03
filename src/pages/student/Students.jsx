@@ -29,6 +29,7 @@ import {
   fetchedStudents,
   fetchedError
 } from '../../redux/studentsSlice'
+import AddStudentForm from './AddStudentForm'
 
 export default function Students () {
   const dispatch = useDispatch()
@@ -210,25 +211,37 @@ export default function Students () {
       }
     }
   ]
-
   // Actions with table
-  const onAddStudent = () => {
+  const onAddStudent = async e => {
+    e.preventDefault()
     // const
     const randomNumber = parseInt(Math.random() * 1000)
+    // id: randomNumber,
+    // birthday,
+    // gender,
     const newStudent = {
-      // id: randomNumber,
       first_name: firstName,
       last_name: lastName,
       phone,
       password,
       address,
-      birthday,
-      gender,
       addition_phone: additionPhone
     }
-    axios
-      .post('https://crm.my-project.site/api/students', newStudent, {
-        headers: { 'Content-Type': 'application/json' },
+    await axios
+      .post('/api/students', newStudent, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Encoding': 'gzip',
+          Vary: 'Authorization',
+          'Access-Control-Allow-Origin': '*',
+          'X-RateLimit-Remaining': '59',
+          'X-RateLimit-Limit': '60',
+          expires: '-1',
+          pragma: 'no-cache',
+          'Cache-Control': 'private, must-revalidate',
+          'X-Powered-By': 'PHP/8.1.0',
+          Server: 'nginx'
+        },
         withCredentials: false
       })
       .then(response => {
@@ -240,7 +253,6 @@ export default function Students () {
         // setBirthday('')
         // setGender('')
         // setAdditionPhone('')
-
         message.success('Muvaffaqiyatli')
       })
       .catch(err => {
@@ -249,9 +261,6 @@ export default function Students () {
       .finally(() => {
         setFormLoading(false)
       })
-    dataSource(pre => {
-      return [...pre, newStudent]
-    })
   }
 
   const onDeleteStudent = record => {
@@ -355,81 +364,14 @@ export default function Students () {
       </header>
       {/* Add a new student with Drawer */}
       <Drawer
-        visible={visible}
+        open={visible}
         title="Yangi o'quvchi qo'shish"
         onClose={() => {
           setVisible(!visible)
         }}
         maskClosable={true}
       >
-        <Form>
-          <p>Telefon</p>
-          <Input
-            onChange={e => {
-              setPhone(e.target.value)
-            }}
-            type='text'
-            addonBefore='+998'
-            className='mb-4 mt-2'
-          />
-          <p>Ism</p>
-          <Input
-            onChange={e => {
-              setFirstName(e.target.value)
-            }}
-            type='text'
-            className='mb-4 mt-2'
-          />
-          <p>Familiya</p>
-          <Input
-            onChange={e => {
-              setLastName(e.target.value)
-            }}
-            type='text'
-            className='mb-4 mt-2'
-          />
-          <p>Manzil</p>
-          <Input
-            onChange={e => {
-              setAddress(e.target.value)
-            }}
-            type='text'
-            className='mb-4 mt-2'
-          />
-          <p>Tug'ilgan sana</p>
-          <DatePicker
-            onChange={e => {
-              setBirthday(e.target.value)
-            }}
-            className='mb-4 mt-2'
-          />
-          <p>Jinsi</p>
-          <Radio.Group
-            className='mb-4 mt-2'
-            onChange={e => {
-              setGender(e.target.value)
-            }}
-          >
-            <Radio value='erkak'> Erkak </Radio>
-            <Radio value='Ayol'> Ayol </Radio>
-          </Radio.Group>
-          <p>Izoh</p>
-          <Input.TextArea rows={4} className='mb-4 mt-2' />
-          <p>Qo'shimcha aloqa</p>
-          <div className='flex gap-2'>
-            <IconButton color='success' className='mb-4 mt-2'>
-              <Telephone />
-            </IconButton>
-            <IconButton color='primary' className='mb-4 mt-2'>
-              <Person />
-            </IconButton>
-          </div>
-          <Form.Item>
-            <MyButton htmlType='submit' onClick={onAddStudent} color='primary'>
-              Yuborish
-            </MyButton>
-          </Form.Item>
-        </Form>
+        <AddStudentForm />
       </Drawer>
       <Table
         columns={columns}
@@ -444,7 +386,7 @@ export default function Students () {
       ></Table>
       {/* Edit the student with Drawer */}
       <Drawer
-        visible={isEditing}
+        open={isEditing}
         title='Tahrirlash'
         onClose={() => {
           setIsEditing(!isEditing)

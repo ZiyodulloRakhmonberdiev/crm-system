@@ -42,13 +42,13 @@ export default function StudentProfile () {
     <div className='grid grid-cols-6 gap-12'>
       <div className='col-span-6 md:col-span-2'>
         <p className='text-xl mb-4'>{userData?.first_name } {userData?.last_name}</p>
-        <div className='rounded-sm bg-white p-4 drop-shadow-md'>
+        <div className='rounded-sm bg-white px-6 py-8 drop-shadow-md'>
           <div className='grid mb-2 md:mb-4'>
-            <label className='text-xl'>{userData?.first_name } {userData?.last_name}</label>
+            <label className='text-xl mb-2'>{userData?.first_name } {userData?.last_name}</label>
             <p className='text-slate-400 text-xs'>(id: {userData?.id})</p>
           </div>
           <div className='grid mb-2 md:mb-4'>
-            <label>Balans</label>
+            <label className='mb-2'>Balans</label>
             <p className='text-red-400'>120 000 so'm</p>
           </div>
           <div className='grid mb-2 md:mb-4'>
@@ -57,7 +57,7 @@ export default function StudentProfile () {
               <p className='text-xs mb-1'>Telefon:</p>
               <span className='text-xs border border-green-400 rounded-md p-0.5 flex items-center justify-center gap-1 w-36'>
                 <TelephoneFill className='text-green-400' />
-                +998 {userData?.phone}
+                 {userData?.phone}
               </span>
             </div>
           </div>

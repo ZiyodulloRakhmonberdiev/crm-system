@@ -8,6 +8,8 @@ import { IconButton } from '../../UI/IconButton.style'
 import moment from 'moment'
 import { useDispatch } from 'react-redux'
 import { refreshStudentsData } from '../../redux/studentsSlice'
+import InputMask from 'react-input-mask';
+
 
 export default function AddStudentForm ({ modalType, editingStudent, visible, setVisible }) {
   const url = '/api/students'
@@ -21,6 +23,7 @@ export default function AddStudentForm ({ modalType, editingStudent, visible, se
     gender: '',
     additionPhone: ''
   })
+  const [phone, setPhone] = useState("")
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export default function AddStudentForm ({ modalType, editingStudent, visible, se
       setStudent({
         firstName: first_name,
         lastName: last_name,
-        phone: phone,
+        phone: phone.length === 9 ? phone : phone.slice(4, 13),
         password: '',
         address: address,
         birthday: birthday,
@@ -64,7 +67,7 @@ export default function AddStudentForm ({ modalType, editingStudent, visible, se
       .post(url, {
         first_name: student.firstName,
         last_name: student.lastName,
-        phone: student.phone,
+        phone: "+998"+student.phone?.split(" ").join(""),
         password: student.password,
         address: student.address,
         birthday: student.birthday,
@@ -96,7 +99,7 @@ export default function AddStudentForm ({ modalType, editingStudent, visible, se
         student_id: editingStudent?.id,
         first_name: student.firstName,
         last_name: student.lastName,
-        phone: student.phone,
+        phone: "+998"+student.phone?.split(" ").join(""),
         password: student.password,
         address: student.address,
         birthday: student.birthday,
@@ -133,19 +136,24 @@ export default function AddStudentForm ({ modalType, editingStudent, visible, se
     <div>
       <Form onSubmit={e => submit(e)}>
         <p>Telefon</p>
-        <InputNumber
-          required
-          id='phone'
-          value={student?.phone}
+        <InputMask
+          mask="99 999 99 99"
           onChange={e => {
-            handle(e)
+            console.log(e.target.value)
+            setStudent({ ...student, phone: e.target.value })
           }}
-          type='number'
-          addonBefore='+998'
-          maxLength={9}
-          minLength={9}
+          value={student.phone}
+          maskChar={null}
+        >
+        {(props) => <Input
+          {...props}
+          required
+          addonBefore='+998' 
           className='mb-4 mt-2'
-        />
+          disableUnderline 
+        />}
+        </InputMask>
+        
         <p>Ism</p>
         <Input
           required

@@ -7,7 +7,8 @@ import {
   DatePicker,
   Form,
   Radio,
-  message
+  message,
+  Pagination
 } from 'antd'
 import { useState, useEffect } from 'react'
 import {
@@ -49,7 +50,9 @@ export default function Students () {
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
 
   const [modalType, setModalType] = useState("add")
-
+  const [currentPage, setCurrentPage] = useState(1)
+  const [per_page, setPerPage] = useState(40)
+  const [last_page, setLastPage] = useState(1)
   const dispatch = useDispatch()
   const { students, loading, error, refreshStudents } = useSelector(state => state.students)
 
@@ -92,7 +95,7 @@ export default function Students () {
           {item?.first_name + ' ' + item?.last_name}
         </Link>
       ),
-      phone: "+998 "+Number(item?.phone)?.toLocaleString(),
+      phone: item?.phone?.toLocaleString(),
       address: item?.address,
       birthday: item?.birthday,
       gender: item?.gender,
@@ -256,14 +259,14 @@ export default function Students () {
   useEffect(() => {
     dispatch(fetchingStudents())
     axios
-      .get('/api/students')
+      .get(`/api/students?page=${currentPage}`)
       .then(res => {
         dispatch(fetchedStudents(res?.data?.data?.data))
       })
       .catch(err => {
         dispatch(fetchedError())
       })
-  }, [refreshStudents])
+  }, [refreshStudents, currentPage])
   return (
     <div>
       <div className='bg-white flex flex-col md:flex-row p-4 rounded-lg items-center justify-start mb-8 gap-4'>
@@ -351,6 +354,18 @@ export default function Students () {
         className='overflow-auto'
         pagination={false}
       ></Table> 
+      <br />
+      <center>
+      <Pagination
+        pageSize={ per_page ? per_page : 40 }
+        total={ last_page * per_page }
+        current={ currentPage }
+        onChange={ (page, x) => {
+          setCurrentPage(page)
+          setPerPage(x)
+        } }
+      />
+      </center>
     </div>
   )
 }

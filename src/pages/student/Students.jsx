@@ -27,13 +27,31 @@ import StudentProfile from './StudentProfile'
 import {
   fetchingStudents,
   fetchedStudents,
-  fetchedError
+  fetchedError,
+  setUserData
 } from '../../redux/studentsSlice'
 import AddStudentForm from './AddStudentForm'
 
 export default function Students () {
+  // all states 
+  // Search functions which is in the heading on the page
+  const [searchText, setSearchText] = useState('')
+  const [isEditing, setIsEditing] = useState(false)
+  const [editingStudent, setEditingStudent] = useState(null) 
+  // Add a new student
+  const [formLoading, setFormLoading] = useState(false)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [password, setPassword] = useState('')
+  const [address, setAddress] = useState('')
+  const [additionPhone, setAdditionPhone] = useState([])
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
+
+  const [modalType, setModalType] = useState("add")
+
   const dispatch = useDispatch()
-  const { students, loading, error } = useSelector(state => state.students)
+  const { students, loading, error, refreshStudents } = useSelector(state => state.students)
 
   // Multi Select inputs
   const courses = [
@@ -54,7 +72,6 @@ export default function Students () {
   ]
 
   // Table select functions
-  const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const onSelectChange = newSelectedRowKeys => {
     setSelectedRowKeys(newSelectedRowKeys)
   }
@@ -71,34 +88,39 @@ export default function Students () {
       firstName: item?.first_name,
       lastName: item?.last_name,
       name: (
-        <Link to={`/students/profile/${item.id}`}>
+        <Link to={`/students/profile/${item.id}`} onClick={() => dispatch(setUserData(item))}>
           {item?.first_name + ' ' + item?.last_name}
         </Link>
       ),
-      phone: item?.phone,
+      phone: "+998 "+Number(item?.phone)?.toLocaleString(),
       address: item?.address,
       birthday: item?.birthday,
       gender: item?.gender,
-      additionPhone: item?.addition_phone?.map(phone => phone?.name)
+      additionPhone: item?.addition_phone?.map(phone => phone?.name),
+      actions: (
+        <div className='flex gap-2'>
+            <IconButton
+              color='primary'
+              onClick={() => {
+                onEditStudent(item)
+              }}
+            >
+              <PencilSquare />
+            </IconButton>
+            <IconButton
+              color='danger'
+              onClick={() => {
+                onDeleteStudent(item)
+              }}
+            >
+              <Trash />
+            </IconButton>
+            </div>
+      )
     })
   })
   students?.map(item => <StudentProfile item={item} />)
 
-  // Search functions which is in the heading on the page
-  const [searchText, setSearchText] = useState('')
-  const [isEditing, setIsEditing] = useState(false)
-  const [editingStudent, setEditingStudent] = useState(null)
-
-  // Add a new student
-  const [formLoading, setFormLoading] = useState(false)
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [password, setPassword] = useState('')
-  const [address, setAddress] = useState('')
-  const [birthday, setBirthday] = useState('')
-  const [gender, setGender] = useState('')
-  const [additionPhone, setAdditionPhone] = useState([])
   // Table headers
   const columns = [
     {
@@ -141,74 +163,13 @@ export default function Students () {
       title: 'Manzil',
       dataIndex: 'address',
       fixed: 'top'
-    },
-    // {
-    //   key: '5',
-    //   title: 'Kurslari',
-    //   dataIndex: 'course',
-    //   fixed: 'top'
-    // render: record => {
-    //   return (
-    //     <div className='flex gap-1 flex-wrap'>
-    //       {record.map(c => (
-    //         <span className='border rounded-sm text-xs border-slate-100 p-0.5'>
-    //           {c}
-    //         </span>
-    //       ))}
-    //     </div>
-    //   )
-    // }
-    // },
-    // {
-    //   key: '6',
-    //   title: "O'qituvchilar",
-    //   dataIndex: 'teachers',
-    //   fixed: 'top'
-    // render: record => {
-    //   return (
-    //     <div className='flex gap-1 flex-wrap'>
-    //       {record.map(c => (
-    //         <span className='border rounded-sm text-xs border-slate-100 p-0.5'>
-    //           {c}
-    //         </span>
-    //       ))}
-    //     </div>
-    //   )
-    // }
-    // },
-    // {
-    //   key: '7',
-    //   title: 'Balansi',
-    //   dataIndex: 'balance',
-    //   fixed: 'top'
-    // },
+    }, 
     {
       key: '5',
       title: 'Amallar',
-      width: 270,
       fixed: 'top',
-      render: record => {
-        return (
-          <div className='flex gap-2'>
-            <IconButton
-              color='primary'
-              onClick={() => {
-                onEditStudent(record)
-              }}
-            >
-              <PencilSquare />
-            </IconButton>
-            <IconButton
-              color='danger'
-              onClick={() => {
-                onDeleteStudent(record)
-              }}
-            >
-              <Trash />
-            </IconButton>
-          </div>
-        )
-      }
+      width: 100,
+      dataIndex: "actions"
     }
   ]
   // Actions with table
@@ -276,9 +237,12 @@ export default function Students () {
       // }
     })
   }
-  const onEditStudent = record => {
+  const onEditStudent = student => {
+    setModalType("update")
+    setVisible(true)
     setIsEditing(true)
-    setEditingStudent({ ...record })
+    setEditingStudent({ ...student })
+    console.log(student)
   }
   const resetEditing = () => {
     setIsEditing(false)
@@ -299,7 +263,7 @@ export default function Students () {
       .catch(err => {
         dispatch(fetchedError())
       })
-  }, [])
+  }, [refreshStudents])
   return (
     <div>
       <div className='bg-white flex flex-col md:flex-row p-4 rounded-lg items-center justify-start mb-8 gap-4'>
@@ -356,6 +320,7 @@ export default function Students () {
         <MyButton
           onClick={() => {
             setVisible(!visible)
+            setModalType("add")
           }}
           className='ml-auto'
         >
@@ -365,15 +330,16 @@ export default function Students () {
       {/* Add a new student with Drawer */}
       <Drawer
         open={visible}
-        title="Yangi o'quvchi qo'shish"
+        title={modalType === "add" ? "Yangi o'quvchi qo'shish" : "O'quvchini yangilash"}
         onClose={() => {
           setVisible(!visible)
         }}
         maskClosable={true}
       >
-        <AddStudentForm />
+        <AddStudentForm modalType={modalType} editingStudent={editingStudent} visible={visible} setVisible={() => setVisible(false)} />
       </Drawer>
       <Table
+        loading={loading}
         columns={columns}
         dataSource={dataSource}
         size='small'
@@ -383,73 +349,8 @@ export default function Students () {
         }}
         rowSelection={rowSelection}
         className='overflow-auto'
-      ></Table>
-      {/* Edit the student with Drawer */}
-      <Drawer
-        open={isEditing}
-        title='Tahrirlash'
-        onClose={() => {
-          setIsEditing(!isEditing)
-        }}
-        maskClosable={true}
-      >
-        <Form>
-          <p>Telefon</p>
-          <Input
-            onChange={e => {
-              setPhone(e.target.value)
-            }}
-            type='text'
-          />
-          <p>Ism</p>
-          <Input
-            onChange={e => {
-              setFirstName(e.target.value)
-            }}
-            type='text'
-            className='mb-4 mt-2'
-          />
-          <p>Familiya</p>
-          <Input
-            onChange={e => {
-              setLastName(e.target.value)
-            }}
-            type='text'
-            className='mb-4 mt-2'
-          />
-          <p>Tug'ilgan sana</p>
-          <DatePicker
-            onChange={e => {
-              setBirthday(e.target.value)
-            }}
-            className='mb-4 mt-2'
-          />
-          <p>Jinsi</p>
-          <Radio.Group
-            className='mb-4 mt-2'
-            onChange={e => {
-              setGender(e.target.value)
-            }}
-          >
-            <Radio value='erkak'> Erkak </Radio>
-            <Radio value='Ayol'> Ayol </Radio>
-          </Radio.Group>
-          <p>Qo'shimcha aloqa</p>
-          <div className='flex gap-2'>
-            <IconButton color='success' className='mb-4 mt-2'>
-              <Telephone />
-            </IconButton>
-            <IconButton color='primary' className='mb-4 mt-2'>
-              <Person />
-            </IconButton>
-          </div>
-          <Form.Item>
-            <MyButton htmlType='submit' color='primary'>
-              Yuborish
-            </MyButton>
-          </Form.Item>
-        </Form>
-      </Drawer>
+        pagination={false}
+      ></Table> 
     </div>
   )
 }

@@ -3,7 +3,9 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   students: [],
   loading: false,
-  error: false
+  error: false,
+  refreshStudents: true,
+  userData: {}
 }
 
 const studentsSlice = createSlice({
@@ -20,6 +22,12 @@ const studentsSlice = createSlice({
     fetchedError: state => {
       state.loading = false
       state.error = true
+    },
+    refreshStudentsData: (state) => {
+      state.refreshStudents = !state.refreshStudents
+    },
+    setUserData: (state, action) => {
+      state.userData = action.payload
     }
   }
 })
@@ -27,7 +35,9 @@ const studentsSlice = createSlice({
 export const {
   fetchingStudents,
   fetchedStudents,
-  fetchedError
+  fetchedError,
+  refreshStudentsData,
+  setUserData
 } = studentsSlice.actions
 const studentsReducer = studentsSlice.reducer
 export default studentsReducer

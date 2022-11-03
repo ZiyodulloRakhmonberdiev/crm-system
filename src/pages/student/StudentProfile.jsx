@@ -8,8 +8,10 @@ import {
 } from 'react-bootstrap-icons'
 import { EditOutlined, TeamOutlined } from '@ant-design/icons'
 import { IconButton } from '../../UI/IconButton.style'
+import { useSelector } from 'react-redux'
 
 export default function StudentProfile () {
+  const { userData } = useSelector(state => state.students)
   const columns = [
     {
       key: '1',
@@ -39,11 +41,11 @@ export default function StudentProfile () {
   return (
     <div className='grid grid-cols-6 gap-12'>
       <div className='col-span-6 md:col-span-2'>
-        <p className='text-xl mb-4'>Umar Abdulazizov</p>
+        <p className='text-xl mb-4'>{userData?.first_name } {userData?.last_name}</p>
         <div className='rounded-sm bg-white p-4 drop-shadow-md'>
           <div className='grid mb-2 md:mb-4'>
-            <label className='text-xl'>Umar Abdulazizov</label>
-            <p className='text-slate-400 text-xs'>(id: 1256215)</p>
+            <label className='text-xl'>{userData?.first_name } {userData?.last_name}</label>
+            <p className='text-slate-400 text-xs'>(id: {userData?.id})</p>
           </div>
           <div className='grid mb-2 md:mb-4'>
             <label>Balans</label>
@@ -55,7 +57,7 @@ export default function StudentProfile () {
               <p className='text-xs mb-1'>Telefon:</p>
               <span className='text-xs border border-green-400 rounded-md p-0.5 flex items-center justify-center gap-1 w-36'>
                 <TelephoneFill className='text-green-400' />
-                +998 90 520 00 00
+                +998 {userData?.phone}
               </span>
             </div>
           </div>

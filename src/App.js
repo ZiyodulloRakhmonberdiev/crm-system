@@ -16,7 +16,7 @@ import Report from './pages/report/Report'
 import Conversion from './pages/report/Conversion'
 import Messages from './pages/report/Messages'
 import TeacherProfile from './components/TeacherProfile'
-import StudentProfile from './components/StudentProfile'
+import StudentProfile from './pages/student/StudentProfile'
 import Layout from './components/Layout'
 export default function App () {
   return (
@@ -29,7 +29,7 @@ export default function App () {
           <Route path='/groups' element={<Groups />} />
 
           <Route path='/students' element={<Students />} />
-          <Route path='/students/profile' element={<StudentProfile />} />
+          <Route path='/students/profile/:id' element={<StudentProfile />} />
 
           <Route path='/teachers' element={<Teachers />} />
           <Route path='/teachers/profile' element={<TeacherProfile />} />

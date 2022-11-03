@@ -1,11 +1,59 @@
-import { Table, Modal, Input, Select, Divider } from 'antd'
-import { useState } from 'react'
-import { PencilSquare, Trash } from 'react-bootstrap-icons'
+import {
+  Table,
+  Modal,
+  Input,
+  Select,
+  Drawer,
+  DatePicker,
+  Form,
+  Radio,
+  message
+} from 'antd'
+import { useState, useEffect } from 'react'
+import {
+  PencilSquare,
+  Trash,
+  Mortarboard,
+  Telephone,
+  Person
+} from 'react-bootstrap-icons'
 import { Link } from 'react-router-dom'
+import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
+import { useDispatch, useSelector } from 'react-redux'
+import StudentProfile from './StudentProfile'
+
+import {
+  fetchingStudents,
+  fetchedStudents,
+  fetchedError,
+  setUserData
+} from '../../redux/studentsSlice'
+import AddStudentForm from './AddStudentForm'
+
 export default function Students () {
-  // Multi Select input which is on the heading
+  // all states 
+  // Search functions which is in the heading on the page
+  const [searchText, setSearchText] = useState('')
+  const [isEditing, setIsEditing] = useState(false)
+  const [editingStudent, setEditingStudent] = useState(null) 
+  // Add a new student
+  const [formLoading, setFormLoading] = useState(false)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [password, setPassword] = useState('')
+  const [address, setAddress] = useState('')
+  const [additionPhone, setAdditionPhone] = useState([])
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
+
+  const [modalType, setModalType] = useState("add")
+
+  const dispatch = useDispatch()
+  const { students, loading, error, refreshStudents } = useSelector(state => state.students)
+
+  // Multi Select inputs
   const courses = [
     'English',
     'Russian',
@@ -23,48 +71,55 @@ export default function Students () {
     'Balansida pul bor'
   ]
 
-  // Search functions which is in the heading on the page
-  const [searchText, setSearchText] = useState('')
-  const [isEditing, setIsEditing] = useState(false)
-  const [editingStudent, setEditingStudent] = useState(null)
-  const [dataSource, setDataSource] = useState([
-    {
-      id: 1,
-      name: <Link to='/students/profile'>Yoqub Abdulazizov</Link>,
-      email: 'umar@yandex.com',
-      course: ['android', 'english'],
-      teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
-      phone: '88 855 86 85',
-      balance: '500 000'
-    },
-    {
-      id: 2,
-      name: <Link to='/students/profile'>Yoqub Abdulazizov</Link>,
-      email: 'yoqub@yandex.com',
-      course: ['android', 'english'],
-      teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
-      phone: '88 855 13 49',
-      balance: '1 500 000'
-    },
-    {
-      id: 3,
-      name: <Link to='/students/profile'>Temur Abdulazizov</Link>,
-      email: 'umar@yandex.com',
-      course: ['android', 'english'],
-      teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
-      phone: '88 855 86 85',
-      balance: '500 000'
-    },
-    {
-      id: 4,
-      name: <Link to='/students/profile'>Jahon Abdulazizov</Link>,
-      email: 'umar@yandex.com',
-      course: ['android', 'english'],
-      teachers: ['Umida Makhmodova', 'Sanjar Akmalov'],
-      phone: '88 855 86 85',
-      balance: '500 000'
-    }
-  ])
+  // Table select functions
+  const onSelectChange = newSelectedRowKeys => {
+    setSelectedRowKeys(newSelectedRowKeys)
+  }
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange
+  }
+
+  // students static data
+  let dataSource = []
+  students?.map(item => {
+    dataSource?.push({
+      id: item?.id,
+      firstName: item?.first_name,
+      lastName: item?.last_name,
+      name: (
+        <Link to={`/students/profile/${item.id}`} onClick={() => dispatch(setUserData(item))}>
+          {item?.first_name + ' ' + item?.last_name}
+        </Link>
+      ),
+      phone: "+998 "+Number(item?.phone)?.toLocaleString(),
+      address: item?.address,
+      birthday: item?.birthday,
+      gender: item?.gender,
+      additionPhone: item?.addition_phone?.map(phone => phone?.name),
+      actions: (
+        <div className='flex gap-2'>
+            <IconButton
+              color='primary'
+              onClick={() => {
+                onEditStudent(item)
+              }}
+            >
+              <PencilSquare />
+            </IconButton>
+            <IconButton
+              color='danger'
+              onClick={() => {
+                onDeleteStudent(item)
+              }}
+            >
+              <Trash />
+            </IconButton>
+            </div>
+      )
+    })
+  })
+  students?.map(item => <StudentProfile item={item} />)
 
   // Table headers
   const columns = [
@@ -79,7 +134,7 @@ export default function Students () {
     },
     {
       key: '2',
-      title: 'Name',
+      title: 'Ism',
       dataIndex: 'name',
       fixed: 'top',
       filteredValue: [searchText],
@@ -99,118 +154,95 @@ export default function Students () {
     },
     {
       key: '3',
-      title: 'Email',
-      dataIndex: 'email',
-      fixed: 'top',
-      render: record => {
-        return <span className='text-xs'>{record}</span>
-      }
-    },
-    {
-      key: '4',
       title: 'Telefon',
       dataIndex: 'phone',
       fixed: 'top'
     },
     {
-      key: '5',
-      title: 'Kurslari',
-      dataIndex: 'course',
-      fixed: 'top',
-      render: record => {
-        return (
-          <div className='flex gap-1 flex-wrap'>
-            {record.map(c => (
-              <span className='border rounded-sm text-xs border-slate-100 p-0.5'>
-                {c}
-              </span>
-            ))}
-          </div>
-        )
-      }
-    },
-    {
-      key: '6',
-      title: 'Ustozlari',
-      dataIndex: 'teachers',
-      fixed: 'top',
-      render: record => {
-        return (
-          <div className='flex gap-1 flex-wrap'>
-            {record.map(c => (
-              <span className='border rounded-sm text-xs border-slate-100 p-0.5'>
-                {c}
-              </span>
-            ))}
-          </div>
-        )
-      }
-    },
-    {
-      key: '7',
-      title: 'Balansi',
-      dataIndex: 'balance',
+      key: '4',
+      title: 'Manzil',
+      dataIndex: 'address',
       fixed: 'top'
-    },
+    }, 
     {
-      key: '8',
+      key: '5',
       title: 'Amallar',
-      width: 270,
       fixed: 'top',
-      render: record => {
-        return (
-          <div className='flex gap-2'>
-            <IconButton
-              color='primary'
-              onClick={() => {
-                onEditStudent(record)
-              }}
-            >
-              <PencilSquare />
-            </IconButton>
-            <IconButton
-              color='danger'
-              onClick={() => {
-                onDeleteStudent(record)
-              }}
-            >
-              <Trash />
-            </IconButton>
-          </div>
-        )
-      }
+      width: 100,
+      dataIndex: "actions"
     }
   ]
-
   // Actions with table
-  const onAddStudent = () => {
+  const onAddStudent = async e => {
+    e.preventDefault()
+    // const
     const randomNumber = parseInt(Math.random() * 1000)
+    // id: randomNumber,
+    // birthday,
+    // gender,
     const newStudent = {
-      id: randomNumber,
-      name: 'Name ' + randomNumber,
-      email: randomNumber + '@gmail.com',
-      address: 'Address ' + randomNumber
+      first_name: firstName,
+      last_name: lastName,
+      phone,
+      password,
+      address,
+      addition_phone: additionPhone
     }
-    setDataSource(pre => {
-      return [...pre, newStudent]
-    })
+    await axios
+      .post('/api/students', newStudent, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Encoding': 'gzip',
+          Vary: 'Authorization',
+          'Access-Control-Allow-Origin': '*',
+          'X-RateLimit-Remaining': '59',
+          'X-RateLimit-Limit': '60',
+          expires: '-1',
+          pragma: 'no-cache',
+          'Cache-Control': 'private, must-revalidate',
+          'X-Powered-By': 'PHP/8.1.0',
+          Server: 'nginx'
+        },
+        withCredentials: false
+      })
+      .then(response => {
+        // setFirstName('')
+        // setLastName('')
+        // setPhone('')
+        // setPassword('')
+        // setAddress('')
+        // setBirthday('')
+        // setGender('')
+        // setAdditionPhone('')
+        message.success('Muvaffaqiyatli')
+      })
+      .catch(err => {
+        message.error('Xatolik yuz berdi')
+      })
+      .finally(() => {
+        setFormLoading(false)
+      })
   }
+
   const onDeleteStudent = record => {
     Modal.confirm({
       title: "O'chirilsinmi?",
       okText: 'Ha',
       okType: 'danger',
-      cancelText: "Yo'q",
-      onOk: () => {
-        setDataSource(pre => {
-          return pre.filter(student => student.id !== record.id)
-        })
-      }
+      cancelText: "Yo'q"
+      // onOk: () => {
+      //   setDataSource(pre => {
+      //     return pre.filter(student => student.id !== record.id)
+      //   })
+      // }
     })
   }
-  const onEditStudent = record => {
+  const onEditStudent = student => {
+    setModalType("update")
+    setVisible(true)
     setIsEditing(true)
-    setEditingStudent({ ...record })
+    setEditingStudent({ ...student })
+    console.log(student)
   }
   const resetEditing = () => {
     setIsEditing(false)
@@ -218,17 +250,30 @@ export default function Students () {
   }
 
   // Add a new teacher
-  const [openModal, setOpenModal] = useState(false)
-  const handleModal = () => {
-    setOpenModal(!openModal)
-  }
+  const [visible, setVisible] = useState(false)
 
+  // fetching students
+  useEffect(() => {
+    dispatch(fetchingStudents())
+    axios
+      .get('/api/students')
+      .then(res => {
+        dispatch(fetchedStudents(res?.data?.data?.data))
+      })
+      .catch(err => {
+        dispatch(fetchedError())
+      })
+  }, [refreshStudents])
   return (
     <div>
-      <Divider orientation='center'>
-        <span className='text-2xl'>O'quvchilar</span>
-      </Divider>
-      <header className='flex flex-wrap gap-2'>
+      <div className='bg-white flex flex-col md:flex-row p-4 rounded-lg items-center justify-start mb-8 gap-4'>
+        <div className='text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md'>
+          <Mortarboard />
+        </div>
+        <p className='text-cyan-400 text-2xl'>O'quvchilar</p>
+        <p className='text-cyan-400'>Jami: 312 ta</p>
+      </div>
+      <header className='flex flex-wrap gap-2 mb-8'>
         <div className='w-42'>
           <Input.Search
             placeholder='Qidirish - ism, email, telefon'
@@ -239,7 +284,7 @@ export default function Students () {
               setSearchText(e.target.value)
             }}
             allowClear
-            className='min-w-[200px] md:min-w-[250px]'
+            className='min-w-[200px] md:min-w-[250px] sm:pr-8'
           />
         </div>
         <Select
@@ -272,24 +317,29 @@ export default function Students () {
             )
           })}
         </Select>
+        <MyButton
+          onClick={() => {
+            setVisible(!visible)
+            setModalType("add")
+          }}
+          className='ml-auto'
+        >
+          Yangi o'quvchi qo'shish
+        </MyButton>
       </header>
-      <MyButton onClick={handleModal} className='my-4'>
-        Yangi o'quvchi qo'shish
-      </MyButton> 
-      <Modal
-        title="Yangi o'quvchi qo'shish"
-        visible={openModal}
-        okText="Qo'shish"
-        cancelText='Yopish'
-        onCancel={() => {
-          handleModal()
+      {/* Add a new student with Drawer */}
+      <Drawer
+        open={visible}
+        title={modalType === "add" ? "Yangi o'quvchi qo'shish" : "O'quvchini yangilash"}
+        onClose={() => {
+          setVisible(!visible)
         }}
+        maskClosable={true}
       >
-        <Input placeholder='Ism Familiya' className='mb-2' />
-        <Input placeholder='Email' className='mb-2' />
-        <Input placeholder='Telefon raqam' className='mb-2' />
-      </Modal>
+        <AddStudentForm modalType={modalType} editingStudent={editingStudent} visible={visible} setVisible={() => setVisible(false)} />
+      </Drawer>
       <Table
+        loading={loading}
         columns={columns}
         dataSource={dataSource}
         size='small'
@@ -297,56 +347,10 @@ export default function Students () {
           x: 1000,
           y: 400
         }}
+        rowSelection={rowSelection}
         className='overflow-auto'
-      ></Table>
-      <Modal
-        title='Tahrirlash'
-        visible={isEditing}
-        okText='Saqlash'
-        cancelText='Yopish'
-        onCancel={() => {
-          resetEditing()
-        }}
-        onOk={() => {
-          setDataSource(pre => {
-            return pre.map(student => {
-              if (student.id === editingStudent.id) {
-                return editingStudent
-              } else {
-                return student
-              }
-            })
-          })
-          resetEditing()
-        }}
-      >
-        <Input
-          value={editingStudent?.name}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, name: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <Input
-          value={editingStudent?.email}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, email: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <Input
-          value={editingStudent?.phone}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, phone: e.target.value }
-            })
-          }}
-        />
-      </Modal>
+        pagination={false}
+      ></Table> 
     </div>
   )
 }

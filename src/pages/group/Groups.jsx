@@ -30,7 +30,7 @@ export default function Groups () {
     'Arxiv guruhlar',
     'Yakunlangan guruhlar'
   ]
-  const days = ['Toq kunlar', 'Jufr kunlar', 'Har kuni', 'Boshqa']
+  const days = ['Toq kunlar', 'Juft kunlar', 'Har kuni', 'Boshqa']
 
   // Search functions which is in the heading on the page
   const [isEditing, setIsEditing] = useState(false)
@@ -154,8 +154,8 @@ export default function Groups () {
     Modal.confirm({
       title: "O'chirilsinmi?",
       okText: 'Ha',
-      okType: 'danger' ,
-      cancelText: "Yo'q", 
+      okType: 'danger',
+      cancelText: "Yo'q"
     })
   }
   const onEditStudent = record => {

@@ -70,7 +70,7 @@ export default function Sidebar () {
         breakpoint='lg'
         collapsedWidth='56'
         onBreakpoint={broken => {
-          console.log(broken)
+          // console.log(broken)
         }}
         onCollapse={(collapsed, type) => {
           console.log(collapsed, type)
@@ -87,7 +87,7 @@ export default function Sidebar () {
       </Sider>
       <Modal
         title='Qidirish'
-        visible={isOpenSearchModal}
+        open={isOpenSearchModal}
         okText='Qidirish'
         cancelText='Yopish'
         onCancel={() => {

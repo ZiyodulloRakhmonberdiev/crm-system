@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux'
 import { refreshStudentsData } from '../../redux/studentsSlice'
 import InputMask from 'react-input-mask'
 
-export default function AddStudentForm ({
+export default function AddTeacherForm ({
   modalType,
   editingStudent,
   visible,

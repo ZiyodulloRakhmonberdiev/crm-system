@@ -15,7 +15,7 @@ import Debtors from './pages/finance/Debtors'
 import Report from './pages/report/Report'
 import Conversion from './pages/report/Conversion'
 import Messages from './pages/report/Messages'
-import TeacherProfile from './components/TeacherProfile'
+import TeacherProfile from './pages/employee/TeacherProfile'
 import StudentProfile from './pages/student/StudentProfile'
 import Layout from './components/Layout'
 export default function App () {

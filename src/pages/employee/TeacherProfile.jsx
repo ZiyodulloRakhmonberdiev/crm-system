@@ -1,6 +1,6 @@
 import { Card, Dropdown, Space, Avatar, Tabs } from 'antd'
 import { ArrowRight } from 'react-bootstrap-icons'
-import photo from './../assets/img/profile.jpg'
+import photo from '../../assets/img/profile.jpg'
 import { Link } from 'react-router-dom'
 export default function TeacherProfile () {
   const { Meta } = Card

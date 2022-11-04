@@ -1,29 +1,11 @@
-import {
-  Table,
-  Modal,
-  Input,
-  Select,
-  Drawer,
-  DatePicker,
-  Form,
-  Radio,
-  message,
-  Pagination
-} from 'antd'
+import { Table, Modal, Input, Select, Drawer, Pagination } from 'antd'
 import { useState, useEffect } from 'react'
-import {
-  PencilSquare,
-  Trash,
-  Mortarboard,
-  Telephone,
-  Person
-} from 'react-bootstrap-icons'
+import { PencilSquare, Trash, Mortarboard } from 'react-bootstrap-icons'
 import { Link } from 'react-router-dom'
 import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
 import { useDispatch, useSelector } from 'react-redux'
-import StudentProfile from './StudentProfile'
 
 import {
   fetchingStudents,
@@ -34,27 +16,21 @@ import {
 import AddStudentForm from './AddStudentForm'
 
 export default function Students () {
-  // all states 
-  // Search functions which is in the heading on the page
+  // all states
   const [searchText, setSearchText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
-  const [editingStudent, setEditingStudent] = useState(null) 
-  // Add a new student
-  const [formLoading, setFormLoading] = useState(false)
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [password, setPassword] = useState('')
-  const [address, setAddress] = useState('')
-  const [additionPhone, setAdditionPhone] = useState([])
+  const [editingStudent, setEditingStudent] = useState(null)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
+  const [visible, setVisible] = useState(false)
 
-  const [modalType, setModalType] = useState("add")
+  const [modalType, setModalType] = useState('add')
   const [currentPage, setCurrentPage] = useState(1)
-  const [per_page, setPerPage] = useState(40)
+  const [per_page, setPerPage] = useState(30)
   const [last_page, setLastPage] = useState(1)
   const dispatch = useDispatch()
-  const { students, loading, error, refreshStudents } = useSelector(state => state.students)
+  const { students, loading, error, refreshStudents } = useSelector(
+    state => state.students
+  )
 
   // Multi Select inputs
   const courses = [
@@ -91,7 +67,10 @@ export default function Students () {
       firstName: item?.first_name,
       lastName: item?.last_name,
       name: (
-        <Link to={`/students/profile/${item.id}`} onClick={() => dispatch(setUserData(item))}>
+        <Link
+          to={`/students/profile/${item.id}`}
+          onClick={() => dispatch(setUserData(item))}
+        >
           {item?.first_name + ' ' + item?.last_name}
         </Link>
       ),
@@ -102,27 +81,26 @@ export default function Students () {
       additionPhone: item?.addition_phone?.map(phone => phone?.name),
       actions: (
         <div className='flex gap-2'>
-            <IconButton
-              color='primary'
-              onClick={() => {
-                onEditStudent(item)
-              }}
-            >
-              <PencilSquare />
-            </IconButton>
-            <IconButton
-              color='danger'
-              onClick={() => {
-                onDeleteStudent(item)
-              }}
-            >
-              <Trash />
-            </IconButton>
-            </div>
+          <IconButton
+            color='primary'
+            onClick={() => {
+              onEditStudent(item)
+            }}
+          >
+            <PencilSquare />
+          </IconButton>
+          <IconButton
+            color='danger'
+            onClick={() => {
+              onDeleteStudent(item)
+            }}
+          >
+            <Trash />
+          </IconButton>
+        </div>
       )
     })
   })
-  students?.map(item => <StudentProfile item={item} />)
 
   // Table headers
   const columns = [
@@ -166,66 +144,15 @@ export default function Students () {
       title: 'Manzil',
       dataIndex: 'address',
       fixed: 'top'
-    }, 
+    },
     {
       key: '5',
       title: 'Amallar',
       fixed: 'top',
-      width: 100,
-      dataIndex: "actions"
+      width: 120,
+      dataIndex: 'actions'
     }
   ]
-  // Actions with table
-  const onAddStudent = async e => {
-    e.preventDefault()
-    // const
-    const randomNumber = parseInt(Math.random() * 1000)
-    // id: randomNumber,
-    // birthday,
-    // gender,
-    const newStudent = {
-      first_name: firstName,
-      last_name: lastName,
-      phone,
-      password,
-      address,
-      addition_phone: additionPhone
-    }
-    await axios
-      .post('/api/students', newStudent, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Encoding': 'gzip',
-          Vary: 'Authorization',
-          'Access-Control-Allow-Origin': '*',
-          'X-RateLimit-Remaining': '59',
-          'X-RateLimit-Limit': '60',
-          expires: '-1',
-          pragma: 'no-cache',
-          'Cache-Control': 'private, must-revalidate',
-          'X-Powered-By': 'PHP/8.1.0',
-          Server: 'nginx'
-        },
-        withCredentials: false
-      })
-      .then(response => {
-        // setFirstName('')
-        // setLastName('')
-        // setPhone('')
-        // setPassword('')
-        // setAddress('')
-        // setBirthday('')
-        // setGender('')
-        // setAdditionPhone('')
-        message.success('Muvaffaqiyatli')
-      })
-      .catch(err => {
-        message.error('Xatolik yuz berdi')
-      })
-      .finally(() => {
-        setFormLoading(false)
-      })
-  }
 
   const onDeleteStudent = record => {
     Modal.confirm({
@@ -241,19 +168,11 @@ export default function Students () {
     })
   }
   const onEditStudent = student => {
-    setModalType("update")
+    setModalType('update')
     setVisible(true)
     setIsEditing(true)
     setEditingStudent({ ...student })
-    console.log(student)
   }
-  const resetEditing = () => {
-    setIsEditing(false)
-    setEditingStudent(null)
-  }
-
-  // Add a new teacher
-  const [visible, setVisible] = useState(false)
 
   // fetching students
   useEffect(() => {
@@ -323,7 +242,7 @@ export default function Students () {
         <MyButton
           onClick={() => {
             setVisible(!visible)
-            setModalType("add")
+            setModalType('add')
           }}
           className='ml-auto'
         >
@@ -333,19 +252,27 @@ export default function Students () {
       {/* Add a new student with Drawer */}
       <Drawer
         open={visible}
-        title={modalType === "add" ? "Yangi o'quvchi qo'shish" : "O'quvchini yangilash"}
+        title={
+          modalType === 'add'
+            ? "Yangi o'quvchi qo'shish"
+            : "O'quvchini yangilash"
+        }
         onClose={() => {
           setVisible(!visible)
         }}
         maskClosable={true}
       >
-        <AddStudentForm modalType={modalType} editingStudent={editingStudent} visible={visible} setVisible={() => setVisible(false)} />
+        <AddStudentForm
+          modalType={modalType}
+          editingStudent={editingStudent}
+          visible={visible}
+          setVisible={() => setVisible(false)}
+        />
       </Drawer>
       <Table
         loading={loading}
         columns={columns}
         dataSource={dataSource}
-        size='small'
         scroll={{
           x: 1000,
           y: 400
@@ -353,18 +280,18 @@ export default function Students () {
         rowSelection={rowSelection}
         className='overflow-auto'
         pagination={false}
-      ></Table> 
+      ></Table>
       <br />
       <center>
-      <Pagination
-        pageSize={ per_page ? per_page : 40 }
-        total={ last_page * per_page }
-        current={ currentPage }
-        onChange={ (page, x) => {
-          setCurrentPage(page)
-          setPerPage(x)
-        } }
-      />
+        <Pagination
+          pageSize={per_page ? per_page : 30}
+          total={last_page * per_page}
+          current={currentPage}
+          onChange={(page, x) => {
+            setCurrentPage(page)
+            setPerPage(x)
+          }}
+        />
       </center>
     </div>
   )

@@ -1,11 +1,24 @@
+import { useRef, useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+import { Button, Table, Input, Modal, Space, Drawer, Pagination } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import Highlighter from 'react-highlight-words'
-import { Button, Table, Modal, Input, Space, Divider } from 'antd'
-import { useRef, useState } from 'react'
-import { PencilSquare, Trash } from 'react-bootstrap-icons'
-import { Link } from 'react-router-dom'
+
+import { PencilSquare, Trash, MicrosoftTeams } from 'react-bootstrap-icons'
 import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
+import axios from '../../axios/axios'
+
+import {
+  fetchingTeachers,
+  fetchedTeachers,
+  fetchedError,
+  setTeachersData
+} from '../../redux/teachersSlice'
+
+import AddTeacherForm from './AddTeacherForm'
 
 export default function Teachers () {
   // Search functions which is in the heading on the table
@@ -13,39 +26,58 @@ export default function Teachers () {
   const [searchedColumn, setSearchedColumn] = useState('')
   const searchInput = useRef(null)
   const [isEditing, setIsEditing] = useState(false)
-  const [editingStudent, setEditingStudent] = useState(null)
-  const [dataSource, setDataSource] = useState([
-    {
-      id: 1,
-      name: <Link to='/teachers/profile'>Anvar Akbarxodjaev</Link>,
-      email: 'anvar@gmail.com',
-      phone: '+998906706555'
-    },
-    {
-      id: 2,
-      name: <Link to='/teachers/profile'>Anvar Akbarxodjaev</Link>,
-      email: 'anvar@gmail.com',
-      phone: '+998906706555'
-    },
-    {
-      id: 3,
-      name: <Link to='/teachers/profile'>Anvar Akbarxodjaev</Link>,
-      email: 'anvar@gmail.com',
-      phone: '+998906706555'
-    },
-    {
-      id: 4,
-      name: <Link to='/teachers/profile'>Anvar Akbarxodjaev</Link>,
-      email: 'anvar@gmail.com',
-      phone: '+998906706555'
-    },
-    {
-      id: 5,
-      name: <Link to='/teachers/profile'>Anvar Akbarxodjaev</Link>,
-      email: 'anvar@gmail.com',
-      phone: '+998906706555'
-    }
-  ])
+
+  const [editingTeacher, setEditingTeacher] = useState(null)
+  const [visible, setVisible] = useState(false)
+
+  const [modalType, setModalType] = useState('add')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [per_page, setPerPage] = useState(30)
+  const [last_page, setLastPage] = useState(1)
+  const dispatch = useDispatch()
+
+  const { teachers, loading, error, refreshTeachers } = useSelector(
+    state => state.teachers
+  )
+
+  // teachers static data
+  let dataSource = []
+  teachers?.map(item => {
+    dataSource?.push({
+      id: item?.id,
+      name: item?.name,
+      name: (
+        <Link
+          to={`/teachers/profile/${item.id}`}
+          onClick={() => dispatch(setTeachersData(item))}
+        >
+          {item?.name}
+        </Link>
+      ),
+      phone: item?.phone?.toLocaleString(),
+      gender: item?.gender,
+      actions: (
+        <div className='flex gap-2'>
+          <IconButton
+            color='primary'
+            onClick={() => {
+              onEditTeacher(item)
+            }}
+          >
+            <PencilSquare />
+          </IconButton>
+          <IconButton
+            color='danger'
+            onClick={() => {
+              onEditTeacher(item)
+            }}
+          >
+            <Trash />
+          </IconButton>
+        </div>
+      )
+    })
+  })
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm()
     setSearchText(selectedKeys[0])
@@ -166,109 +198,96 @@ export default function Teachers () {
     },
     {
       key: '3',
-      title: 'Email',
-      dataIndex: 'email',
-      fixed: 'top',
-      ...getColumnSearchProps('email')
-    },
-    {
-      key: '4',
       title: 'Telefon',
       dataIndex: 'phone',
       fixed: 'top',
       ...getColumnSearchProps('phone')
     },
     {
-      key: '5',
+      key: '4',
       title: 'Amallar',
-      width: 270,
-      fixed: 'top',
-      render: record => {
-        return (
-          <div className='flex gap-2'>
-            <IconButton
-              color='primary'
-              onClick={() => {
-                onEditStudent(record)
-              }}
-            >
-              <PencilSquare />
-            </IconButton>
-            <IconButton
-              color='danger'
-              onClick={() => {
-                onDeleteStudent(record)
-              }}
-            >
-              <Trash />
-            </IconButton>
-          </div>
-        )
-      }
+      width: 120,
+      dataIndex: 'actions'
     }
   ]
   // Actions with table
-  const onAddStudent = () => {
-    const randomNumber = parseInt(Math.random() * 1000)
-    const newStudent = {
-      id: randomNumber,
-      name: 'Name ' + randomNumber,
-      email: randomNumber + '@gmail.com',
-      address: 'Address ' + randomNumber
-    }
-    setDataSource(pre => {
-      return [...pre, newStudent]
-    })
-  }
   const onDeleteStudent = record => {
     Modal.confirm({
       title: "O'chirilsinmi?",
       okText: 'Ha',
       okType: 'danger',
-      cancelText: "Yo'q",
-      onOk: () => {
-        setDataSource(pre => {
-          return pre.filter(student => student.id !== record.id)
-        })
-      }
+      cancelText: "Yo'q"
+      // onOk: () => {
+      //   setDataSource(pre => {
+      //     return pre.filter(teacher => teacher.id !== record.id)
+      //   })
+      // }
     })
   }
-  const onEditStudent = record => {
+
+  const onEditTeacher = teacher => {
+    setModalType('update')
+    setVisible(true)
     setIsEditing(true)
-    setEditingStudent({ ...record })
-  }
-  const resetEditing = () => {
-    setIsEditing(false)
-    setEditingStudent(null)
+    setEditingTeacher({ ...teacher })
   }
 
-  // Add a new teacher
-  const [openModal, setOpenModal] = useState(false)
-  const handleModal = () => {
-    setOpenModal(!openModal)
+  const resetEditing = () => {
+    setIsEditing(false)
+    setEditingTeacher(null)
   }
+
+  // fetching teachers
+  useEffect(() => {
+    dispatch(fetchingTeachers())
+    axios
+      .get(`/api/teachers?page=${currentPage}`)
+      .then(res => {
+        dispatch(fetchedTeachers(res?.data?.data?.data))
+      })
+      .catch(err => {
+        dispatch(fetchedError())
+      })
+  }, [refreshTeachers, currentPage])
   return (
     <div>
-      <Divider orientation='center'>
-        <span className='text-2xl'>O'qituvchilar</span>
-      </Divider>
-      <MyButton onClick={handleModal} className='my-4'>
+      <div className='bg-white flex flex-col md:flex-row p-4 rounded-lg items-center justify-start mb-8 gap-4'>
+        <div className='text-2xl text-violet-400 bg-violet-50 p-2 rounded-md'>
+          <MicrosoftTeams />
+        </div>
+        <p className='text-violet-400 text-2xl'>O'qituvchilar</p>
+        <p className='text-violet-400'>Jami: 24 ta</p>
+      </div>
+      <MyButton
+        onClick={() => {
+          setVisible(!visible)
+          setModalType('add')
+        }}
+        className='my-4'
+      >
         Yangi o'qituvchi qo'shish
       </MyButton>
-      <Modal
-        title="Yangi o'qituvchi qo'shish"
-        visible={openModal}
-        okText="Qo'shish"
-        cancelText='Yopish'
-        onCancel={() => {
-          handleModal()
+      <Drawer
+        open={visible}
+        title={
+          modalType === 'add'
+            ? "Yangi o'quvchi qo'shish"
+            : "O'quvchini yangilash"
+        }
+        onClose={() => {
+          setVisible(!visible)
         }}
+        maskClosable={true}
       >
-        <Input placeholder='Ism Familiya' className='mb-2' />
-        <Input placeholder='Email' className='mb-2' />
-        <Input placeholder='Telefon raqam' className='mb-2' />
-      </Modal>
+        <AddTeacherForm
+          modalType={modalType}
+          editingTeacher={editingTeacher}
+          visible={visible}
+          setVisible={() => setVisible(false)}
+        />
+      </Drawer>
       <Table
+        loading={loading}
         columns={columns}
         dataSource={dataSource}
         scroll={{
@@ -276,55 +295,18 @@ export default function Teachers () {
           y: 400
         }}
       ></Table>
-
-      <Modal
-        title='Tahrirlash'
-        visible={isEditing}
-        okText='Saqlash'
-        cancelText='Yopish'
-        onCancel={() => {
-          resetEditing()
-        }}
-        onOk={() => {
-          setDataSource(pre => {
-            return pre.map(student => {
-              if (student.id === editingStudent.id) {
-                return editingStudent
-              } else {
-                return student
-              }
-            })
-          })
-          resetEditing()
-        }}
-      >
-        <Input
-          value={editingStudent?.name}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, name: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <Input
-          value={editingStudent?.email}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, email: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <Input
-          value={editingStudent?.phone}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, phone: e.target.value }
-            })
+      <br />
+      <center>
+        <Pagination
+          pageSize={per_page ? per_page : 30}
+          total={last_page * per_page}
+          current={currentPage}
+          onChange={(page, x) => {
+            setCurrentPage(page)
+            setPerPage(x)
           }}
         />
-      </Modal>
+      </center>
     </div>
   )
 }

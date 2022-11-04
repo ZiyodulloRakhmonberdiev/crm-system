@@ -32,7 +32,7 @@ export default function App () {
           <Route path='/students/profile/:id' element={<StudentProfile />} />
 
           <Route path='/teachers' element={<Teachers />} />
-          <Route path='/teachers/profile' element={<TeacherProfile />} />
+          <Route path='/teachers/profile/:id' element={<TeacherProfile />} />
 
           <Route path='/finance' element={<Finance />} />
           <Route path='/finance/payment' element={<Payment />} />

@@ -1,74 +1,53 @@
 // import type { RadioChangeEvent } from 'antd'
 import { useState, useEffect } from 'react'
 import { Input, Form, Radio, message } from 'antd'
-import { Telephone, Person } from 'react-bootstrap-icons'
 import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
-import { IconButton } from '../../UI/IconButton.style'
 import { useDispatch } from 'react-redux'
-import { refreshStudentsData } from '../../redux/studentsSlice'
+import { refreshTeachersData } from '../../redux/teachersSlice'
 import InputMask from 'react-input-mask'
 
 export default function AddTeacherForm ({
   modalType,
-  editingStudent,
+  editingTeacher,
   visible,
   setVisible
 }) {
-  const url = '/api/students'
-  const [student, setStudent] = useState({
-    firstName: '',
-    lastName: '',
+  const url = '/api/teachers'
+  const [teacher, setTeacher] = useState({
+    name: '',
     phone: '',
     password: '',
-    address: '',
-    birthday: '',
     gender: '',
-    additionPhone: ''
+    salary_percentage: ''
   })
   const dispatch = useDispatch()
 
   useEffect(() => {
     if (modalType === 'add') {
-      setStudent({
-        firstName: '',
-        lastName: '',
+      setTeacher({
+        name: '',
         phone: '',
         password: '',
-        address: '',
-        birthday: '',
         gender: '',
-        additionPhone: ''
+        salary_percentage: ''
       })
     } else {
-      const {
-        first_name,
-        last_name,
-        id,
-        phone,
-        address,
-        birthday,
-        gender,
-        addition_phone
-      } = editingStudent
-      setStudent({
-        firstName: first_name,
-        lastName: last_name,
+      const { name, phone, gender, salary_percentage } = editingTeacher
+      setTeacher({
+        name: name,
         phone: phone.length === 9 ? phone : phone.slice(4, 13),
         password: '',
-        address: address,
-        birthday: birthday,
         gender: gender,
-        additionPhone: addition_phone
+        salary_percentage: salary_percentage
       })
     }
   }, [modalType, visible])
 
   function handle (e) {
-    const newStudent = { ...student }
-    newStudent[e.target.id] = e.target.value
-    setStudent(newStudent)
-    console.log(newStudent)
+    const newTeacher = { ...teacher }
+    newTeacher[e.target.id] = e.target.value
+    setTeacher(newTeacher)
   }
 
   function submit (e) {
@@ -76,28 +55,22 @@ export default function AddTeacherForm ({
     if (modalType === 'add') {
       axios
         .post(url, {
-          first_name: student.firstName,
-          last_name: student.lastName,
-          phone: '+998' + student.phone?.split(' ').join(''),
-          password: student.password,
-          address: student.address,
-          birthday: student.birthday,
-          gender: student.gender,
-          addition_phone: student.additionPhone
+          name: teacher.name,
+          phone: '+998' + teacher.phone?.split(' ').join(''),
+          password: teacher.password,
+          gender: teacher.gender,
+          salary_percentage: teacher.salary_percentage
         })
         .then(res => {
-          setStudent({
-            firstName: '',
-            lastName: '',
+          setTeacher({
+            name: '',
             phone: '',
             password: '',
-            address: '',
-            birthday: '',
             gender: '',
-            additionPhone: ''
+            salary_percentage: ''
           })
           message.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
-          dispatch(refreshStudentsData())
+          dispatch(refreshTeachersData())
           setVisible()
         })
         .catch(err => {
@@ -106,37 +79,29 @@ export default function AddTeacherForm ({
         })
     } else if (modalType === 'update') {
       axios
-        .patch(url + '/' + editingStudent?.id, {
-          student_id: editingStudent?.id,
-          first_name: student.firstName,
-          last_name: student.lastName,
-          phone: '+998' + student.phone?.split(' ').join(''),
-          password: student.password,
-          address: student.address,
-          birthday: student.birthday,
-          gender: student.gender,
-          addition_phone: student.additionPhone
+        .patch(url + '/' + editingTeacher?.id, {
+          teacher_id: editingTeacher?.id,
+          name: teacher.name,
+          phone: '+998' + teacher.phone?.split(' ').join(''),
+          password: teacher.password,
+          gender: teacher.gender,
+          salary_percentage: teacher.salary_percentage
         })
         .then(res => {
-          setStudent({
-            firstName: '',
-            lastName: '',
+          setTeacher({
+            name: '',
             phone: '',
             password: '',
-            address: '',
-            birthday: '',
             gender: '',
-            additionPhone: ''
+            salary_percentage: ''
           })
           message.success('Foydalanuvchi muvaffaqiyatli yangilandi')
-          dispatch(refreshStudentsData())
+          dispatch(refreshTeachersData())
           setVisible()
         })
         .catch(err => {
           console.log(err)
           message.error("Barcha maydonni to'ldiring")
-
-          console.log(err.response.code)
         })
     }
   }
@@ -148,10 +113,9 @@ export default function AddTeacherForm ({
         <InputMask
           mask='99 999 99 99'
           onChange={e => {
-            console.log(e.target.value)
-            setStudent({ ...student, phone: e.target.value })
+            setTeacher({ ...teacher, phone: e.target.value })
           }}
-          value={student.phone}
+          value={teacher.phone}
           maskChar={null}
         >
           {props => (
@@ -160,7 +124,6 @@ export default function AddTeacherForm ({
               required
               addonBefore='+998'
               className='mb-4 mt-2'
-              disableUnderline
             />
           )}
         </InputMask>
@@ -168,51 +131,18 @@ export default function AddTeacherForm ({
         <p>Ism</p>
         <Input
           required
-          id='firstName'
-          value={student?.firstName}
+          id='name'
+          value={teacher?.name}
           onChange={e => {
             handle(e)
           }}
           type='text'
           className='mb-4 mt-2'
-        />
-        <p>Familiya</p>
-        <Input
-          required
-          id='lastName'
-          value={student?.lastName}
-          onChange={e => {
-            handle(e)
-          }}
-          type='text'
-          className='mb-4 mt-2'
-        />
-        <p>Manzil</p>
-        <Input
-          required
-          id='address'
-          onChange={e => {
-            handle(e)
-          }}
-          type='text'
-          value={student?.address}
-          className='mb-4 mt-2'
-        />
-        <p>Tug'ilgan sana</p>
-        <input
-          required
-          type='date'
-          id='birthday'
-          value={student?.birthday}
-          onChange={e => {
-            handle(e)
-          }}
-          className='mb-4 mt-2 p-2 border border-slate-400'
         />
         <p>Jinsi</p>
-        <Radio.Group value={student.gender} className='mb-4 mt-2'>
+        <Radio.Group value={teacher?.gender} className='mb-4 mt-2'>
           <Radio
-            checked={student?.gender === 'male'}
+            checked={teacher?.gender === 'male'}
             value='male'
             id='gender'
             name='gender'
@@ -223,7 +153,7 @@ export default function AddTeacherForm ({
             Erkak
           </Radio>
           <Radio
-            checked={student?.gender === 'female'}
+            checked={teacher?.gender === 'female'}
             value='female'
             id='gender'
             name='gender'
@@ -234,8 +164,17 @@ export default function AddTeacherForm ({
             Ayol
           </Radio>
         </Radio.Group>
-        {/* <p>Izoh</p>
-        <Input.TextArea rows={4} className='mb-4 mt-2' id='comment' /> */}
+        <p>Ish haqi stavkasi</p>
+        <Input
+          required
+          id='salary_percentage'
+          value={teacher?.salary_percentage}
+          onChange={e => {
+            handle(e)
+          }}
+          type='text'
+          className='mb-4 mt-2'
+        />
         <Form.Item>
           <p>Parol</p>
           <Input
@@ -245,19 +184,10 @@ export default function AddTeacherForm ({
               handle(e)
             }}
             type='password'
-            value={student?.password}
+            value={teacher?.password}
             className='mb-4 mt-2'
           />
         </Form.Item>
-        <p>Qo'shimcha aloqa</p>
-        <div className='flex gap-2'>
-          <IconButton color='success' className='mb-4 mt-2'>
-            <Telephone />
-          </IconButton>
-          <IconButton color='primary' className='mb-4 mt-2'>
-            <Person />
-          </IconButton>
-        </div>
         <Form.Item>
           <MyButton htmlType='submit' color='primary' onClick={submit}>
             Yuborish

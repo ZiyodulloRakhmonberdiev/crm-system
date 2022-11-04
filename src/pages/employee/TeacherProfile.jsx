@@ -1,9 +1,14 @@
-import { Card, Dropdown, Space, Avatar, Tabs } from 'antd'
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+
+import { Card, Dropdown, Space, Avatar, Tabs, Table } from 'antd'
 import { ArrowRight } from 'react-bootstrap-icons'
 import photo from '../../assets/img/profile.jpg'
-import { Link } from 'react-router-dom'
+
 export default function TeacherProfile () {
   const { Meta } = Card
+  const { teachersData } = useSelector(state => state.teachers)
+
   const info = (
     <div className='bg-white rounded-md p-4 border'>
       <Meta
@@ -32,68 +37,112 @@ export default function TeacherProfile () {
       </div>
     </div>
   )
+  const columns = [
+    {
+      key: '1',
+      title: 'Guruhlar soni',
+      dataIndex: 'id',
+      fixed: 'top'
+    },
+    {
+      key: '2',
+      title: "O'quvchilar soni",
+      dataIndex: 'name',
+      fixed: 'top'
+    },
+    {
+      key: '3',
+      title: 'Darslar soni',
+      dataIndex: 'phone',
+      fixed: 'top'
+    },
+    {
+      key: '4',
+      title: "Maosh miqdori: so'm",
+      dataIndex: 'address',
+      fixed: 'top'
+    }
+  ]
   return (
     <Tabs>
-      <Tabs.TabPane tab='Profil' key='item-1'>
+      <Tabs.TabPane tab='Profil' key='item-1' className='pt-20'>
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4'>
           <div>
-            <Card className='md:p-4 mb-4 rounded-lg border border-blue-400'>
-              <div className='flex text-center flex-col md:flex-row items-center mb-4'>
+            <Card className='md:p-4 mb-4 rounded-sm drop-shadow-md'>
+              <div className='flex text-center flex-col items-center mb-4'>
                 <img
                   alt=''
-                  src={photo}
-                  className='w-20 h-20 mx-auto rounded-full'
+                  src={teachersData?.photo ? teachersData?.photo : photo}
+                  className='w-32 h-32 mx-auto rounded-sm -mt-28 mb-4'
                 />
-                <p className='text-xl font-bold mb-4'>Kamolov Bobur</p>
+                <p className='text-xl font-bold mb-4 text-slate-700'>
+                  {teachersData?.name}
+                </p>
               </div>
 
-              <div className='grid md:grid-cols-2 border-b mb-2 md:mb-4'>
-                <label className='font-bold'>Telefon raqam:</label>
-                <p>(91) 670 85 85</p>
+              <div className='grid md:grid-cols-2 mb-2 md:mb-4'>
+                <label className='text-slate-600'>Telefon raqam:</label>
+                <p>{teachersData?.phone}</p>
               </div>
-              <div className='grid md:grid-cols-2 border-b mb-2 md:mb-4'>
-                <label className='font-bold'>Sohasi:</label>
-                <p>English Teacher</p>
+              <div className='grid mb-2 md:mb-4'>
+                <label className='text-slate-600 mb-1'>Rollar:</label>
+                <div className='flex flex-wrap gap-2'>
+                  <span className='px-2 py-0.5 rounded-md text-violet-500 border border-violet-500 text-sm'>
+                    CEO
+                  </span>
+                  <span className='px-2 py-0.5 rounded-md text-violet-500 border border-violet-500 text-sm'>
+                    English teacher
+                  </span>
+                  <span className='px-2 py-0.5 rounded-md text-violet-500 border border-violet-500 text-sm'>
+                    Accounter
+                  </span>
+                </div>
               </div>
-              <div className='grid md:grid-cols-2 border-b mb-2 md:mb-4'>
-                <label className='font-bold'>Qaysi filial:</label>
-                <p>Saodat Learning Center</p>
+              <div className='grid mb-2 md:mb-4'>
+                <label className='text-slate-600 mb-1'>Qaysi filial:</label>
+                <div className='flex flex-wrap gap-2'>
+                  <span className='px-2 py-0.5 rounded-md text-cyan-500 border border-cyan-500 text-sm'>
+                    Saodat
+                  </span>
+                </div>
               </div>
             </Card>
           </div>
           <div>
             <p className='text-xl font-bold mb-4'>Guruhlar</p>
             <div className='grid gap-2'>
-              <div className='rounded-sm grid sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-white p-4 text-xs border  border-blue-400 hover:bg-blue-400 hover:text-white transition rounded-md'>
-                <span>Android</span>
-                <span>Toq kunlar</span>
-                <span>14:00</span>
-                <span>12 o'quvchi</span>
-              </div>
-              <div className='rounded-sm grid sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-white p-4 text-xs border  border-blue-400 hover:bg-blue-400 hover:text-white transition rounded-md'>
-                <span>Pre-Intermediate</span>
-                <span>Juft kunlar</span>
-                <span>09:00</span>
-                <span>5 o'quvchi</span>
-              </div>
-              <div className='rounded-sm grid sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-white p-4 text-xs border  border-blue-400 hover:bg-blue-400 hover:text-white transition rounded-md '>
-                <span>Flutter</span>
-                <span>Toq kunlar</span>
-                <span>16:00</span>
-                <span>24 o'quvchi</span>
+              <div className='rounded-sm flex flex-wrap gap-4 bg-orange-50 p-4 justify-between items-center'>
+                <div className='grid gap-0.5'>
+                  <div>
+                    <span className='py-0.5 px-2 bg-orange-200 rounded-sm text-xs text-center'>
+                      tesla
+                    </span>
+                  </div>
+                  <span className='font-bold text-md'>Android 12-guruh</span>
+                </div>
+                <div className='grid gap-0.5 text-xs'>
+                  <span>Toq kunlar</span>
+                  <span>02.11.2022 - 12.12.2022</span>
+                  <span>14:00</span>
+                </div>
+                <div>
+                  <span className='bg-orange-500 rounded-sm text-white px-1 py-0.5'>
+                    12
+                  </span>
+                </div>
               </div>
             </div>
           </div>
           <div>
             <p className='text-xl font-bold mb-4'>Guruh haqida</p>
-            <div className='rounded-lg bg-white p-4 border border-blue-400'>
+            <div className='rounded-sm bg-white p-4 drop-shadow'>
               <div className='grid md:grid-cols-2 border-b mb-2 md:mb-4'>
                 <label className='font-bold'>Guruh nomi:</label>
                 <p className='text-slate-400'>Android 12</p>
               </div>
               <div className='grid md:grid-cols-2 border-b mb-2 md:mb-4'>
-                <label className='font-bold'>Sohasi:</label>
-                <p className='text-slate-400'>English Teacher</p>
+                <label className='font-bold'>O'qituvchi:</label>
+                <p className='text-slate-400'>Umar Bek</p>
               </div>
               <div className='grid md:grid-cols-2 border-b mb-2 md:mb-4'>
                 <label className='font-bold'>Qaysi filial:</label>
@@ -117,30 +166,6 @@ export default function TeacherProfile () {
                   </Dropdown>
                   <p>+998 90 002 02 02</p>
                 </div>
-                <div className='grid md:grid-cols-2 border-b md:border-b-0 mb-2'>
-                  <Dropdown overlay={info}>
-                    <a onClick={e => e.preventDefault()}>
-                      <Space>Ikrom Ahmedov</Space>
-                    </a>
-                  </Dropdown>
-                  <p>+998 90 002 02 02</p>
-                </div>
-                <div className='grid md:grid-cols-2 border-b md:border-b-0 mb-2'>
-                  <Dropdown overlay={info}>
-                    <a onClick={e => e.preventDefault()}>
-                      <Space>Umid Ahmedov</Space>
-                    </a>
-                  </Dropdown>
-                  <p>+998 90 002 02 02</p>
-                </div>
-                <div className='grid md:grid-cols-2 border-b md:border-b-0 mb-2'>
-                  <Dropdown overlay={info}>
-                    <a onClick={e => e.preventDefault()}>
-                      <Space>Sanjar Ahmedov</Space>
-                    </a>
-                  </Dropdown>
-                  <p>+998 90 002 02 02</p>
-                </div>
               </div>
               <div className='text-right mt-4'>
                 <Link className='flex gap-2 items-center justify-end'>
@@ -152,24 +177,7 @@ export default function TeacherProfile () {
         </div>
       </Tabs.TabPane>
       <Tabs.TabPane tab='Ish haqi' key='item-2'>
-        <div className='bg-white p-4 rounded-sm grid md:grid-cols-4'>
-          <div className='block p-6 border-b md:border-b-0 md:border-r'>
-            <label className='font-bold mb-2'>Guruhlar soni</label>
-            <p>6</p>
-          </div>
-          <div className='block p-6 border-b md:border-b-0 md:border-r'>
-            <label className='font-bold mb-2'>O'quvchilar soni</label>
-            <p>52</p>
-          </div>
-          <div className='block p-6 border-b md:border-b-0 md:border-r'>
-            <label className='font-bold mb-2'>Darslar soni</label>
-            <p>146 soat</p>
-          </div>
-          <div className='block p-6 border-b md:border-b-0'>
-            <label className='font-bold mb-2'>Maosh so'm</label>
-            <p>12 000 000 so'm</p>
-          </div>
-        </div>
+        <Table columns={columns} className='overflow-auto'></Table>
       </Tabs.TabPane>
     </Tabs>
   )

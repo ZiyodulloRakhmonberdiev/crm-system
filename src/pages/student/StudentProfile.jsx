@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux'
 import { Tabs, Table } from 'antd'
 import {
   CashStack,
@@ -8,7 +9,6 @@ import {
 } from 'react-bootstrap-icons'
 import { EditOutlined, TeamOutlined } from '@ant-design/icons'
 import { IconButton } from '../../UI/IconButton.style'
-import { useSelector } from 'react-redux'
 
 export default function StudentProfile () {
   const { userData } = useSelector(state => state.students)
@@ -41,10 +41,14 @@ export default function StudentProfile () {
   return (
     <div className='grid grid-cols-6 gap-12'>
       <div className='col-span-6 md:col-span-2'>
-        <p className='text-xl mb-4'>{userData?.first_name } {userData?.last_name}</p>
+        <p className='text-xl mb-4'>
+          {userData?.first_name} {userData?.last_name}
+        </p>
         <div className='rounded-sm bg-white px-6 py-8 drop-shadow-md'>
           <div className='grid mb-2 md:mb-4'>
-            <label className='text-xl mb-2'>{userData?.first_name } {userData?.last_name}</label>
+            <label className='text-xl mb-2'>
+              {userData?.first_name} {userData?.last_name}
+            </label>
             <p className='text-slate-400 text-xs'>(id: {userData?.id})</p>
           </div>
           <div className='grid mb-2 md:mb-4'>
@@ -55,13 +59,13 @@ export default function StudentProfile () {
             <label className='mb-2'>Aloqa vositalari</label>
             <div>
               <p className='text-xs mb-1'>Telefon:</p>
-              <span className='text-xs border border-green-400 rounded-md p-0.5 flex items-center justify-center gap-1 w-36'>
+              <span className='text-xs border border-green-400 rounded-sm p-1 flex items-center justify-center gap-1 w-36'>
                 <TelephoneFill className='text-green-400' />
-                 {userData?.phone}
+                {userData?.phone}
               </span>
             </div>
           </div>
-          <div className='flex gap-4'>
+          <div className='flex flex-wrap gap-4'>
             <IconButton color='success'>
               <EditOutlined />
             </IconButton>

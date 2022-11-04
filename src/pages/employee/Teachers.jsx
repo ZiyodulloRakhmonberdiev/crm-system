@@ -1,15 +1,14 @@
-import { useRef, useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { Button, Table, Input, Modal, Space, Drawer, Pagination } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
-import Highlighter from 'react-highlight-words'
-
+import { Table, Modal, Drawer, Pagination } from 'antd'
 import { PencilSquare, Trash, MicrosoftTeams } from 'react-bootstrap-icons'
+
 import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
 import axios from '../../axios/axios'
+import AddTeacherForm from './AddTeacherForm'
 
 import {
   fetchingTeachers,
@@ -18,15 +17,7 @@ import {
   setTeachersData
 } from '../../redux/teachersSlice'
 
-import AddTeacherForm from './AddTeacherForm'
-
 export default function Teachers () {
-  // Search functions which is in the heading on the table
-  const [searchText, setSearchText] = useState('')
-  const [searchedColumn, setSearchedColumn] = useState('')
-  const searchInput = useRef(null)
-  const [isEditing, setIsEditing] = useState(false)
-
   const [editingTeacher, setEditingTeacher] = useState(null)
   const [visible, setVisible] = useState(false)
 
@@ -34,9 +25,9 @@ export default function Teachers () {
   const [currentPage, setCurrentPage] = useState(1)
   const [per_page, setPerPage] = useState(30)
   const [last_page, setLastPage] = useState(1)
-  const dispatch = useDispatch()
 
-  const { teachers, loading, error, refreshTeachers } = useSelector(
+  const dispatch = useDispatch()
+  const { teachers, loading, refreshTeachers } = useSelector(
     state => state.teachers
   )
 
@@ -48,7 +39,7 @@ export default function Teachers () {
       name: item?.name,
       name: (
         <Link
-          to={`/teachers/profile/${item.id}`}
+          to={`/teachers/profile/${item?.id}`}
           onClick={() => dispatch(setTeachersData(item))}
         >
           {item?.name}
@@ -56,6 +47,7 @@ export default function Teachers () {
       ),
       phone: item?.phone?.toLocaleString(),
       gender: item?.gender,
+      salary_percentage: item?.salary_percentage + '%',
       actions: (
         <div className='flex gap-2'>
           <IconButton
@@ -69,7 +61,7 @@ export default function Teachers () {
           <IconButton
             color='danger'
             onClick={() => {
-              onEditTeacher(item)
+              onDeleteTeacher(item)
             }}
           >
             <Trash />
@@ -77,108 +69,6 @@ export default function Teachers () {
         </div>
       )
     })
-  })
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm()
-    setSearchText(selectedKeys[0])
-    setSearchedColumn(dataIndex)
-  }
-  const handleReset = clearFilters => {
-    clearFilters()
-    setSearchText('')
-  }
-  const getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters
-    }) => (
-      <div
-        style={{
-          padding: 8
-        }}
-      >
-        <Input
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{
-            marginBottom: 8,
-            display: 'block'
-          }}
-        />
-        <Space>
-          <Button
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size='small'
-            style={{
-              width: 90
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size='small'
-            style={{
-              width: 90
-            }}
-          >
-            Reset
-          </Button>
-          <Button
-            type='link'
-            size='small'
-            onClick={() => {
-              confirm({
-                closeDropdown: false
-              })
-              setSearchText(selectedKeys[0])
-              setSearchedColumn(dataIndex)
-            }}
-          >
-            Filter
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: filtered => (
-      <SearchOutlined
-        style={{
-          color: filtered ? '#1890ff' : undefined
-        }}
-      />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: visible => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100)
-      }
-    },
-    render: text =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{
-            backgroundColor: '#ffc069',
-            padding: 0
-          }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ''}
-        />
-      ) : (
-        text
-      )
   })
 
   // Table headers
@@ -193,25 +83,29 @@ export default function Teachers () {
       key: '2',
       title: 'Ism',
       dataIndex: 'name',
-      fixed: 'top',
-      ...getColumnSearchProps('name')
+      fixed: 'top'
     },
     {
       key: '3',
       title: 'Telefon',
       dataIndex: 'phone',
-      fixed: 'top',
-      ...getColumnSearchProps('phone')
+      fixed: 'top'
     },
     {
       key: '4',
+      title: 'Ish haqi stavkasi',
+      dataIndex: 'salary_percentage',
+      fixed: 'top'
+    },
+    {
+      key: '5',
       title: 'Amallar',
       width: 120,
       dataIndex: 'actions'
     }
   ]
   // Actions with table
-  const onDeleteStudent = record => {
+  const onDeleteTeacher = record => {
     Modal.confirm({
       title: "O'chirilsinmi?",
       okText: 'Ha',
@@ -228,13 +122,7 @@ export default function Teachers () {
   const onEditTeacher = teacher => {
     setModalType('update')
     setVisible(true)
-    setIsEditing(true)
     setEditingTeacher({ ...teacher })
-  }
-
-  const resetEditing = () => {
-    setIsEditing(false)
-    setEditingTeacher(null)
   }
 
   // fetching teachers
@@ -243,7 +131,7 @@ export default function Teachers () {
     axios
       .get(`/api/teachers?page=${currentPage}`)
       .then(res => {
-        dispatch(fetchedTeachers(res?.data?.data?.data))
+        dispatch(fetchedTeachers(res?.data?.data))
       })
       .catch(err => {
         dispatch(fetchedError())
@@ -251,28 +139,30 @@ export default function Teachers () {
   }, [refreshTeachers, currentPage])
   return (
     <div>
-      <div className='bg-white flex flex-col md:flex-row p-4 rounded-lg items-center justify-start mb-8 gap-4'>
+      <div className='bg-white flex flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4'>
         <div className='text-2xl text-violet-400 bg-violet-50 p-2 rounded-md'>
           <MicrosoftTeams />
         </div>
         <p className='text-violet-400 text-2xl'>O'qituvchilar</p>
-        <p className='text-violet-400'>Jami: 24 ta</p>
+        <p className='text-violet-400'>Jami: {teachers.length} ta</p>
       </div>
-      <MyButton
-        onClick={() => {
-          setVisible(!visible)
-          setModalType('add')
-        }}
-        className='my-4'
-      >
-        Yangi o'qituvchi qo'shish
-      </MyButton>
+      <div className='flex justify-end'>
+        <MyButton
+          onClick={() => {
+            setVisible(!visible)
+            setModalType('add')
+          }}
+          className='my-4'
+        >
+          Yangi o'qituvchi qo'shish
+        </MyButton>
+      </div>
       <Drawer
         open={visible}
         title={
           modalType === 'add'
-            ? "Yangi o'quvchi qo'shish"
-            : "O'quvchini yangilash"
+            ? "Yangi o'qituvchi qo'shish"
+            : "O'qituvchini yangilash"
         }
         onClose={() => {
           setVisible(!visible)
@@ -294,6 +184,7 @@ export default function Teachers () {
           x: 1000,
           y: 400
         }}
+        pagination={false}
       ></Table>
       <br />
       <center>

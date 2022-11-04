@@ -135,8 +135,6 @@ export default function AddStudentForm ({
         .catch(err => {
           console.log(err)
           message.error("Barcha maydonni to'ldiring")
-
-          console.log(err.response.code)
         })
     }
   }
@@ -148,7 +146,6 @@ export default function AddStudentForm ({
         <InputMask
           mask='99 999 99 99'
           onChange={e => {
-            console.log(e.target.value)
             setStudent({ ...student, phone: e.target.value })
           }}
           value={student.phone}
@@ -160,7 +157,6 @@ export default function AddStudentForm ({
               required
               addonBefore='+998'
               className='mb-4 mt-2'
-              disableUnderline
             />
           )}
         </InputMask>

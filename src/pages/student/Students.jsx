@@ -1,11 +1,14 @@
-import { Table, Modal, Input, Select, Drawer, Pagination } from 'antd'
 import { useState, useEffect } from 'react'
-import { PencilSquare, Trash, Mortarboard } from 'react-bootstrap-icons'
 import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { Table, Modal, Input, Select, Drawer, Pagination } from 'antd'
+import { PencilSquare, Trash, Mortarboard } from 'react-bootstrap-icons'
+
 import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
-import { useDispatch, useSelector } from 'react-redux'
+import AddStudentForm from './AddStudentForm'
 
 import {
   fetchingStudents,
@@ -13,12 +16,10 @@ import {
   fetchedError,
   setUserData
 } from '../../redux/studentsSlice'
-import AddStudentForm from './AddStudentForm'
 
 export default function Students () {
   // all states
   const [searchText, setSearchText] = useState('')
-  const [isEditing, setIsEditing] = useState(false)
   const [editingStudent, setEditingStudent] = useState(null)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [visible, setVisible] = useState(false)
@@ -170,7 +171,6 @@ export default function Students () {
   const onEditStudent = student => {
     setModalType('update')
     setVisible(true)
-    setIsEditing(true)
     setEditingStudent({ ...student })
   }
 
@@ -193,7 +193,7 @@ export default function Students () {
           <Mortarboard />
         </div>
         <p className='text-cyan-400 text-2xl'>O'quvchilar</p>
-        <p className='text-cyan-400'>Jami: 312 ta</p>
+        <p className='text-cyan-400'>Jami: {students.length} ta</p>
       </div>
       <header className='flex flex-wrap gap-2 mb-8'>
         <div className='w-42'>

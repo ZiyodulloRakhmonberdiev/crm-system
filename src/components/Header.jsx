@@ -1,10 +1,16 @@
-import { Dropdown, Menu, Space, Input } from 'antd'
+import { Dropdown, Menu, Space, Input, Spin } from 'antd'
 import { BookmarkPlus, CashStack, Person } from 'react-bootstrap-icons'
 import { Select } from 'antd'
 import { Link } from 'react-router-dom'
 import logo from '../assets/img/logo.png'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import axios from '../axios/axios'
+import { fetchedBranches, fetchingBranches, setSelectedBranch } from '../redux/branchesSlice'
 
 export default function Header () {
+  const { branches, loading, selected_branch } = useSelector(state => state.branches)
+  const dispatch = useDispatch()
   const { Option } = Select
 
   const menu = (
@@ -41,6 +47,17 @@ export default function Header () {
       ]}
     />
   )
+
+  useEffect(() => {
+    dispatch(fetchingBranches())
+    axios.get("/api/branches")
+      .then((res) => {
+        dispatch(fetchedBranches(res.data.data))
+        dispatch(setSelectedBranch(res.data.data[0]))
+      })
+  }, [])
+
+
   return (
     <header
       style={{
@@ -54,18 +71,24 @@ export default function Header () {
           <Link to='/' className='flex align-center h-auto'>
             <img src={logo} alt='' className='w-32' />
           </Link>
-          <Select
-            labelInValue
-            defaultValue={{ value: 'demo', label: 'DEMO VERSION' }}
-            style={{ backgroundColor: 'transparent' }}
-            className='w-32 lg:w-44 ml-8 lg:ml-4'
-            bordered={false}
-          >
-            <Option value='demo'>DEMO VERSION</Option>
-            <Option value='chilanzar'>Chilonzor filiali</Option>
-            <Option value='margilan'>Marg'ilon filiali</Option>
-            <Option value='urgut'>Urgut filiali</Option>
-          </Select>
+          <Spin spinning={loading}>
+            <Select
+              loading={loading}
+              value={selected_branch?.id}
+              style={{ backgroundColor: 'transparent' }}
+              className='w-32 lg:w-44 ml-8 lg:ml-4'
+              bordered={false}
+              onChange={e => {
+                dispatch(setSelectedBranch(e))
+              }}
+            >
+              {
+                branches?.map((item) => (
+                  <Option value={item.id}>{item.name}</Option>
+                ))
+              }
+            </Select>
+          </Spin>
         </div>
         <div className='w-42 hidden lg:block'>
           <Input.Search

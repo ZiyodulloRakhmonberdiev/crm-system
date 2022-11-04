@@ -9,7 +9,7 @@ import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
 import axios from '../../axios/axios'
 import AddTeacherForm from './AddTeacherForm'
-
+import { v4 as uuidv4 } from 'uuid';
 import {
   fetchingTeachers,
   fetchedTeachers,
@@ -36,6 +36,7 @@ export default function Teachers () {
   teachers?.map(item => {
     dataSource?.push({
       id: item?.id,
+      uid: uuidv4(),
       name: item?.name,
       name: (
         <Link
@@ -185,6 +186,7 @@ export default function Teachers () {
           y: 400
         }}
         pagination={false}
+        rowKey={record => record.uid}
       ></Table>
       <br />
       <center>
@@ -196,6 +198,7 @@ export default function Teachers () {
             setCurrentPage(page)
             setPerPage(x)
           }}
+          
         />
       </center>
     </div>

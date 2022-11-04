@@ -1,6 +1,6 @@
 // import type { RadioChangeEvent } from 'antd'
 import { useState, useEffect } from 'react'
-import { Input, Form, Radio, message } from 'antd'
+import { Input, Form, Radio, message, Spin } from 'antd'
 import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
 import { useDispatch } from 'react-redux'
@@ -21,6 +21,7 @@ export default function AddTeacherForm ({
     gender: '',
     salary_percentage: ''
   })
+  const [uploading, setUploading] = useState(false)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -52,6 +53,9 @@ export default function AddTeacherForm ({
 
   function submit (e) {
     e.preventDefault()
+    const { name, phone, gender, salary_percentage } = teacher
+    if (name && phone && gender && salary_percentage) {
+      setUploading(true)
     if (modalType === 'add') {
       axios
         .post(url, {
@@ -73,10 +77,14 @@ export default function AddTeacherForm ({
           dispatch(refreshTeachersData())
           setVisible()
         })
-        .catch(err => {
-          console.log(err)
-          message.error("Barcha maydonni to'ldiring")
+        .catch(err => { 
+          if (err.response.data.data.phone) {
+            message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
+          } else {
+            message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+          }
         })
+        .finally(() => setUploading(false))
     } else if (modalType === 'update') {
       axios
         .patch(url + '/' + editingTeacher?.id, {
@@ -100,15 +108,23 @@ export default function AddTeacherForm ({
           setVisible()
         })
         .catch(err => {
-          console.log(err)
-          message.error("Barcha maydonni to'ldiring")
+          if (err.response.data.data.phone) {
+            message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
+          } else {
+            message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+          }
         })
+        .finally(() => setUploading(false))
     }
+    } else {
+      message.error("Barcha maydonni to'ldiring!")
+    }
+
   }
 
   return (
     <div>
-      <Form onSubmit={e => submit(e)}>
+      <form onSubmit={e => submit(e)}>
         <p>Telefon</p>
         <InputMask
           mask='99 999 99 99'
@@ -140,7 +156,7 @@ export default function AddTeacherForm ({
           className='mb-4 mt-2'
         />
         <p>Jinsi</p>
-        <Radio.Group value={teacher?.gender} className='mb-4 mt-2'>
+        <Radio.Group  value={teacher?.gender} className='mb-4 mt-2'>
           <Radio
             checked={teacher?.gender === 'male'}
             value='male'
@@ -188,12 +204,12 @@ export default function AddTeacherForm ({
             className='mb-4 mt-2'
           />
         </Form.Item>
-        <Form.Item>
-          <MyButton htmlType='submit' color='primary' onClick={submit}>
-            Yuborish
-          </MyButton>
-        </Form.Item>
-      </Form>
+          <Spin spinning={uploading} >
+            <MyButton htmlType='submit' color='primary' >
+              Yuborish
+            </MyButton>
+          </Spin>
+      </form>
     </div>
   )
 }

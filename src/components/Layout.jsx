@@ -9,7 +9,9 @@ const Layout = () => {
     <div style={{ maxWidth: 1920 }} className='mx-auto'>
       <div>
         <Header />
-        <Sidebar />
+        <div>
+          <Sidebar />
+        </div>
         <div className='ml-14 lg:ml-48 mt-14 p-2 lg:p-8 pb-16 mx-auto z-0'>
           <ScrollToTop />
           <Outlet />

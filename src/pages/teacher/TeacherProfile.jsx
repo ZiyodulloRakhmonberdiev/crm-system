@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { v4 as uuidv4 } from 'uuid'
 
 import { Card, Dropdown, Space, Avatar, Tabs, Table } from 'antd'
 import { ArrowRight } from 'react-bootstrap-icons'
-import photo from '../../assets/img/profile.jpg'
+import photo from '../../assets/img/Default-avatar.jpg'
 
 export default function TeacherProfile () {
   const { Meta } = Card
   const { teachersData } = useSelector(state => state.teachers)
-
   const info = (
     <div className='bg-white rounded-md p-4 border'>
       <Meta
@@ -177,7 +177,11 @@ export default function TeacherProfile () {
         </div>
       </Tabs.TabPane>
       <Tabs.TabPane tab='Ish haqi' key='item-2'>
-        <Table columns={columns} className='overflow-auto'></Table>
+        <Table
+          columns={columns}
+          className='overflow-auto'
+          rowKey={uuidv4()}
+        ></Table>
       </Tabs.TabPane>
     </Tabs>
   )

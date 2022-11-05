@@ -8,7 +8,13 @@ import {
   Mortarboard,
   PlusCircle,
   Search,
-  House
+  House,
+  Wallet2,
+  Calendar,
+  Cast,
+  DoorOpen,
+  Layers,
+  Palette2
 } from 'react-bootstrap-icons'
 import { Link } from 'react-router-dom'
 
@@ -43,6 +49,26 @@ export default function Sidebar () {
     getItem(<Link to='/groups'>Guruhlar</Link>, 'groups', <TeamOutlined />),
     getItem(<Link to='/finance'>Moliya</Link>, 'finance', <CashStack />),
     getItem(<Link to='/report'>Hisobot</Link>, 'report', <PieChartOutlined />),
+    getItem(`Qo'shimcha`, 'addition', <Wallet2 />, [
+      getItem(
+        <Link className='flex items-center justify-start gap-3' to='/employees'>
+          <Layers /> Hodimlar
+        </Link>,
+        'employees'
+      ),
+      getItem(
+        <Link className='flex items-center justify-start gap-3' to='/courses'>
+          <Palette2 /> Kurslar
+        </Link>,
+        'courses'
+      ),
+      getItem(
+        <Link className='flex items-center justify-start gap-3' to='/rooms'>
+          <DoorOpen /> Xonalar
+        </Link>,
+        'rooms'
+      )
+    ]),
     getItem(
       <span
         onClick={() => {
@@ -69,12 +95,6 @@ export default function Sidebar () {
       <Sider
         breakpoint='lg'
         collapsedWidth='56'
-        onBreakpoint={broken => {
-          // console.log(broken)
-        }}
-        onCollapse={(collapsed, type) => {
-          console.log(collapsed, type)
-        }}
         style={{ height: '100vh' }}
         className='mt-14 pt-4 fixed overflow-y-scroll pb-24'
       >

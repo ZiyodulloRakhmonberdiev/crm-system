@@ -1,5 +1,5 @@
 import HeaderLayout from '../../components/HeaderLayout'
-import Teachers from '../employee/Teachers'
+import Teachers from '../teacher/Teachers'
 export default function Dashboard () {
   return (
     <div className='container'>

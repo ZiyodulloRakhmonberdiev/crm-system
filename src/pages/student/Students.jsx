@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { v4 as uuidv4 } from 'uuid'
 
 import { Table, Modal, Input, Select, Drawer, Pagination } from 'antd'
 import { PencilSquare, Trash, Mortarboard } from 'react-bootstrap-icons'
@@ -65,6 +66,7 @@ export default function Students () {
   students?.map(item => {
     dataSource?.push({
       id: item?.id,
+      uid: uuidv4(),
       firstName: item?.first_name,
       lastName: item?.last_name,
       name: (
@@ -280,6 +282,7 @@ export default function Students () {
         rowSelection={rowSelection}
         className='overflow-auto'
         pagination={false}
+        rowKey={record => record.uid}
       ></Table>
       <br />
       <center>

@@ -1,28 +1,40 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import ScrollToTop from './ScrollToTop'
+
 import Login from './pages/login/Login'
+import Layout from './components/Layout'
 import Dashboard from './pages/dashboard/Dashboard'
 import Leads from './pages/leads/Leads'
+
 import Students from './pages/student/Students'
-import Teachers from './pages/employee/Teachers'
+import StudentProfile from './pages/student/StudentProfile'
+
+import Teachers from './pages/teacher/Teachers'
+import TeacherProfile from './pages/teacher/TeacherProfile'
+
 import Groups from './pages/group/Groups'
-import ScrollToTop from './ScrollToTop'
+
 import Finance from './pages/finance/Finance'
 import Payment from './pages/finance/Payment'
 import TakeOff from './pages/finance/TakeOff'
 import Spend from './pages/finance/Spend'
 import Salary from './pages/finance/Salary'
 import Debtors from './pages/finance/Debtors'
+
 import Report from './pages/report/Report'
 import Conversion from './pages/report/Conversion'
 import Messages from './pages/report/Messages'
-import TeacherProfile from './pages/employee/TeacherProfile'
-import StudentProfile from './pages/student/StudentProfile'
-import Layout from './components/Layout'
+
+import Employee from './pages/employee/Employee'
+import EmployeeProfile from './pages/employee/EmployeeProfile'
+
 export default function App () {
   return (
     <div>
       <ScrollToTop />
       <Routes>
+        <Route path='/login' element={<Login />} />
+
         <Route path='/' element={<Layout />}>
           <Route path='/' element={<Dashboard />} />
           <Route path='/leads' element={<Leads />} />
@@ -44,9 +56,10 @@ export default function App () {
           <Route path='/report' element={<Report />} />
           <Route path='/report/conversion' element={<Conversion />} />
           <Route path='/report/messages' element={<Messages />} />
-        </Route>
 
-        <Route path='/login' element={<Login />} />
+          <Route path='/employees' element={<Employee />} />
+          <Route path='/employees/profile/:id' element={<EmployeeProfile />} />
+        </Route>
       </Routes>
     </div>
   )

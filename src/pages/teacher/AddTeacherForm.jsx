@@ -192,7 +192,7 @@ export default function AddTeacherForm ({
         />
         <Form.Item>
           <p>Parol</p>
-          <Input
+          <Input.Password
             required={modalType === "add"}
             id='password'
             onChange={e => {

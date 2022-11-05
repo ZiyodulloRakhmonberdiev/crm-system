@@ -217,14 +217,14 @@ export default function AddEmployeeForm ({
           className='mb-4 mt-2'
         />
         <p>Parol</p>
-        <Input
+        <Input.Password
           required={modalType === "add"}
           id='password'
           value={employee?.password}
           onChange={e => {
             handle(e)
           }}
-          type='text'
+          type='password'
           className='mb-4 mt-2'
         />
         <Spin spinning={uploading}>

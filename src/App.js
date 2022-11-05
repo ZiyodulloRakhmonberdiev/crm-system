@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import ScrollToTop from './ScrollToTop'
 
 import Login from './pages/login/Login'
@@ -27,15 +28,15 @@ import Messages from './pages/report/Messages'
 
 import Employee from './pages/employee/Employee'
 import EmployeeProfile from './pages/employee/EmployeeProfile'
-
+import axios from './axios/axios'
+import { Spin } from 'antd'
 export default function App () {
+   
   return (
-    <div>
+     <div>
       <ScrollToTop />
       <Routes>
-        <Route path='/login' element={<Login />} />
-
-        <Route path='/' element={<Layout />}>
+        <Route path='/' element={<Layout  />}>
           <Route path='/' element={<Dashboard />} />
           <Route path='/leads' element={<Leads />} />
           <Route path='/groups' element={<Groups />} />
@@ -60,6 +61,8 @@ export default function App () {
           <Route path='/employees' element={<Employee />} />
           <Route path='/employees/profile/:id' element={<EmployeeProfile />} />
         </Route>
+        <Route path='/login' element={<Login />} />
+
       </Routes>
     </div>
   )

@@ -2,7 +2,7 @@ import { Button, Checkbox, Form, Input, message, Spin } from 'antd'
 import { useRef, useState, useEffect } from 'react'
  
 import axios from '../../axios/axios'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
 import { checkUserIdLoggedIn, login } from '../../redux/loginSlice'
 
@@ -16,6 +16,19 @@ export default function Login () {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
+  const location = useLocation()
+  const [logged, setLogged] = useState(true)
+  
+
+  useEffect(() => {
+    setLoading(true)
+    axios.get("/api/schedule")
+      .then((res) => {
+        navigate("/", { replace: true })
+      })
+      .catch((err) => setLogged(false))
+      .finally(() => setLoading(false))
+  }, [location]);
 
   useEffect(() => {
     userRef.current.focus()

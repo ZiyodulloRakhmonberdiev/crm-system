@@ -17,9 +17,10 @@ export default function AddEmployeeForm ({
   const [employee, setEmployee] = useState({
     name: '',
     phone: '',
-    role: '',
+    roles: [],
     gender: '',
-    salary: ''
+    salary: '',
+    password: ""
   })
   const [uploading, setUploading] = useState(false)
   const dispatch = useDispatch()
@@ -29,18 +30,20 @@ export default function AddEmployeeForm ({
       setEmployee({
         name: '',
         phone: '',
-        role: '',
+        roles: [],
         gender: '',
-        salary: ''
+        salary: '',
+        password: ""
       })
     } else {
-      const { name, phone, gender, salary } = editingEmployee
+      const { name, phone, gender, salary, password, roles } = editingEmployee
       setEmployee({
         name: name,
         phone: phone.length === 9 ? phone : phone.slice(4, 13),
-        role: '',
+        roles: roles,
         gender: gender,
-        salary: salary
+        salary: salary,
+        password: password
       })
     }
   }, [modalType, visible])
@@ -53,23 +56,24 @@ export default function AddEmployeeForm ({
 
   function submit (e) {
     e.preventDefault()
-    const { name, phone, role, gender, salary } = employee
-    if (name && phone && role && gender && salary) {
+    const { name, phone, roles, gender, salary, password } = employee
+    if (name && phone && roles && gender && salary) {
       setUploading(true)
       if (modalType === 'add') {
         axios
           .post(url, {
             name: employee.name,
             phone: '+998' + employee.phone?.split(' ').join(''),
-            role: employee.role,
+            roles: employee.roles,
             gender: employee.gender,
-            salary: employee.salary
+            salary: employee.salary,
+            password: employee.password
           })
           .then(res => {
             setEmployee({
               name: '',
               phone: '',
-              role: '',
+              roles: [],
               gender: '',
               salary: ''
             })
@@ -91,15 +95,16 @@ export default function AddEmployeeForm ({
             employee_id: editingEmployee?.id,
             name: employee.name,
             phone: '+998' + employee.phone?.split(' ').join(''),
-            role: employee.role,
+            roles: employee.roles,
             gender: employee.gender,
-            salary: employee.salary
+            salary: employee.salary,
+            password: employee.password
           })
           .then(res => {
             setEmployee({
               name: '',
               phone: '',
-              role: '',
+              roles: [],
               gender: '',
               salary: ''
             })
@@ -156,11 +161,10 @@ export default function AddEmployeeForm ({
         />
         <p>Rollar</p>
         <Checkbox.Group
-          value={employee?.role}
-          id='role'
+          defaultValue={employee.roles}
           options={[
             {
-              label: 'CEO',
+              label: 'asas',
               value: 'ceo'
             },
             {
@@ -173,7 +177,7 @@ export default function AddEmployeeForm ({
             }
           ]}
           onChange={e => {
-            handle(e)
+            setEmployee({ ...employee, roles: e })
           }}
           className='mb-4 mt-2'
         />
@@ -207,6 +211,17 @@ export default function AddEmployeeForm ({
           required
           id='salary'
           value={employee?.salary}
+          onChange={e => {
+            handle(e)
+          }}
+          type='number'
+          className='mb-4 mt-2'
+        />
+        <p>Parol</p>
+        <Input
+          required={modalType === "add"}
+          id='password'
+          value={employee?.password}
           onChange={e => {
             handle(e)
           }}

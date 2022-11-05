@@ -52,7 +52,16 @@ export default function Employees () {
           {item?.name}
         </Link>
       ),
-      role: item?.role,
+      role: (
+        <div className='flex flex-wrap gap-2'>
+          {item?.role?.map((role) => (
+          <>
+            <span className='px-2 py-1 rounded-md bg-slate-200 text-xs text-gray-500  capitalize'>{role}</span>
+          
+          </>
+        ))}
+        </div>
+      ),
       phone: item?.phone?.toLocaleString(),
       gender: item?.gender,
       salary: item?.salary,
@@ -91,7 +100,8 @@ export default function Employees () {
       key: '2',
       title: 'Ism',
       dataIndex: 'name',
-      fixed: 'top'
+      fixed: 'top',
+      width: 250
     },
     {
       key: '3',
@@ -192,6 +202,8 @@ export default function Employees () {
         }}
         pagination={false}
         rowKey={record => record.uid}
+        
+        size="small"
       ></Table>
       <br />
       <center>

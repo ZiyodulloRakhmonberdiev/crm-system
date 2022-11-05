@@ -248,7 +248,7 @@ export default function AddStudentForm ({
         <Form.Item>
           <p>Parol</p>
           <Input
-            required
+            required={modalType === "add"}
             id='password'
             onChange={e => {
               handle(e)

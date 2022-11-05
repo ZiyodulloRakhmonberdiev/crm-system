@@ -36,18 +36,17 @@ export default function AddEmployeeForm ({
         password: ""
       })
     } else {
-      const { name, phone, gender, salary, password, roles } = editingEmployee
+      const { name, phone, gender, salary, password, role } = editingEmployee
       setEmployee({
         name: name,
         phone: phone.length === 9 ? phone : phone.slice(4, 13),
-        roles: roles,
+        roles: role,
         gender: gender,
         salary: salary,
         password: password
       })
     }
   }, [modalType, visible])
-
   function handle (e) {
     const newEmployee = { ...employee }
     newEmployee[e.target.id] = e.target.value
@@ -161,7 +160,7 @@ export default function AddEmployeeForm ({
         />
         <p>Rollar</p>
         <Checkbox.Group
-          defaultValue={employee.roles}
+          value={employee.roles}
           options={[
             {
               label: 'asas',

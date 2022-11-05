@@ -1,6 +1,6 @@
 // import type { RadioChangeEvent } from 'antd'
 import { useState, useEffect } from 'react'
-import { Input, Form, Radio, message } from 'antd'
+import { Input, Form, Radio, message, Spin } from 'antd'
 import { Telephone, Person } from 'react-bootstrap-icons'
 import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
@@ -15,6 +15,7 @@ export default function AddStudentForm ({
   visible,
   setVisible
 }) {
+  const [uploading, setUploading] = useState(false)
   const url = '/api/students'
   const [student, setStudent] = useState({
     firstName: '',
@@ -44,7 +45,6 @@ export default function AddStudentForm ({
       const {
         first_name,
         last_name,
-        id,
         phone,
         address,
         birthday,
@@ -68,80 +68,93 @@ export default function AddStudentForm ({
     const newStudent = { ...student }
     newStudent[e.target.id] = e.target.value
     setStudent(newStudent)
-    console.log(newStudent)
   }
 
   function submit (e) {
     e.preventDefault()
-    if (modalType === 'add') {
-      axios
-        .post(url, {
-          first_name: student.firstName,
-          last_name: student.lastName,
-          phone: '+998' + student.phone?.split(' ').join(''),
-          password: student.password,
-          address: student.address,
-          birthday: student.birthday,
-          gender: student.gender,
-          addition_phone: student.additionPhone
-        })
-        .then(res => {
-          setStudent({
-            firstName: '',
-            lastName: '',
-            phone: '',
-            password: '',
-            address: '',
-            birthday: '',
-            gender: '',
-            additionPhone: ''
+    const { firstName, lastName, phone, address, birthday, gender } = student
+    if (firstName && lastName && phone && address && birthday && gender) {
+      setUploading(true)
+      if (modalType === 'add') {
+        axios
+          .post(url, {
+            first_name: student.firstName,
+            last_name: student.lastName,
+            phone: '+998' + student.phone?.split(' ').join(''),
+            password: student.password,
+            address: student.address,
+            birthday: student.birthday,
+            gender: student.gender,
+            addition_phone: student.additionPhone
           })
-          message.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
-          dispatch(refreshStudentsData())
-          setVisible()
-        })
-        .catch(err => {
-          console.log(err)
-          message.error("Barcha maydonni to'ldiring")
-        })
-    } else if (modalType === 'update') {
-      axios
-        .patch(url + '/' + editingStudent?.id, {
-          student_id: editingStudent?.id,
-          first_name: student.firstName,
-          last_name: student.lastName,
-          phone: '+998' + student.phone?.split(' ').join(''),
-          password: student.password,
-          address: student.address,
-          birthday: student.birthday,
-          gender: student.gender,
-          addition_phone: student.additionPhone
-        })
-        .then(res => {
-          setStudent({
-            firstName: '',
-            lastName: '',
-            phone: '',
-            password: '',
-            address: '',
-            birthday: '',
-            gender: '',
-            additionPhone: ''
+          .then(res => {
+            setStudent({
+              firstName: '',
+              lastName: '',
+              phone: '',
+              password: '',
+              address: '',
+              birthday: '',
+              gender: '',
+              additionPhone: ''
+            })
+            message.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
+            dispatch(refreshStudentsData())
+            setVisible()
           })
-          message.success('Foydalanuvchi muvaffaqiyatli yangilandi')
-          dispatch(refreshStudentsData())
-          setVisible()
-        })
-        .catch(err => {
-          console.log(err)
-          message.error("Barcha maydonni to'ldiring")
-        })
+          .catch(err => {
+            if (err.response.data.data.phone) {
+              message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
+            } else {
+              message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+            }
+          })
+          .finally(() => setUploading(false))
+      } else if (modalType === 'update') {
+        axios
+          .patch(url + '/' + editingStudent?.id, {
+            student_id: editingStudent?.id,
+            first_name: student.firstName,
+            last_name: student.lastName,
+            phone: '+998' + student.phone?.split(' ').join(''),
+            password: student.password,
+            address: student.address,
+            birthday: student.birthday,
+            gender: student.gender,
+            addition_phone: student.additionPhone
+          })
+          .then(res => {
+            setStudent({
+              firstName: '',
+              lastName: '',
+              phone: '',
+              password: '',
+              address: '',
+              birthday: '',
+              gender: '',
+              additionPhone: ''
+            })
+            message.success('Foydalanuvchi muvaffaqiyatli yangilandi')
+            dispatch(refreshStudentsData())
+            setVisible()
+          })
+          .catch(err => {
+            if (err.response.data.data.phone) {
+              message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
+            } else {
+              message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+            }
+          })
+          .finally(() => setUploading(false))
+      }
+    } else {
+      message.error("Barcha maydonni to'ldiring!")
     }
   }
 
   return (
     <div>
-      <Form onSubmit={e => submit(e)}>
+      <form onSubmit={e => submit(e)}>
         <p>Telefon</p>
         <InputMask
           mask='99 999 99 99'
@@ -254,12 +267,12 @@ export default function AddStudentForm ({
             <Person />
           </IconButton>
         </div>
-        <Form.Item>
-          <MyButton htmlType='submit' color='primary' onClick={submit}>
+        <Spin spinning={uploading}>
+          <MyButton htmlType='submit' color='primary'>
             Yuborish
           </MyButton>
-        </Form.Item>
-      </Form>
+        </Spin>
+      </form>
     </div>
   )
 }

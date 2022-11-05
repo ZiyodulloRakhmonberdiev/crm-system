@@ -56,70 +56,69 @@ export default function AddTeacherForm ({
     const { name, phone, gender, salary_percentage } = teacher
     if (name && phone && gender && salary_percentage) {
       setUploading(true)
-    if (modalType === 'add') {
-      axios
-        .post(url, {
-          name: teacher.name,
-          phone: '+998' + teacher.phone?.split(' ').join(''),
-          password: teacher.password,
-          gender: teacher.gender,
-          salary_percentage: teacher.salary_percentage
-        })
-        .then(res => {
-          setTeacher({
-            name: '',
-            phone: '',
-            password: '',
-            gender: '',
-            salary_percentage: ''
+      if (modalType === 'add') {
+        axios
+          .post(url, {
+            name: teacher.name,
+            phone: '+998' + teacher.phone?.split(' ').join(''),
+            password: teacher.password,
+            gender: teacher.gender,
+            salary_percentage: teacher.salary_percentage
           })
-          message.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
-          dispatch(refreshTeachersData())
-          setVisible()
-        })
-        .catch(err => { 
-          if (err.response.data.data.phone) {
-            message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
-          } else {
-            message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
-          }
-        })
-        .finally(() => setUploading(false))
-    } else if (modalType === 'update') {
-      axios
-        .patch(url + '/' + editingTeacher?.id, {
-          teacher_id: editingTeacher?.id,
-          name: teacher.name,
-          phone: '+998' + teacher.phone?.split(' ').join(''),
-          password: teacher.password,
-          gender: teacher.gender,
-          salary_percentage: teacher.salary_percentage
-        })
-        .then(res => {
-          setTeacher({
-            name: '',
-            phone: '',
-            password: '',
-            gender: '',
-            salary_percentage: ''
+          .then(res => {
+            setTeacher({
+              name: '',
+              phone: '',
+              password: '',
+              gender: '',
+              salary_percentage: ''
+            })
+            message.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
+            dispatch(refreshTeachersData())
+            setVisible()
           })
-          message.success('Foydalanuvchi muvaffaqiyatli yangilandi')
-          dispatch(refreshTeachersData())
-          setVisible()
-        })
-        .catch(err => {
-          if (err.response.data.data.phone) {
-            message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
-          } else {
-            message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
-          }
-        })
-        .finally(() => setUploading(false))
-    }
+          .catch(err => {
+            if (err.response.data.data.phone) {
+              message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
+            } else {
+              message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+            }
+          })
+          .finally(() => setUploading(false))
+      } else if (modalType === 'update') {
+        axios
+          .patch(url + '/' + editingTeacher?.id, {
+            teacher_id: editingTeacher?.id,
+            name: teacher.name,
+            phone: '+998' + teacher.phone?.split(' ').join(''),
+            password: teacher.password,
+            gender: teacher.gender,
+            salary_percentage: teacher.salary_percentage
+          })
+          .then(res => {
+            setTeacher({
+              name: '',
+              phone: '',
+              password: '',
+              gender: '',
+              salary_percentage: ''
+            })
+            message.success('Foydalanuvchi muvaffaqiyatli yangilandi')
+            dispatch(refreshTeachersData())
+            setVisible()
+          })
+          .catch(err => {
+            if (err.response.data.data.phone) {
+              message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
+            } else {
+              message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+            }
+          })
+          .finally(() => setUploading(false))
+      }
     } else {
       message.error("Barcha maydonni to'ldiring!")
     }
-
   }
 
   return (
@@ -156,7 +155,7 @@ export default function AddTeacherForm ({
           className='mb-4 mt-2'
         />
         <p>Jinsi</p>
-        <Radio.Group  value={teacher?.gender} className='mb-4 mt-2'>
+        <Radio.Group value={teacher?.gender} className='mb-4 mt-2'>
           <Radio
             checked={teacher?.gender === 'male'}
             value='male'
@@ -204,11 +203,11 @@ export default function AddTeacherForm ({
             className='mb-4 mt-2'
           />
         </Form.Item>
-          <Spin spinning={uploading} >
-            <MyButton htmlType='submit' color='primary' >
-              Yuborish
-            </MyButton>
-          </Spin>
+        <Spin spinning={uploading}>
+          <MyButton htmlType='submit' color='primary'>
+            Yuborish
+          </MyButton>
+        </Spin>
       </form>
     </div>
   )

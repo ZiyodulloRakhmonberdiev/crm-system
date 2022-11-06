@@ -134,9 +134,9 @@ export default function Courses () {
       </Drawer>
       <Spin spinning={fetchLoading}>
         <div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 py-6'>
-          {courses.map(course => (
+          {courses?.map(course => (
             <div
-              key={courses?.id}
+              key={course?.id}
               className='flex flex-col drop-shadow-md hover:drop-shadow-2xl transition relative'
             >
               <Link
@@ -144,7 +144,7 @@ export default function Courses () {
                 onClick={() => dispatch(setCoursesData(course))}
                 className='bg-pink-500 text-center text-xl text-white px-4 py-20 flex items-center justify-center hover:text-white'
               >
-                {course.name}
+                {course?.name}
               </Link>
               <div className='absolute top-4 right-4'>
               <div className='flex gap-2'>

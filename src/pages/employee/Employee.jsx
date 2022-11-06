@@ -49,9 +49,9 @@ export default function Employees () {
       ),
       role: (
         <div className='flex flex-wrap gap-2'>
-          {item?.role?.map(role => (
+          {item?.role?.map((role, index) => (
             <>
-              <span className='px-2 py-1 rounded-md bg-slate-200 text-xs text-gray-500  capitalize'>
+              <span key={index} className='px-2 py-1 rounded-md bg-slate-200 text-xs text-gray-500  capitalize'>
                 {role}
               </span>
             </>

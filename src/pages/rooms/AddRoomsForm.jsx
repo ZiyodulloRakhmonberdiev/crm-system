@@ -21,8 +21,7 @@ export default function AddRoomsForm ({
   const [room, setRoom] = useState({
     name: '',
     capacity: '',
-    branch_id: selected_branch?.id,
-    room_id: ''
+    branch_id: selected_branch?.id
   })
 
   useEffect(() => {
@@ -30,8 +29,7 @@ export default function AddRoomsForm ({
       setRoom({
         name: '',
         capacity: '',
-        branch_id: selected_branch?.id,
-        room_id: uuidv4()
+        branch_id: selected_branch?.id
       })
     } else {
       const { name, capacity, branch_id, room_id } = editingRoom
@@ -53,15 +51,14 @@ export default function AddRoomsForm ({
   function submit (e) {
     e.preventDefault()
     const { name, capacity, branch_id, room_id } = room
-    if (name && capacity && branch_id && room_id) {
+    if (name && capacity) {
       setUploading(true)
       if (modalType === 'add') {
         axios
           .post(url, {
             name: room.name,
             capacity: room.capacity,
-            branch_id: room.branch_id,
-            room_id: room.room_id
+            branch_id: selected_branch?.id
           })
           .then(res => {
             setRoom({
@@ -82,7 +79,7 @@ export default function AddRoomsForm ({
             room_id: editingRoom?.id,
             name: room?.name,
             capacity: room?.capacity,
-            branch_id: room?.branch_id
+            branch_id: selected_branch?.id
           })
           .then(res => {
             setRoom({
@@ -130,20 +127,8 @@ export default function AddRoomsForm ({
           }}
           className='mb-4 mt-2'
           name='capacity'
-        />
-        <p>Room ID</p>
-        <Input
-          type='number'
-          required
-          id='room_id'
-          value={room?.room_id}
-          onChange={e => {
-            handle(e)
-          }}
-          className='mb-4 mt-2'
-          name='room_id'
-        />
-        <p>Branch ID</p>
+        /> 
+        {/* <p>Branch ID</p>
         <Input
           type='number'
           required
@@ -154,7 +139,7 @@ export default function AddRoomsForm ({
           }}
           className='mb-4 mt-2'
           name='branch_id'
-        />
+        /> */}
         <Spin spinning={uploading}>
           <MyButton htmlType='submit' color='primary'>
             Yuborish

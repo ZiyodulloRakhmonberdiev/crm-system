@@ -66,7 +66,7 @@ export default function Rooms () {
       key: '1',
       title: 'ID',
       dataIndex: 'id',
-      width: 80,
+      width: 50,
       render: record => {
         return <span className='pl-1'>{record}</span>
       }

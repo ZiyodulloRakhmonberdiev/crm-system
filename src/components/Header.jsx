@@ -6,10 +6,16 @@ import logo from '../assets/img/logo.png'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import axios from '../axios/axios'
-import { fetchedBranches, fetchingBranches, setSelectedBranch } from '../redux/branchesSlice'
+import {
+  fetchedBranches,
+  fetchingBranches,
+  setSelectedBranch
+} from '../redux/branchesSlice'
 
 export default function Header () {
-  const { branches, loading, selected_branch } = useSelector(state => state.branches)
+  const { branches, loading, selected_branch } = useSelector(
+    state => state.branches
+  )
   const dispatch = useDispatch()
   const { Option } = Select
 
@@ -50,13 +56,11 @@ export default function Header () {
 
   useEffect(() => {
     dispatch(fetchingBranches())
-    axios.get("/api/branches")
-      .then((res) => {
-        dispatch(fetchedBranches(res.data.data))
-        dispatch(setSelectedBranch(res.data.data[0]))
-      })
+    axios.get('/api/branches').then(res => {
+      dispatch(fetchedBranches(res.data.data))
+      dispatch(setSelectedBranch(res.data.data[0]))
+    })
   }, [])
-
 
   return (
     <header
@@ -82,11 +86,11 @@ export default function Header () {
                 dispatch(setSelectedBranch(e))
               }}
             >
-              {
-                branches?.map((item) => (
-                  <Option value={item.id}>{item.name}</Option>
-                ))
-              }
+              {branches?.map(item => (
+                <Option key={item.id} value={item.id}>
+                  {item.name}
+                </Option>
+              ))}
             </Select>
           </Spin>
         </div>

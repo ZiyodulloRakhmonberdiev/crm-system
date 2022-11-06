@@ -247,8 +247,8 @@ export default function AddStudentForm ({
         <Input.TextArea rows={4} className='mb-4 mt-2' id='comment' /> */}
         <Form.Item>
           <p>Parol</p>
-          <Input
-            required={modalType === "add"}
+          <Input.Password
+            required={modalType === 'add'}
             id='password'
             onChange={e => {
               handle(e)

@@ -147,9 +147,24 @@ export default function Courses () {
                 {course.name}
               </Link>
               <div className='absolute top-4 right-4'>
-                {dataSource.map(item => (
-                  <div>{item.actions}</div>
-                ))}
+              <div className='flex gap-2'>
+                <IconButton
+                  color='primaryOutlined'
+                  onClick={() => {
+                    onEditCourse(course)
+                  }}
+                >
+                  <PencilSquare />
+                </IconButton>
+                <IconButton
+                  color='dangerOutlined'
+                  onClick={() => {
+                    onDeleteCourse(course)
+                  }}
+                >
+                  <Trash />
+                </IconButton>
+        </div>
               </div>
               <div className='flex flex-col gap-8 items-start justify-start px-6 py-8 bg-white'>
                 <p className='text-xl text-pink-500'>{course.name}</p>

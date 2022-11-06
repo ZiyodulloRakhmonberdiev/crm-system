@@ -10,7 +10,8 @@ export default function AddCourseForm ({
   modalType,
   editingCourse,
   visible,
-  setVisible
+  setVisible,
+  changeUpdateCourseDataFunc = null
 }) {
   const url = '/api/courses'
   const [course, setCourse] = useState({
@@ -85,6 +86,9 @@ export default function AddCourseForm ({
             month: course.month
           })
           .then(res => {
+            if (changeUpdateCourseDataFunc) {
+              changeUpdateCourseDataFunc(course)
+            }
             setCourse({
               name: '',
               price: '',

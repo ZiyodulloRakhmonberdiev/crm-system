@@ -28,6 +28,9 @@ const coursesSlice = createSlice({
     },
     setCoursesData: (state, action) => {
       state.coursesData = action.payload
+    },
+    changeUpdateCourseData: (state, action) => {
+      state.coursesData = { ...state.coursesData, ...action.payload }
     }
   }
 })
@@ -37,7 +40,8 @@ export const {
   fetchedCourses,
   fetchedError,
   refreshCoursesData,
-  setCoursesData
+  setCoursesData,
+  changeUpdateCourseData
 } = coursesSlice.actions
 const coursesReducer = coursesSlice.reducer
 export default coursesReducer

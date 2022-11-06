@@ -3,12 +3,7 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Table, Modal, Drawer, Pagination } from 'antd'
-import {
-  PencilSquare,
-  Trash,
-  MicrosoftTeams,
-  Layers
-} from 'react-bootstrap-icons'
+import { PencilSquare, Trash, Layers } from 'react-bootstrap-icons'
 
 import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
@@ -54,12 +49,13 @@ export default function Employees () {
       ),
       role: (
         <div className='flex flex-wrap gap-2'>
-          {item?.role?.map((role) => (
-          <>
-            <span className='px-2 py-1 rounded-md bg-slate-200 text-xs text-gray-500  capitalize'>{role}</span>
-          
-          </>
-        ))}
+          {item?.role?.map(role => (
+            <>
+              <span className='px-2 py-1 rounded-md bg-slate-200 text-xs text-gray-500  capitalize'>
+                {role}
+              </span>
+            </>
+          ))}
         </div>
       ),
       phone: item?.phone?.toLocaleString(),
@@ -202,8 +198,7 @@ export default function Employees () {
         }}
         pagination={false}
         rowKey={record => record.uid}
-        
-        size="small"
+        size='small'
       ></Table>
       <br />
       <center>

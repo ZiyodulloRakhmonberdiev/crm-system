@@ -5,6 +5,7 @@ import loginReducer from '../loginSlice'
 import studentsReducer from '../studentsSlice'
 import teachersReducer from '../teachersSlice'
 import employeesReducer from '../employeesSlice'
+import coursesReducer from '../coursesSlice'
 
 export const reducers = combineReducers({
   login: loginReducer,
@@ -12,5 +13,6 @@ export const reducers = combineReducers({
   students: studentsReducer,
   teachers: teachersReducer,
   branches: branchesReducer,
-  employees: employeesReducer
+  employees: employeesReducer,
+  courses: coursesReducer
 })

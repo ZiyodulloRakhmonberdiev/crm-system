@@ -1,4 +1,3 @@
-// import type { RadioChangeEvent } from 'antd'
 import { useState, useEffect } from 'react'
 import { Input, Form, Radio, message, Spin } from 'antd'
 import axios from '../../axios/axios'

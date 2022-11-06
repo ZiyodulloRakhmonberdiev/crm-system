@@ -1,6 +1,6 @@
 // import type { RadioChangeEvent } from 'antd'
 import { useState, useEffect } from 'react'
-import { Input, Radio, message, Spin, Checkbox } from 'antd'
+import { Input, Form, Radio, message, Spin, Checkbox } from 'antd'
 import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
 import { useDispatch } from 'react-redux'
@@ -17,10 +17,9 @@ export default function AddEmployeeForm ({
   const [employee, setEmployee] = useState({
     name: '',
     phone: '',
-    roles: [],
+    role: '',
     gender: '',
-    salary: '',
-    password: ""
+    salary: ''
   })
   const [uploading, setUploading] = useState(false)
   const dispatch = useDispatch()
@@ -30,23 +29,22 @@ export default function AddEmployeeForm ({
       setEmployee({
         name: '',
         phone: '',
-        roles: [],
+        role: '',
         gender: '',
-        salary: '',
-        password: ""
+        salary: ''
       })
     } else {
-      const { name, phone, gender, salary, password, role } = editingEmployee
+      const { name, phone, gender, salary } = editingEmployee
       setEmployee({
         name: name,
         phone: phone.length === 9 ? phone : phone.slice(4, 13),
-        roles: role,
+        role: '',
         gender: gender,
-        salary: salary,
-        password: password
+        salary: salary
       })
     }
   }, [modalType, visible])
+
   function handle (e) {
     const newEmployee = { ...employee }
     newEmployee[e.target.id] = e.target.value
@@ -55,24 +53,23 @@ export default function AddEmployeeForm ({
 
   function submit (e) {
     e.preventDefault()
-    const { name, phone, roles, gender, salary, password } = employee
-    if (name && phone && roles && gender && salary) {
+    const { name, phone, role, gender, salary } = employee
+    if (name && phone && role && gender && salary) {
       setUploading(true)
       if (modalType === 'add') {
         axios
           .post(url, {
             name: employee.name,
             phone: '+998' + employee.phone?.split(' ').join(''),
-            roles: employee.roles,
+            role: employee.role,
             gender: employee.gender,
-            salary: employee.salary,
-            password: employee.password
+            salary: employee.salary
           })
           .then(res => {
             setEmployee({
               name: '',
               phone: '',
-              roles: [],
+              role: '',
               gender: '',
               salary: ''
             })
@@ -94,16 +91,15 @@ export default function AddEmployeeForm ({
             employee_id: editingEmployee?.id,
             name: employee.name,
             phone: '+998' + employee.phone?.split(' ').join(''),
-            roles: employee.roles,
+            role: employee.role,
             gender: employee.gender,
-            salary: employee.salary,
-            password: employee.password
+            salary: employee.salary
           })
           .then(res => {
             setEmployee({
               name: '',
               phone: '',
-              roles: [],
+              role: '',
               gender: '',
               salary: ''
             })
@@ -160,10 +156,11 @@ export default function AddEmployeeForm ({
         />
         <p>Rollar</p>
         <Checkbox.Group
-          value={employee.roles}
+          value={employee?.role}
+          id='role'
           options={[
             {
-              label: 'asas',
+              label: 'CEO',
               value: 'ceo'
             },
             {
@@ -176,7 +173,7 @@ export default function AddEmployeeForm ({
             }
           ]}
           onChange={e => {
-            setEmployee({ ...employee, roles: e })
+            handle(e)
           }}
           className='mb-4 mt-2'
         />
@@ -213,18 +210,7 @@ export default function AddEmployeeForm ({
           onChange={e => {
             handle(e)
           }}
-          type='number'
-          className='mb-4 mt-2'
-        />
-        <p>Parol</p>
-        <Input.Password
-          required={modalType === "add"}
-          id='password'
-          value={employee?.password}
-          onChange={e => {
-            handle(e)
-          }}
-          type='password'
+          type='text'
           className='mb-4 mt-2'
         />
         <Spin spinning={uploading}>

@@ -120,39 +120,38 @@ export default function AddCourseForm ({
           className='mb-4 mt-2'
           name='name'
         />
-        <p>Kurs davomiyligi</p>
+        <p>Dars davomiyligi (daqiqa)</p>
         <Input
+          type='number'
           required
           id='lesson_duration'
           value={course?.lesson_duration}
           onChange={e => {
             handle(e)
           }}
-          type='text'
           className='mb-4 mt-2'
           name='lesson_duration'
         />
         <p>Kurs o'tish muddati (oy)</p>
-        <Input.Number
+        <Input
+          type='number'
           required
           id='month'
           value={course?.month}
           onChange={e => {
             handle(e)
           }}
-          type='text'
           className='mb-4 mt-2'
           name='month'
         />
         <p>Kurs narxi (so'm)</p>
-        <Input.Number
+        <Input
           required
           id='price'
           value={course?.price}
           onChange={e => {
             handle(e)
           }}
-          type='text'
           className='mb-4 mt-2'
           name='price'
         />

@@ -32,6 +32,8 @@ import EmployeeProfile from './pages/employee/EmployeeProfile'
 import Courses from './pages/courses/Courses'
 import CourseProfile from './pages/courses/CourseProfile'
 
+import Rooms from './pages/rooms/Rooms'
+
 export default function App () {
   return (
     <div>
@@ -64,6 +66,8 @@ export default function App () {
 
           <Route path='/courses' element={<Courses />} />
           <Route path='/courses/:id' element={<CourseProfile />} />
+
+          <Route path='/rooms' element={<Rooms />} />
         </Route>
         <Route path='/login' element={<Login />} />
       </Routes>

@@ -3,72 +3,73 @@ import { useState, useEffect } from 'react'
 import { Input, message, Spin } from 'antd'
 import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
-import { useDispatch } from 'react-redux'
-import { refreshCoursesData } from '../../redux/coursesSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { refreshRoomsData } from '../../redux/roomsSlice'
+import { v4 as uuidv4 } from 'uuid'
 
-export default function AddCourseForm ({
+export default function AddRoomsForm ({
   modalType,
-  editingCourse,
+  editingRoom,
   visible,
   setVisible
 }) {
-  const url = '/api/courses'
-  const [course, setCourse] = useState({
-    name: '',
-    price: '',
-    lesson_duration: '',
-    month: ''
-  })
   const [uploading, setUploading] = useState(false)
+  const { selected_branch } = useSelector(state => state.branches)
   const dispatch = useDispatch()
+  const url = '/api/rooms'
+
+  const [room, setRoom] = useState({
+    name: '',
+    capacity: '',
+    branch_id: selected_branch?.id,
+    room_id: ''
+  })
 
   useEffect(() => {
     if (modalType === 'add') {
-      setCourse({
+      setRoom({
         name: '',
-        price: '',
-        lesson_duration: '',
-        month: ''
+        capacity: '',
+        branch_id: selected_branch?.id,
+        room_id: uuidv4()
       })
     } else {
-      const { name, price, month, lesson_duration } = editingCourse
-      setCourse({
+      const { name, capacity, branch_id, room_id } = editingRoom
+      setRoom({
         name: name,
-        price: price,
-        lesson_duration: lesson_duration,
-        month: month
+        capacity: capacity,
+        branch_id: branch_id,
+        room_id: room_id
       })
     }
   }, [modalType, visible])
 
   function handle (e) {
-    const newCourse = { ...course }
-    newCourse[e.target.id] = e.target.value
-    setCourse(newCourse)
+    const newRoom = { ...room }
+    newRoom[e.target.id] = e.target.value
+    setRoom(newRoom)
   }
 
   function submit (e) {
     e.preventDefault()
-    const { name, price, lesson_duration, month } = course
-    if (name && price && lesson_duration && month) {
+    const { name, capacity, branch_id, room_id } = room
+    if (name && capacity && branch_id && room_id) {
       setUploading(true)
       if (modalType === 'add') {
         axios
           .post(url, {
-            name: course.name,
-            price: course.price,
-            lesson_duration: course.lesson_duration,
-            month: course.month
+            name: room.name,
+            capacity: room.capacity,
+            branch_id: room.branch_id,
+            room_id: room.room_id
           })
           .then(res => {
-            setCourse({
+            setRoom({
               name: '',
-              price: '',
-              lesson_duration: '',
-              month: ''
+              capacity: ''
             })
-            message.success("Kurs muvaffaqiyatli qo'shildi")
-            dispatch(refreshCoursesData())
+            message.success("Xona muvaffaqiyatli qo'shildi")
+            dispatch(refreshRoomsData())
             setVisible()
           })
           .catch(err => {
@@ -77,25 +78,23 @@ export default function AddCourseForm ({
           .finally(() => setUploading(false))
       } else if (modalType === 'update') {
         axios
-          .patch(url + '/' + editingCourse?.id, {
-            course_id: editingCourse?.id,
-            name: course.name,
-            price: course.price,
-            lesson_duration: course.lesson_duration,
-            month: course.month
+          .patch(url + '/' + editingRoom?.id, {
+            room_id: editingRoom?.id,
+            name: room?.name,
+            capacity: room?.capacity,
+            branch_id: room?.branch_id
           })
           .then(res => {
-            setCourse({
+            setRoom({
               name: '',
-              price: '',
-              lesson_duration: '',
-              month: ''
+              capacity: ''
             })
-            message.success('Kurs muvaffaqiyatli yangilandi')
-            dispatch(refreshCoursesData())
+            message.success('Xona muvaffaqiyatli yangilandi')
+            dispatch(refreshRoomsData())
             setVisible()
           })
           .catch(err => {
+            console.log(err)
             message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
           })
           .finally(() => setUploading(false))
@@ -108,11 +107,11 @@ export default function AddCourseForm ({
   return (
     <div>
       <form onSubmit={e => submit(e)}>
-        <p>Kurs nomi</p>
+        <p>Xona nomi</p>
         <Input
           required
           id='name'
-          value={course?.name}
+          value={room?.name}
           onChange={e => {
             handle(e)
           }}
@@ -120,40 +119,41 @@ export default function AddCourseForm ({
           className='mb-4 mt-2'
           name='name'
         />
-        <p>Dars davomiyligi (daqiqa)</p>
+        <p>Talaba sig'imi</p>
         <Input
           type='number'
           required
-          id='lesson_duration'
-          value={course?.lesson_duration}
+          id='capacity'
+          value={room?.capacity}
           onChange={e => {
             handle(e)
           }}
           className='mb-4 mt-2'
-          name='lesson_duration'
+          name='capacity'
         />
-        <p>Kurs o'tish muddati (oy)</p>
+        <p>Room ID</p>
         <Input
           type='number'
           required
-          id='month'
-          value={course?.month}
+          id='room_id'
+          value={room?.room_id}
           onChange={e => {
             handle(e)
           }}
           className='mb-4 mt-2'
-          name='month'
+          name='room_id'
         />
-        <p>Kurs narxi (so'm)</p>
+        <p>Branch ID</p>
         <Input
+          type='number'
           required
-          id='price'
-          value={course?.price}
+          id='branch_id'
+          value={room?.branch_id}
           onChange={e => {
             handle(e)
           }}
           className='mb-4 mt-2'
-          name='price'
+          name='branch_id'
         />
         <Spin spinning={uploading}>
           <MyButton htmlType='submit' color='primary'>

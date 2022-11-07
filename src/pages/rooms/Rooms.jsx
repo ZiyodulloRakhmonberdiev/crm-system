@@ -30,7 +30,7 @@ export default function Rooms () {
 
   // rooms static data
   let dataSource = []
-  rooms?.data?.map(item => {
+  rooms?.map(item => {
     dataSource?.push({
       id: item?.id,
       uid: uuidv4(),
@@ -119,7 +119,7 @@ export default function Rooms () {
     axios
       .get(`/api/rooms`)
       .then(res => {
-        dispatch(fetchedRooms(res?.data?.data))
+        dispatch(fetchedRooms(res?.data?.data?.data))
       })
       .catch(err => {
         dispatch(fetchedError())

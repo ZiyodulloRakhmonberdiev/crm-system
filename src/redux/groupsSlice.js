@@ -28,6 +28,9 @@ const groupsSlice = createSlice({
     },
     setGroupData: (state, action) => {
       state.groupData = action.payload
+    },
+    changeUpdateGroupData: (state, action) => {
+      state.groupData = { ...state.groupData, ...action.payload }
     }
   }
 })
@@ -37,7 +40,8 @@ export const {
   fetchedGroups,
   fetchedError,
   refreshGroupsData,
-  setGroupData
+  setGroupData,
+  changeUpdateGroupData
 } = groupsSlice.actions
 const groupsReducer = groupsSlice.reducer
 export default groupsReducer

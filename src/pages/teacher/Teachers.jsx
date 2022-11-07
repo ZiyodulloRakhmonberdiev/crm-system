@@ -37,7 +37,6 @@ export default function Teachers () {
     dataSource?.push({
       id: item?.id,
       uid: uuidv4(),
-      name: item?.name,
       name: (
         <Link
           to={`/teachers/profile/${item?.id}`}

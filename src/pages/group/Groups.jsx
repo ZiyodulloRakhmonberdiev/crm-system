@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
 import { v4 as uuidv4 } from 'uuid'
 import AddGroupForm from './AddGroupForm'
 
@@ -54,7 +56,14 @@ export default function Groups () {
     dataSource?.push({
       id: item?.id,
       uid: uuidv4(),
-      name: item?.name,
+      name: (
+        <Link
+          to={`/groups/${item?.id}`}
+          onClick={() => dispatch(setGroupData(item))}
+        >
+          {item?.name}
+        </Link>
+      ),
       course: item?.course?.name,
       room: item?.room?.name,
       teachers: item?.tachers?.map(teacher => teacher?.name),

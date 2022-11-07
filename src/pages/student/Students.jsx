@@ -190,14 +190,23 @@ export default function Students () {
   }, [refreshStudents, currentPage])
   return (
     <div>
-      <div className='bg-white flex flex-col md:flex-row p-4 rounded-lg items-center justify-start mb-8 gap-4'>
+      <header className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start mb-8 gap-4'>
         <div className='text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md'>
           <Mortarboard />
         </div>
         <p className='text-cyan-400 text-2xl'>O'quvchilar</p>
         <p className='text-cyan-400'>Jami: {students.length} ta</p>
-      </div>
-      <header className='flex flex-wrap gap-2 mb-8'>
+        <MyButton
+          onClick={() => {
+            setVisible(!visible)
+            setModalType('add')
+          }}
+          className='md:ml-auto'
+        >
+          Yangi o'quvchi qo'shish
+        </MyButton>
+      </header>
+      <div className='flex flex-wrap gap-2 mb-8'>
         <div className='w-42'>
           <Input.Search
             placeholder='Qidirish - ism, email, telefon'
@@ -241,16 +250,7 @@ export default function Students () {
             )
           })}
         </Select>
-        <MyButton
-          onClick={() => {
-            setVisible(!visible)
-            setModalType('add')
-          }}
-          className='ml-auto'
-        >
-          Yangi o'quvchi qo'shish
-        </MyButton>
-      </header>
+      </div>
       {/* Add a new student with Drawer */}
       <Drawer
         open={visible}

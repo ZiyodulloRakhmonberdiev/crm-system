@@ -1,29 +1,43 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   groups: [],
   loading: false,
-  error: false
+  error: false,
+  refreshGroups: true,
+  groupData: {}
 }
 
 const groupsSlice = createSlice({
-  name: "groups",
+  name: 'groups',
   initialState,
   reducers: {
-    fetchingGroups: (state) => {
+    fetchingGroups: state => {
       state.loading = true
     },
-    fetchGroups: (state, action) => {
+    fetchedGroups: (state, action) => {
       state.loading = false
       state.groups = action.payload
     },
-    fetchingError: (state) => {
+    fetchedError: state => {
       state.loading = false
       state.error = true
+    },
+    refreshGroupsData: state => {
+      state.refreshGroups = !state.refreshGroups
+    },
+    setGroupData: (state, action) => {
+      state.groupData = action.payload
     }
   }
 })
 
-export const { fetchGroups, fetchingGroups, fetchingError } = groupsSlice.actions
+export const {
+  fetchingGroups,
+  fetchedGroups,
+  fetchedError,
+  refreshGroupsData,
+  setGroupData
+} = groupsSlice.actions
 const groupsReducer = groupsSlice.reducer
 export default groupsReducer

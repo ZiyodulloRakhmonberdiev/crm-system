@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Modal, Drawer, Pagination, Table } from 'antd'
-import { PencilSquare, Trash, Palette2 } from 'react-bootstrap-icons'
+import { PencilSquare, Trash, DoorOpen } from 'react-bootstrap-icons'
 
 import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
@@ -127,9 +127,9 @@ export default function Rooms () {
   }, [refreshRooms])
   return (
     <div>
-      <div className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4 mb-8'>
+      <header className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4 mb-8'>
         <div className='text-2xl text-sky-400 bg-sky-50 p-2 rounded-md'>
-          <Palette2 />
+          <DoorOpen />
         </div>
         <p className='text-sky-400 text-2xl'>Xonalar</p>
         <p className='text-sky-400'>Jami: {rooms?.data?.length} ta</p>
@@ -142,7 +142,7 @@ export default function Rooms () {
         >
           Yangi xona qo'shish
         </MyButton>
-      </div>
+      </header>
       <Drawer
         open={visible}
         title={modalType === 'add' ? "Yangi xona qo'shish" : 'Xonani yangilash'}

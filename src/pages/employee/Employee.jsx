@@ -51,7 +51,10 @@ export default function Employees () {
         <div className='flex flex-wrap gap-2'>
           {item?.role?.map((role, index) => (
             <>
-              <span key={index} className='px-2 py-1 rounded-md bg-slate-200 text-xs text-gray-500  capitalize'>
+              <span
+                key={index}
+                className='px-2 py-1 rounded-md bg-slate-200 text-xs text-gray-500  capitalize'
+              >
                 {role}
               </span>
             </>
@@ -153,24 +156,22 @@ export default function Employees () {
   }, [refreshEmployees, currentPage])
   return (
     <div>
-      <div className='bg-white flex flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4'>
+      <header className='bg-white flex flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4 mb-8'>
         <div className='text-2xl text-blue-400 bg-blue-50 p-2 rounded-md'>
           <Layers />
         </div>
         <p className='text-blue-400 text-2xl'>Hodimlar</p>
         <p className='text-blue-400'>Jami: {employees.length} ta</p>
-      </div>
-      <div className='flex justify-end'>
         <MyButton
           onClick={() => {
             setVisible(!visible)
             setModalType('add')
           }}
-          className='my-4'
+          className='md:ml-auto'
         >
-          Yangi Hodim qo'shish
+          Yangi hodim qo'shish
         </MyButton>
-      </div>
+      </header>
       <Drawer
         open={visible}
         title={

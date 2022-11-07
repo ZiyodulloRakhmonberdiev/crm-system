@@ -5,7 +5,6 @@ import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
 import { useDispatch, useSelector } from 'react-redux'
 import { refreshRoomsData } from '../../redux/roomsSlice'
-import { v4 as uuidv4 } from 'uuid'
 
 export default function AddRoomsForm ({
   modalType,
@@ -127,7 +126,7 @@ export default function AddRoomsForm ({
           }}
           className='mb-4 mt-2'
           name='capacity'
-        /> 
+        />
         {/* <p>Branch ID</p>
         <Input
           type='number'

@@ -1,19 +1,39 @@
-import { Table, Modal, Input, Select, DatePicker, Divider } from 'antd'
 import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+import { v4 as uuidv4 } from 'uuid'
+import AddGroupForm from './AddGroupForm'
+
+import { Table, Modal, Select, DatePicker, Drawer, Pagination } from 'antd'
+import { TeamOutlined } from '@ant-design/icons'
 import { PencilSquare, Trash } from 'react-bootstrap-icons'
 import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
 import axios from '../../axios/axios'
-import { useDispatch, useSelector } from 'react-redux'
 import {
-  fetchGroups,
-  fetchingError,
-  fetchingGroups
+  fetchingGroups,
+  fetchedGroups,
+  fetchedError,
+  refreshGroupsData,
+  setGroupData
 } from '../../redux/groupsSlice'
+import { fetchedTeachers, fetchingTeachers, setTeachersData } from '../../redux/teachersSlice'
 
 export default function Groups () {
+  const [visible, setVisible] = useState(false)
+  const [modalType, setModalType] = useState('add')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [per_page, setPerPage] = useState(30)
+  const [last_page, setLastPage] = useState(1)
   const dispatch = useDispatch()
-  const { groups, loading, error } = useSelector(state => state.groups)
+  const { groups, loading, error, refreshGroups, groupData } = useSelector(
+    state => state.groups
+  )
+  const { teachers, refreshTeachers } = useSelector(
+    state => state.teachers
+  )
+
   // Multi Select input which is on the heading
   const courses = [
     'English',
@@ -24,7 +44,6 @@ export default function Groups () {
     'Python',
     'PHP'
   ]
-  const teachers = ['Amir Kamol', 'Sanjar', 'Yulduz Ahmedova', 'Mirza O`roqov']
   const groupsStatus = [
     'Faol guruhlar',
     'Arxiv guruhlar',
@@ -33,25 +52,139 @@ export default function Groups () {
   const days = ['Toq kunlar', 'Juft kunlar', 'Har kuni', 'Boshqa']
 
   // Search functions which is in the heading on the page
-  const [isEditing, setIsEditing] = useState(false)
-  const [editingStudent, setEditingStudent] = useState(null)
+  const [editingGroup, setEditingGroup] = useState(null)
+
+  // fetching teachers
+  useEffect(() => {
+    dispatch(fetchingTeachers())
+    axios
+      .get(`/api/teachers`)
+      .then(res => {
+        dispatch(fetchedTeachers(res?.data?.data))
+      }) 
+  }, [])
+
+  const shortDays = [
+    {
+      id: 1,
+      day: "По"
+    },
+    {
+      id: 2,
+      day: "Вт"
+    },
+    {
+      id: 3,
+      day: "Ср"
+    },
+    {
+      id: 4,
+      day: "Чт"
+    },
+    {
+      id: 5,
+      day: "Пт"
+    },
+    {
+      id: 6,
+      day: "Сб"
+    },
+    {
+      id: 7,
+      day: "Вс"
+    },
+  ]
+
+  // get days
+  const getDays = (days) => {
+    let returnData = null
+    console.log(days);
+    switch (days) {
+      case ["1","3","5"]:
+        returnData = "Toq kunlar"
+      case ["2","4","6"]:
+        returnData = "Juft kunlar"
+      case ["6","7"] || ["7"]:
+        returnData = "Dam olish kunlari"
+      default:
+        (
+          returnData = <div className='flex flex-wrap gap-1'>
+            {days?.map((item) => {
+            return (
+              <span className='px-1 py-0.5 rounded-md text-white bg-gray-400 font-semibold' style={{ fontSize: "10px" }}>
+              {shortDays.find(x => x.id == item)?.day}
+            </span>
+            )
+          })}
+          </div>
+        )
+    }
+    return returnData 
+  }
 
   // Groups static data
   let dataSource = []
   groups?.map(item => {
     dataSource?.push({
       id: item?.id,
-      name: item?.name,
+      uid: uuidv4(),
+      name: (
+        <Link
+          to={`/groups/${item?.id}`}
+          onClick={() => dispatch(setGroupData(item))}
+          className="text-violet-700"
+        >
+          {item?.name}
+        </Link>
+      ),
       course: item?.course?.name,
       room: item?.room?.name,
-      teachers: item?.tachers?.map(teacher => teacher?.name),
-      days: item?.days?.map(day => day),
+      teachers: item?.tachers?.map(teacher => (
+        <>
+          <Link 
+             onClick={() => {
+              dispatch(setTeachersData(teachers?.find(x => x?.id === teacher?.id)))
+              console.log(teacher);
+             }}
+            to={`/teachers/profile/${teacher?.id}`} className="px-2 py-2 mb-1 mr-2 rounded-md text-violet-700">
+        {teacher?.name}
+        </Link>
+        <br />
+        </>
+      )),
+      days: <>
+        <div className='flex flex-wrap gap-1'>
+        {getDays(item?.days)}
+      </div>
+      <span>{item?.time?.time}</span>
+      </>,
       duration: (
-        <span>
-          {item?.group_start_date} - {item?.group_end_date}
-        </span>
+        <div>
+          <p>{item?.group_start_date} -</p>
+          <p>{item?.group_end_date}</p>
+        </div>
       ),
-      students: item?.student_count
+      student_count: item?.student_count,
+      actions: (
+        <div className='flex gap-2'>
+          <IconButton
+            color='primary'
+            onClick={() => {
+              onEditGroup(item)
+            }}
+          >
+            <PencilSquare />
+          </IconButton>
+          <IconButton
+            color='danger'
+            onClick={() => {
+              onDeleteGroup(item)
+            }}
+          >
+            <Trash />
+          </IconButton>
+        </div>
+      )
     })
   })
 
@@ -61,96 +194,87 @@ export default function Groups () {
       key: '1',
       title: 'ID',
       dataIndex: 'id',
-      width: 80,
+      width: 40,
       render: record => {
-        return <span className='pl-1'>{record}</span>
+        return <span className='pl-1 text-xs'>{record}</span>
       }
     },
     {
       key: '2',
       title: 'Nomi',
       dataIndex: 'name',
-      fixed: 'top'
+      fixed: 'top',
+      render: record => {
+        return <span className='text-xs'>{record}</span>
+      }
     },
     {
       key: '3',
       title: 'Kurs',
       dataIndex: 'course',
-      fixed: 'top'
+      fixed: 'top',
+      render: record => {
+        return <span className='text-xs'>{record}</span>
+      }
     },
     {
       key: '4',
       title: 'Xona',
       dataIndex: 'room',
-      fixed: 'top'
+      fixed: 'top',
+      render: record => {
+        return <span className='text-xs'>{record}</span>
+      }
     },
     {
       key: '5',
       title: `O'qituvchi`,
       dataIndex: 'teachers',
-      fixed: 'top'
+      fixed: 'top',
+      render: record => {
+        return <span className='text-xs'>{record}</span>
+      },
+      width: "250px"
     },
     {
       key: '6',
       title: 'Kunlar',
       dataIndex: 'days',
-      fixed: 'top'
+      fixed: 'top',
+      render: record => {
+        return <span className='text-xs'>{record}</span>
+      }
     },
     {
       key: '7',
       title: 'Davomiyligi',
       dataIndex: 'duration',
-      fixed: 'top'
+      fixed: 'top',
+      render: record => {
+        return <span className='text-xs'>{record}</span>
+      }
     },
     {
       key: '8',
       title: `O'quvchilar`,
-      dataIndex: 'students',
-      fixed: 'top'
+      dataIndex: 'student_count',
+      fixed: 'top',
+      render: record => {
+        return <span className='text-xs'>{record}</span>
+      }
     },
     {
       key: '9',
       title: 'Amallar',
+      dataIndex: 'actions',
+      fixed: 'top',
       render: record => {
-        return (
-          <div className='flex gap-2'>
-            <IconButton
-              color='primary'
-              onClick={() => {
-                onEditStudent(record)
-              }}
-            >
-              <PencilSquare />
-            </IconButton>
-            <IconButton
-              color='danger'
-              onClick={() => {
-                onDeleteStudent(record)
-              }}
-            >
-              <Trash />
-            </IconButton>
-          </div>
-        )
-      },
-      fixed: 'top'
+        return <span className='text-xs'>{record}</span>
+      }
     }
   ]
 
-  // Actions with table
-  const onAddStudent = () => {
-    const randomNumber = parseInt(Math.random() * 1000)
-    const newStudent = {
-      id: randomNumber,
-      name: 'Name ' + randomNumber,
-      email: randomNumber + '@gmail.com',
-      address: 'Address ' + randomNumber
-    }
-    // setDataSource(pre => {
-    //   return [...pre, newStudent]
-    // })
-  }
-  const onDeleteStudent = record => {
+  const onDeleteGroup = record => {
     Modal.confirm({
       title: "O'chirilsinmi?",
       okText: 'Ha',
@@ -158,45 +282,49 @@ export default function Groups () {
       cancelText: "Yo'q"
     })
   }
-  const onEditStudent = record => {
-    setIsEditing(true)
-    setEditingStudent({ ...record })
-  }
-  const resetEditing = () => {
-    setIsEditing(false)
-    setEditingStudent(null)
-  }
-
-  // Add a new group
-  const [openModal, setOpenModal] = useState(false)
-  const handleModal = () => {
-    setOpenModal(!openModal)
+  const onEditGroup = Group => {
+    setModalType('update')
+    setVisible(true)
+    setEditingGroup({ ...Group })
   }
 
   // fetching groups
   useEffect(() => {
     dispatch(fetchingGroups())
     axios
-      .get('/api/groups')
+      .get(`/api/groups?page=${currentPage}`)
       .then(res => {
-        dispatch(fetchGroups(res?.data?.data?.data))
+        dispatch(fetchedGroups(res?.data?.data?.data))
       })
       .catch(err => {
-        dispatch(fetchingError())
+        dispatch(fetchedError())
       })
-  }, [])
-
+  }, [refreshGroups, currentPage])
   return (
     <div>
-      <Divider orientation='center'>
-        <span className='text-2xl'>Guruhlar</span>
-      </Divider>
-      <header className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2'>
+      <header className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start mb-8 gap-4'>
+        <div className='text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md'>
+          <TeamOutlined />
+        </div>
+        <p className='text-cyan-400 text-2xl'>Guruhlar</p>
+        <p className='text-cyan-400'>Jami: {groups.length} ta</p>
+        <MyButton
+          onClick={() => {
+            setVisible(!visible)
+            setModalType('add')
+          }}
+          className='md:ml-auto'
+        >
+          Yangi guruh qo'shish
+        </MyButton>
+      </header>
+      <div className='flex gap-4 mb-8'>
         <Select
           mode='multiple'
           maxTagCount={1}
           placeholder='Guruhlar holati'
           allowClear
+          className='min-w-[200px]'
         >
           {groupsStatus.map((course, index) => {
             return (
@@ -211,6 +339,7 @@ export default function Groups () {
           maxTagCount={2}
           placeholder="Kurslar bo'yicha"
           allowClear
+          className='min-w-[200px]'
         >
           {courses.map((course, index) => {
             return (
@@ -224,7 +353,7 @@ export default function Groups () {
           mode='multiple'
           placeholder="O'qituvchi"
           maxTagCount={2}
-          allowClear
+          className='min-w-[200px]'
         >
           {teachers.map((item, index) => {
             return (
@@ -239,6 +368,7 @@ export default function Groups () {
           placeholder="Kunlar bo'yicha"
           maxTagCount={2}
           allowClear
+          className='min-w-[200px]'
         >
           {days.map((item, index) => {
             return (
@@ -250,207 +380,54 @@ export default function Groups () {
         </Select>
         <DatePicker.RangePicker
           size={12}
-          className='w-full'
+          className='min-w-[200px]'
           block
           format='YYYY-MM-DD'
         />
-      </header>
-      <MyButton onClick={handleModal} className='my-4'>
-        Guruh qo'shish
-      </MyButton>
-      <Modal
-        title="Yangi guruh qo'shish"
-        visible={openModal}
-        okText='Saqlash'
-        onCancel={() => {
-          resetEditing()
-          handleModal()
+      </div>
+      <Drawer
+        open={visible}
+        title={
+          modalType === 'add'
+            ? "Yangi o'quvchi qo'shish"
+            : "O'quvchini yangilash"
+        }
+        onClose={() => {
+          setVisible(!visible)
         }}
-        cancelText='Yopish'
+        maskClosable={true}
       >
-        <label>Nomi:</label>
-        <Input
-          value={editingStudent?.name}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, name: e.target.value }
-            })
-          }}
-          className='mb-2'
+        <AddGroupForm
+          modalType={modalType}
+          editingGroup={editingGroup}
+          visible={visible}
+          setVisible={() => setVisible(false)}
         />
-        <label>Kurs:</label>
-        <Input
-          value={editingStudent?.course}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, course: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <label>Xona:</label>
-        <Input
-          value={editingStudent?.room}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, room: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <label>O'qituvchi:</label>
-        <Input
-          value={editingStudent?.teacher}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, teacher: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <label>Dars kunlari:</label>
-        <br />
-        <Select
-          block
-          mode='tabs'
-          value={editingStudent?.day}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, day: e.value }
-            })
-          }}
-          className='mb-2 min-w-[150px]'
-        >
-          {days.map((day, index) => {
-            return (
-              <Select.Option key={index} value={day}>
-                {day}
-              </Select.Option>
-            )
-          })}
-        </Select>
-        <br />
-        <label>Davomiyligi:</label>
-        <Input
-          value={editingStudent?.duration}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, duration: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-      </Modal>
+      </Drawer>
       <Table
+        loading={loading}
         columns={columns}
         dataSource={dataSource}
         scroll={{
           x: 1000,
           y: 400
         }}
+        className='overflow-auto'
+        pagination={false}
+        size='small'
       ></Table>
-      <Modal
-        title='Tahrirlash'
-        visible={isEditing}
-        okText='Saqlash'
-        onCancel={() => {
-          resetEditing()
-        }}
-        // onOk={() => {
-        //   setDataSource(pre => {
-        //     return pre.map(student => {
-        //       if (student.id === editingStudent.id) {
-        //         return editingStudent
-        //       } else {
-        //         return student
-        //       }
-        //     })
-        //   })
-        //   resetEditing()
-        // }}
-      >
-        <label>Nomi:</label>
-        <Input
-          value={editingStudent?.name}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, name: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <label>Kurs:</label>
-        <Input
-          value={editingStudent?.course}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, course: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <label>Xona:</label>
-        <Input
-          value={editingStudent?.room}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, room: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <label>O'qituvchi:</label>
-        <Input
-          value={editingStudent?.teacher}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, teacher: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <label>Dars kunlari:</label>
-        <br />
-        <Select
-          block
-          mode='tabs'
-          value={editingStudent?.day}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, day: e.value }
-            })
-          }}
-          className='mb-2 min-w-[150px]'
-        >
-          {days.map((day, index) => {
-            return (
-              <Select.Option key={index} value={day}>
-                {day}
-              </Select.Option>
-            )
-          })}
-        </Select>
-        <br />
-        <label>Davomiyligi:</label>
-        <Input
-          value={editingStudent?.duration}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, duration: e.target.value }
-            })
-          }}
-          className='mb-2'
-        />
-        <label>O'quvchilar:</label>
-        <Input
-          value={editingStudent?.students}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, students: e.target.value }
-            })
+      <br />
+      <center>
+        <Pagination
+          pageSize={per_page ? per_page : 30}
+          total={last_page * per_page}
+          current={currentPage}
+          onChange={(page, x) => {
+            setCurrentPage(page)
+            setPerPage(x)
           }}
         />
-      </Modal>
+      </center>
     </div>
   )
 }

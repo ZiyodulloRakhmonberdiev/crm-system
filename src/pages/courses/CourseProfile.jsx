@@ -1,11 +1,11 @@
-import { useState } from "react"
-
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
+import { PencilSquare, Trash } from 'react-bootstrap-icons'
 import { Drawer, Tabs } from 'antd'
 import { IconButton } from '../../UI/IconButton.style'
-import { PencilSquare, Trash } from 'react-bootstrap-icons'
-import AddCourseForm from "./AddCourseForm"
-import { changeUpdateCourseData } from "../../redux/coursesSlice"
+import { changeUpdateCourseData } from '../../redux/coursesSlice'
+import AddCourseForm from './AddCourseForm'
 
 export default function CourseProfile () {
   const { coursesData } = useSelector(state => state.courses)
@@ -19,9 +19,9 @@ export default function CourseProfile () {
     setEditingCourse({ ...course })
   }
 
-  const changeUpdateCourseDataFunc = (data) => {
+  const changeUpdateCourseDataFunc = data => {
     dispatch(changeUpdateCourseData(data))
-  } 
+  }
 
   return (
     <>
@@ -41,11 +41,13 @@ export default function CourseProfile () {
           setVisible={() => setVisible(false)}
         />
       </Drawer>
-      <div className='text-xl mb-8'>{coursesData?.name}</div>
+      <div className='text-xl mb-8 bg-white p-4 rounded-lg'>
+        {coursesData?.name} kursi
+      </div>
       <div className='grid gap-8 sm:grid-cols-2 lg:grid-cols-3'>
         <div className='flex flex-col drop-shadow-md hover:drop-shadow-2xl transition col-span-1'>
           <div className='bg-pink-500 text-center text-xl text-white px-4 py-20 flex items-center justify-center hover:text-white'>
-          <div className='absolute top-4 right-4'>
+            <div className='absolute top-4 right-4'>
               <div className='flex gap-2'>
                 <IconButton
                   color='primaryOutlined'
@@ -55,13 +57,11 @@ export default function CourseProfile () {
                 >
                   <PencilSquare />
                 </IconButton>
-                <IconButton
-                  color='dangerOutlined' 
-                >
+                <IconButton color='dangerOutlined'>
                   <Trash />
                 </IconButton>
-        </div>
               </div>
+            </div>
             {coursesData?.name}
           </div>
           <div className='bg-white p-8'>

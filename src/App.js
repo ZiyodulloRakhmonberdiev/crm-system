@@ -14,6 +14,7 @@ import Teachers from './pages/teacher/Teachers'
 import TeacherProfile from './pages/teacher/TeacherProfile'
 
 import Groups from './pages/group/Groups'
+import GroupProfile from './pages/group/GroupProfile'
 
 import Finance from './pages/finance/Finance'
 import Payment from './pages/finance/Payment'
@@ -43,6 +44,7 @@ export default function App () {
           <Route path='/' element={<Dashboard />} />
           <Route path='/leads' element={<Leads />} />
           <Route path='/groups' element={<Groups />} />
+          <Route path='/groups/:id' element={<GroupProfile />} />
 
           <Route path='/students' element={<Students />} />
           <Route path='/students/profile/:id' element={<StudentProfile />} />

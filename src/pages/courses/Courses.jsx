@@ -101,7 +101,7 @@ export default function Courses () {
   }, [refreshCourses])
   return (
     <div>
-      <div className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4'>
+      <header className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4 mb-8'>
         <div className='text-2xl text-pink-400 bg-pink-50 p-2 rounded-md'>
           <Palette2 />
         </div>
@@ -116,7 +116,7 @@ export default function Courses () {
         >
           Yangi kurs qo'shish
         </MyButton>
-      </div>
+      </header>
       <Drawer
         open={visible}
         title={modalType === 'add' ? "Yangi kurs qo'shish" : 'Kursni yangilash'}
@@ -133,7 +133,7 @@ export default function Courses () {
         />
       </Drawer>
       <Spin spinning={fetchLoading}>
-        <div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 py-6'>
+        <div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
           {courses?.map(course => (
             <div
               key={course?.id}
@@ -147,24 +147,24 @@ export default function Courses () {
                 {course?.name}
               </Link>
               <div className='absolute top-4 right-4'>
-              <div className='flex gap-2'>
-                <IconButton
-                  color='primaryOutlined'
-                  onClick={() => {
-                    onEditCourse(course)
-                  }}
-                >
-                  <PencilSquare />
-                </IconButton>
-                <IconButton
-                  color='dangerOutlined'
-                  onClick={() => {
-                    onDeleteCourse(course)
-                  }}
-                >
-                  <Trash />
-                </IconButton>
-        </div>
+                <div className='flex gap-2'>
+                  <IconButton
+                    color='primaryOutlined'
+                    onClick={() => {
+                      onEditCourse(course)
+                    }}
+                  >
+                    <PencilSquare />
+                  </IconButton>
+                  <IconButton
+                    color='dangerOutlined'
+                    onClick={() => {
+                      onDeleteCourse(course)
+                    }}
+                  >
+                    <Trash />
+                  </IconButton>
+                </div>
               </div>
               <div className='flex flex-col gap-8 items-start justify-start px-6 py-8 bg-white'>
                 <p className='text-xl text-pink-500'>{course.name}</p>

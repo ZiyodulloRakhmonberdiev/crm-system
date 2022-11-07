@@ -9,7 +9,7 @@ import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
 import axios from '../../axios/axios'
 import AddTeacherForm from './AddTeacherForm'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 import {
   fetchingTeachers,
   fetchedTeachers,
@@ -37,7 +37,6 @@ export default function Teachers () {
     dataSource?.push({
       id: item?.id,
       uid: uuidv4(),
-      name: item?.name,
       name: (
         <Link
           to={`/teachers/profile/${item?.id}`}
@@ -140,24 +139,22 @@ export default function Teachers () {
   }, [refreshTeachers, currentPage])
   return (
     <div>
-      <div className='bg-white flex flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4'>
+      <header className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4 mb-8'>
         <div className='text-2xl text-violet-400 bg-violet-50 p-2 rounded-md'>
           <MicrosoftTeams />
         </div>
         <p className='text-violet-400 text-2xl'>O'qituvchilar</p>
         <p className='text-violet-400'>Jami: {teachers.length} ta</p>
-      </div>
-      <div className='flex justify-end'>
         <MyButton
           onClick={() => {
             setVisible(!visible)
             setModalType('add')
           }}
-          className='my-4'
+          className='md:ml-auto'
         >
           Yangi o'qituvchi qo'shish
         </MyButton>
-      </div>
+      </header>
       <Drawer
         open={visible}
         title={
@@ -198,7 +195,6 @@ export default function Teachers () {
             setCurrentPage(page)
             setPerPage(x)
           }}
-          
         />
       </center>
     </div>

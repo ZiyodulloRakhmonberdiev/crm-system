@@ -74,6 +74,8 @@ a {
 .ant-select-single,
 .ant-picker,
 .ant-picker-range {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
   border-radius: 5px !important;
 }
 

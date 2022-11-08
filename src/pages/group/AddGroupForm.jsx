@@ -5,7 +5,11 @@ import { Input, message, Spin, Select, DatePicker } from 'antd'
 import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
 import { refreshGroupsData } from '../../redux/groupsSlice'
-import { fetchedCourses, fetchedError, fetchingCourses } from '../../redux/coursesSlice'
+import {
+  fetchedCourses,
+  fetchedError,
+  fetchingCourses
+} from '../../redux/coursesSlice'
 import { fetchedTeachers, fetchingTeachers } from '../../redux/teachersSlice'
 import { fetchedRooms, fetchingRooms } from '../../redux/roomsSlice'
 
@@ -50,21 +54,17 @@ export default function AddGroupForm ({
   // fetching teachers
   useEffect(() => {
     dispatch(fetchingTeachers())
-    axios
-      .get(`/api/teachers`)
-      .then(res => {
-        dispatch(fetchedTeachers(res?.data?.data))
-      }) 
+    axios.get(`/api/teachers`).then(res => {
+      dispatch(fetchedTeachers(res?.data?.data))
+    })
   }, [])
 
   // fetching rooms
   useEffect(() => {
     dispatch(fetchingRooms())
-    axios
-      .get(`/api/rooms`)
-      .then(res => {
-        dispatch(fetchedRooms(res?.data?.data?.data))
-      }) 
+    axios.get(`/api/rooms`).then(res => {
+      dispatch(fetchedRooms(res?.data?.data?.data))
+    })
   }, [])
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function AddGroupForm ({
         course
       } = editingGroup
       const teachers_ids = []
-      editingGroup?.tachers?.map((item) => {
+      editingGroup?.tachers?.map(item => {
         teachers_ids.push(item.id)
       })
       setGroup({
@@ -100,13 +100,11 @@ export default function AddGroupForm ({
         group_end_date: group_end_date,
         teacher_ids: teachers_ids,
         room_id: room?.id,
-        days: days?.join(","),
+        days: days?.join(','),
         course_id: course?.id
       })
     }
   }, [modalType, visible])
-
-  console.log(editingGroup);
 
   function handle (e) {
     const newGroup = { ...group }
@@ -143,7 +141,7 @@ export default function AddGroupForm ({
             group_end_date: group.group_end_date,
             teacher_ids: group.teacher_ids,
             room_id: group.room_id,
-            days: group.days?.split(","),
+            days: group.days?.split(','),
             course_id: group.course_id
           })
           .then(res => {
@@ -152,7 +150,7 @@ export default function AddGroupForm ({
               time_id: '',
               group_start_date: '',
               group_end_date: '',
-              teacher_ids:[],
+              teacher_ids: [],
               room_id: '',
               days: '',
               course_id: ''
@@ -181,7 +179,7 @@ export default function AddGroupForm ({
             group_end_date: group.group_end_date,
             teacher_ids: group.teacher_ids,
             room_id: group.room_id,
-            days: group.days?.split(","),
+            days: group.days?.split(','),
             course_id: group.course_id
           })
           .then(res => {
@@ -246,7 +244,7 @@ export default function AddGroupForm ({
             )
           })}
         </Select>
-         <p>O'qituvchini tanlang</p>
+        <p>O'qituvchini tanlang</p>
         <Select
           value={group?.teacher_ids}
           onChange={e => {
@@ -255,7 +253,7 @@ export default function AddGroupForm ({
           placeholder="O'qituvchini tanlang"
           className='w-full mb-4 mt-2'
           showSearch={true}
-          mode="multiple"
+          mode='multiple'
         >
           {teachers.map((teacher, index) => {
             return (
@@ -268,16 +266,22 @@ export default function AddGroupForm ({
 
         <p>Boshlanish va tugash vaqtlari</p>
         <div className='flex gap-x-2 mb-4'>
-          <input 
+          <input
             value={group?.group_start_date}
-            id="group_start_date"
+            id='group_start_date'
             onChange={e => handle(e)}
-            type="date" placeholder='Boshlash sanasi' className='rounded-md px-2 py-1 border-2 border-gray-200 mt-2 w-full' />
-          <input 
+            type='date'
+            placeholder='Boshlash sanasi'
+            className='rounded-md px-2 py-1 border-2 border-gray-200 mt-2 w-full'
+          />
+          <input
             onChange={e => handle(e)}
-            id="group_end_date"
+            id='group_end_date'
             value={group?.group_end_date}
-            type="date" placeholder='Tugash sanasi' className='rounded-md px-2 py-1  border-2 border-gray-200 mt-2 w-full' />
+            type='date'
+            placeholder='Tugash sanasi'
+            className='rounded-md px-2 py-1  border-2 border-gray-200 mt-2 w-full'
+          />
         </div>
         <p>Kunlar</p>
         <Select
@@ -289,10 +293,10 @@ export default function AddGroupForm ({
           className='w-full mb-4 mt-2'
           showSearch={true}
         >
-          <Select.Option value={"1,3,5"}>Toq kunlar</Select.Option>
-          <Select.Option value={"2,4,6"}>Juft kunlar</Select.Option>
-          <Select.Option value={"1,2,3,4,5,6"}>Har kuni</Select.Option>
-          <Select.Option value={"6,7"}>Dam olish kunlari</Select.Option>
+          <Select.Option value={'1,3,5'}>Toq kunlar</Select.Option>
+          <Select.Option value={'2,4,6'}>Juft kunlar</Select.Option>
+          <Select.Option value={'1,2,3,4,5,6'}>Har kuni</Select.Option>
+          <Select.Option value={'6,7'}>Dam olish kunlari</Select.Option>
         </Select>
         <p>Xonani tanlang</p>
         <Select
@@ -314,7 +318,6 @@ export default function AddGroupForm ({
         </Select>
         <p>Dars boshlanish vaqti</p>
         <Select
-
           value={group?.time_id}
           onChange={e => {
             setGroup({ ...group, time_id: e })

@@ -1,5 +1,7 @@
-import { useSelector } from 'react-redux'
-import { Tabs, Table } from 'antd'
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { Tabs, Table, Modal, Select, DatePicker, message, Spin } from 'antd'
 import {
   CashStack,
   Envelope,
@@ -7,11 +9,29 @@ import {
   TelephoneFill,
   Trash
 } from 'react-bootstrap-icons'
+
 import { EditOutlined, TeamOutlined } from '@ant-design/icons'
 import { IconButton } from '../../UI/IconButton.style'
+import { fetchedGroups, fetchingGroups } from '../../redux/groupsSlice'
+import axios from '../../axios/axios'
+import { MyButton } from '../../UI/Button.style'
+import { setUserGroupData } from '../../redux/studentsSlice'
 
 export default function StudentProfile () {
-  const { userData } = useSelector(state => state.students)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const { userData, userGroupData, refreshStudentsData } = useSelector(
+    state => state.students
+  )
+  const { groups } = useSelector(state => state.groups)
+  const dispatch = useDispatch()
+  const url = '/api/groups/add-student'
+
+  const [group, setGroup] = useState({
+    group_id: null,
+    start_date: '',
+    student_id: userData.id
+  })
   const columns = [
     {
       key: '1',
@@ -38,6 +58,53 @@ export default function StudentProfile () {
       fixed: 'top'
     }
   ]
+  // fetching groups
+  useEffect(() => {
+    dispatch(fetchingGroups())
+    axios.get(`/api/groups`).then(res => {
+      dispatch(fetchedGroups(res?.data?.data?.data))
+    })
+  }, [])
+
+  function submit (e) {
+    e.preventDefault()
+    const { group_id, start_date } = group
+    if (group_id && start_date) {
+      setUploading(true)
+      axios
+        .post(url, {
+          group_id: group.group_id,
+          student_id: group.student_id,
+          start_date: group.start_date
+        })
+        .then(() => {
+          setGroup({
+            group_id: '',
+            start_date: ''
+          })
+          message.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
+          dispatch(refreshStudentsData())
+        })
+        .catch(err => {
+          console.log(err)
+          if (err.response.data.data.student_id) {
+            message.error('Этот студент уже есть в этой группе!')
+          } else {
+            message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+          }
+        })
+        .finally(() => setUploading(false))
+    } else {
+      message.error("Barcha maydonni to'ldiring!")
+    }
+  }
+  const showModal = () => {
+    setIsModalOpen(true)
+  }
+  const handleCancel = () => {
+    setIsModalOpen(false)
+  }
+
   return (
     <div className='grid grid-cols-6 gap-12'>
       <div className='col-span-6 md:col-span-2'>
@@ -53,7 +120,9 @@ export default function StudentProfile () {
           </div>
           <div className='grid mb-2 md:mb-4'>
             <label className='mb-2'>Balans</label>
-            <p className='text-red-400'>120 000 so'm</p>
+            <p className='text-red-400'>
+              {userData?.balance ? userData?.balance : 'Информация не введена'}
+            </p>
           </div>
           <div className='grid mb-2 md:mb-4'>
             <label className='mb-2'>Aloqa vositalari</label>
@@ -75,7 +144,7 @@ export default function StudentProfile () {
             <IconButton color='success'>
               <CashStack />
             </IconButton>
-            <IconButton color='primary'>
+            <IconButton color='primary' onClick={showModal}>
               <TeamOutlined />
             </IconButton>
             <IconButton color='success'>
@@ -87,13 +156,83 @@ export default function StudentProfile () {
           </div>
         </div>
       </div>
+      <Modal
+        title='Добавить студента в группу'
+        open={isModalOpen}
+        footer={null}
+        onCancel={handleCancel}
+      >
+        <Select
+          value={group?.group_id}
+          onChange={e => {
+            setGroup({ ...group, group_id: e })
+          }}
+          placeholder='Выберите группу'
+          className='w-full mb-1'
+          showSearch={true}
+        >
+          {groups.map((item, index) => {
+            return (
+              <Select.Option value={item?.id} key={index}>
+                <button
+                  onClick={() => {
+                    dispatch(setUserGroupData(item))
+                  }}
+                >
+                  {item.name}
+                </button>
+              </Select.Option>
+            )
+          })}
+        </Select>
+        <div>
+          {group.group_id && (
+            <p className='mb-4 text-xs'>
+              Дата начала группы {userGroupData?.group_start_date}
+            </p>
+          )}
+        </div>
+        <div className='w-full mb-4'>
+          {group.group_id && (
+            <DatePicker
+              onChange={(date, dateString) => {
+                setGroup({ ...group, start_date: dateString })
+              }}
+            />
+          )}
+        </div>
+        <Spin spinning={uploading}>
+          <MyButton htmlType='submit' color='primary' onClick={submit}>
+            Добавить
+          </MyButton>
+        </Spin>
+      </Modal>
       <Tabs className='col-span-6 md:col-span-4'>
         <Tabs.TabPane tab='Profil' key='item-1'>
-          <label className='text-lg'>Guruhlar</label>
-          <div className='bg-orange-50 mt-2 p-3 lg:p-8 text-slate-500 mb-8'>
-            Pre-Intermediate
+          <label className='text-lg block w-full mb-2'>Группы</label>
+          <div className='grid gap-2 mb-4'>
+            <div className='rounded-sm flex flex-wrap gap-4 bg-orange-50 p-4 justify-between items-center'>
+              <div className='grid gap-0.5'>
+                <div>
+                  <span className='py-0.5 px-2 bg-orange-200 rounded-sm text-xs text-center'>
+                    tesla
+                  </span>
+                </div>
+                <span className='font-bold text-md'>Android 12-guruh</span>
+              </div>
+              <div className='grid gap-0.5 text-xs'>
+                <span>Toq kunlar</span>
+                <span>02.11.2022 - 12.12.2022</span>
+                <span>14:00</span>
+              </div>
+              <div>
+                <span className='bg-orange-500 rounded-sm text-white px-1 py-0.5'>
+                  12
+                </span>
+              </div>
+            </div>
           </div>
-          <label className='text-lg'>To'lovlar</label>
+          <label className='text-lg block w-full'>Платежи</label>
           <Table columns={columns} className='overflow-auto mt-2'></Table>
         </Tabs.TabPane>
         <Tabs.TabPane tab='Tarix' key='item-2'>

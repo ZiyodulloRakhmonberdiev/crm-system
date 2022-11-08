@@ -1,7 +1,7 @@
 import { Dropdown, Menu, Space, Input, Spin } from 'antd'
 import { BookmarkPlus, CashStack, Person } from 'react-bootstrap-icons'
 import { Select } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import logo from '../assets/img/logo.png'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
@@ -11,14 +11,14 @@ import {
   fetchingBranches,
   setSelectedBranch
 } from '../redux/branchesSlice'
-
+import { logout } from '../redux/loginSlice'
 export default function Header () {
   const { branches, loading, selected_branch } = useSelector(
     state => state.branches
   )
   const dispatch = useDispatch()
   const { Option } = Select
-
+  const navigate = useNavigate()
   const menu = (
     <Menu
       items={[
@@ -37,7 +37,11 @@ export default function Header () {
           key: '0'
         },
         {
-          label: <a href=''>Chiqish</a>,
+          label: <a onClick={() => {
+            dispatch(logout())
+            localStorage.removeItem("crm_token")
+            navigate("/login", { replace: true })
+          }} >Chiqish</a>,
           key: '1'
         }
       ]}

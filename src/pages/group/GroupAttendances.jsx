@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 
 import axios from '../../axios/axios'
 import { fetchedAtt, fetchingAtt, fetchingErrorAtt } from '../../redux/attendancesSlice'
-import { IconButton } from '../../UI/IconButton.style'
+moment.locale("ru")
 
 const GroupAttendance = () => {
   const params = useParams()
@@ -15,7 +15,6 @@ const GroupAttendance = () => {
   const [refreshing, setRefreshing] = useState(false)
   const [uploading, setUploading] = useState(false)
   const dispatch = useDispatch()
-  moment.locale("ru")
   useEffect(() => {
     dispatch(fetchingAtt())
     axios.get(`/api/groups/${params?.id}/attendance?from=${groupData?.group_start_date}&to=${groupData?.group_end_date}`)

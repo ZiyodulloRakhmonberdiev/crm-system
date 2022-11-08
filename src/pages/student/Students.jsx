@@ -276,8 +276,7 @@ export default function Students () {
         columns={columns}
         dataSource={dataSource}
         scroll={{
-          x: 1000,
-          y: 400
+          x: 1000
         }}
         rowSelection={rowSelection}
         className='overflow-auto'

@@ -414,8 +414,7 @@ export default function Groups () {
         columns={columns}
         dataSource={dataSource}
         scroll={{
-          x: 1000,
-          y: 400
+          x: 1000
         }}
         className='overflow-auto'
         pagination={false}

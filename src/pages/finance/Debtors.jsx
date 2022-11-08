@@ -187,8 +187,7 @@ export default function Debtors () {
         dataSource={dataSource}
         size='small'
         scroll={{
-          x: 850,
-          y: 400
+          x: 850
         }}
       ></Table>
       <Modal

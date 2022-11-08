@@ -6,6 +6,7 @@ import { Drawer, Tabs } from 'antd'
 import { IconButton } from '../../UI/IconButton.style'
 import { changeUpdateGroupData } from '../../redux/groupsSlice'
 import AddGroupForm from './AddGroupForm'
+import GroupAttendance from './GroupAttendances'
 
 export default function GroupProfile () {
   const { groupData } = useSelector(state => state.groups)
@@ -129,6 +130,9 @@ export default function GroupProfile () {
                     12
                   </span>
                 </div>
+              </div>
+              <div className='bg-white rounded-md px-6 py-4 overflow-x-auto '>
+                <GroupAttendance />
               </div>
             </div>
           </Tabs.TabPane>

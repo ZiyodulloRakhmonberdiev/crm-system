@@ -47,7 +47,7 @@ export default function Teachers () {
       ),
       phone: item?.phone?.toLocaleString(),
       gender: item?.gender,
-      salary_percentage: item?.salary_percentage + '%',
+      salary_percentage: item?.salary_percentage ,
       actions: (
         <div className='flex gap-2'>
           <IconButton

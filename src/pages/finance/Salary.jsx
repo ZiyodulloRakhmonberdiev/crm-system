@@ -211,8 +211,7 @@ export default function Payment () {
         columns={columns}
         dataSource={dataSource}
         scroll={{
-          x: 850,
-          y: 400
+          x: 850
         }}
       ></Table>
     </div>

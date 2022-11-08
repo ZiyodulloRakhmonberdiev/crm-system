@@ -194,8 +194,7 @@ export default function Employees () {
         columns={columns}
         dataSource={dataSource}
         scroll={{
-          x: 1000,
-          y: 400
+          x: 1000
         }}
         pagination={false}
         rowKey={record => record.uid}

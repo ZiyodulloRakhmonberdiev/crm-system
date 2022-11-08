@@ -16,6 +16,7 @@ import { fetchedGroups, fetchingGroups } from '../../redux/groupsSlice'
 import axios from '../../axios/axios'
 import { MyButton } from '../../UI/Button.style'
 import { setUserGroupData } from '../../redux/studentsSlice'
+import { useParams } from 'react-router-dom'
 
 export default function StudentProfile () {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -23,6 +24,7 @@ export default function StudentProfile () {
   const { userData, userGroupData, refreshStudentsData } = useSelector(
     state => state.students
   )
+  const params = useParams()
   const { groups } = useSelector(state => state.groups)
   const dispatch = useDispatch()
   const url = '/api/groups/add-student'
@@ -74,7 +76,7 @@ export default function StudentProfile () {
       axios
         .post(url, {
           group_id: group.group_id,
-          student_id: group.student_id,
+          student_id: params.id,
           start_date: group.start_date
         })
         .then(() => {
@@ -103,6 +105,23 @@ export default function StudentProfile () {
   }
   const handleCancel = () => {
     setIsModalOpen(false)
+  }
+
+  const compareDate = (d1, d2) => {
+    let now = new Date();
+    let month = (now.getMonth() + 1);               
+    let day = now.getDate();
+    if (month < 10) 
+    month = "0" + month;
+    if (day < 10) 
+    day = "0" + day;
+    let today = now.getFullYear() + '-' + month + '-' + day;
+    
+    let date1 = new Date(d1).getTime()
+    let date2 = new Date(today).getTime()
+    let date3 = new Date(d2).getTime()
+
+    if (date1 >= (date2 + 100000000) || date1 < date3) return true 
   }
 
   return (
@@ -195,9 +214,11 @@ export default function StudentProfile () {
         <div className='w-full mb-4'>
           {group.group_id && (
             <DatePicker
+              className='w-full'
               onChange={(date, dateString) => {
                 setGroup({ ...group, start_date: dateString })
               }}
+              disabledDate={(currentDate) => compareDate(currentDate.toDate(), userGroupData?.group_start_date)}
             />
           )}
         </div>

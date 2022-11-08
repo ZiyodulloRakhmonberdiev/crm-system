@@ -18,7 +18,11 @@ import {
   refreshGroupsData,
   setGroupData
 } from '../../redux/groupsSlice'
-import { fetchedTeachers, fetchingTeachers, setTeachersData } from '../../redux/teachersSlice'
+import {
+  fetchedTeachers,
+  fetchingTeachers,
+  setTeachersData
+} from '../../redux/teachersSlice'
 
 export default function Groups () {
   const [visible, setVisible] = useState(false)
@@ -30,9 +34,7 @@ export default function Groups () {
   const { groups, loading, error, refreshGroups, groupData } = useSelector(
     state => state.groups
   )
-  const { teachers, refreshTeachers } = useSelector(
-    state => state.teachers
-  )
+  const { teachers, refreshTeachers } = useSelector(state => state.teachers)
 
   // Multi Select input which is on the heading
   const courses = [
@@ -57,69 +59,69 @@ export default function Groups () {
   // fetching teachers
   useEffect(() => {
     dispatch(fetchingTeachers())
-    axios
-      .get(`/api/teachers`)
-      .then(res => {
-        dispatch(fetchedTeachers(res?.data?.data))
-      }) 
+    axios.get(`/api/teachers`).then(res => {
+      dispatch(fetchedTeachers(res?.data?.data))
+    })
   }, [])
 
   const shortDays = [
     {
       id: 1,
-      day: "По"
+      day: 'По'
     },
     {
       id: 2,
-      day: "Вт"
+      day: 'Вт'
     },
     {
       id: 3,
-      day: "Ср"
+      day: 'Ср'
     },
     {
       id: 4,
-      day: "Чт"
+      day: 'Чт'
     },
     {
       id: 5,
-      day: "Пт"
+      day: 'Пт'
     },
     {
       id: 6,
-      day: "Сб"
+      day: 'Сб'
     },
     {
       id: 7,
-      day: "Вс"
-    },
+      day: 'Вс'
+    }
   ]
 
   // get days
-  const getDays = (days) => {
+  const getDays = days => {
     let returnData = null
-    console.log(days);
     switch (days) {
-      case ["1","3","5"]:
-        returnData = "Toq kunlar"
-      case ["2","4","6"]:
-        returnData = "Juft kunlar"
-      case ["6","7"] || ["7"]:
-        returnData = "Dam olish kunlari"
+      case ['1', '3', '5']:
+        returnData = 'Toq kunlar'
+      case ['2', '4', '6']:
+        returnData = 'Juft kunlar'
+      case ['6', '7'] || ['7']:
+        returnData = 'Dam olish kunlari'
       default:
-        (
-          returnData = <div className='flex flex-wrap gap-1'>
-            {days?.map((item) => {
-            return (
-              <span className='px-1 py-0.5 rounded-md text-white bg-gray-400 font-semibold' style={{ fontSize: "10px" }}>
-              {shortDays.find(x => x.id == item)?.day}
-            </span>
-            )
-          })}
+        returnData = (
+          <div className='flex flex-wrap gap-1'>
+            {days?.map(item => {
+              return (
+                <span
+                  className='px-1 py-0.5 rounded-md text-white bg-gray-400 font-semibold'
+                  style={{ fontSize: '10px' }}
+                >
+                  {shortDays.find(x => x.id == item)?.day}
+                </span>
+              )
+            })}
           </div>
         )
     }
-    return returnData 
+    return returnData
   }
 
   // Groups static data
@@ -132,7 +134,7 @@ export default function Groups () {
         <Link
           to={`/groups/${item?.id}`}
           onClick={() => dispatch(setGroupData(item))}
-          className="text-violet-700"
+          className='text-violet-700'
         >
           {item?.name}
         </Link>
@@ -141,23 +143,26 @@ export default function Groups () {
       room: item?.room?.name,
       teachers: item?.tachers?.map(teacher => (
         <>
-          <Link 
-             onClick={() => {
-              dispatch(setTeachersData(teachers?.find(x => x?.id === teacher?.id)))
-              console.log(teacher);
-             }}
-            to={`/teachers/profile/${teacher?.id}`} className="px-2 py-2 mb-1 mr-2 rounded-md text-violet-700">
-        {teacher?.name}
-        </Link>
-        <br />
+          <Link
+            onClick={() => {
+              dispatch(
+                setTeachersData(teachers?.find(x => x?.id === teacher?.id))
+              )
+            }}
+            to={`/teachers/profile/${teacher?.id}`}
+            className='px-2 py-2 mb-1 mr-2 rounded-md text-violet-700'
+          >
+            {teacher?.name}
+          </Link>
+          <br />
         </>
       )),
-      days: <>
-        <div className='flex flex-wrap gap-1'>
-        {getDays(item?.days)}
-      </div>
-      <span>{item?.time?.time}</span>
-      </>,
+      days: (
+        <>
+          <div className='flex flex-wrap gap-1'>{getDays(item?.days)}</div>
+          <span>{item?.time?.time}</span>
+        </>
+      ),
       duration: (
         <div>
           <p>{item?.group_start_date} -</p>
@@ -234,7 +239,7 @@ export default function Groups () {
       render: record => {
         return <span className='text-xs'>{record}</span>
       },
-      width: "250px"
+      width: '250px'
     },
     {
       key: '6',

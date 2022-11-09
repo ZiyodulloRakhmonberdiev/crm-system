@@ -37,26 +37,26 @@ export default function StudentProfile () {
   const columns = [
     {
       key: '1',
-      title: 'Sana',
+      title: 'Дата',
       dataIndex: 'id',
       fixed: 'top'
     },
     {
       key: '2',
-      title: 'Miqdor',
+      title: 'Сумма',
       dataIndex: 'name',
       fixed: 'top'
     },
     {
       key: '3',
-      title: 'Izoh',
-      dataIndex: 'phone',
+      title: 'Комментарий',
+      dataIndex: 'comment',
       fixed: 'top'
     },
     {
       key: '4',
-      title: 'Hodim',
-      dataIndex: 'address',
+      title: 'Сотрудник',
+      dataIndex: 'employee',
       fixed: 'top'
     }
   ]
@@ -84,20 +84,20 @@ export default function StudentProfile () {
             group_id: '',
             start_date: ''
           })
-          message.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
+          message.success('Пользователь успешно добавлен!')
           dispatch(refreshStudentsData())
         })
         .catch(err => {
           console.log(err)
           if (err.response.data.data.student_id) {
-            message.error('Этот студент уже есть в этой группе!')
+            message.error('Этот пользователь уже !')
           } else {
-            message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+            message.error('Произошла ошибка! Попробуйте еще раз!')
           }
         })
         .finally(() => setUploading(false))
     } else {
-      message.error("Barcha maydonni to'ldiring!")
+      message.error('Заполните все поля!')
     }
   }
   const showModal = () => {
@@ -108,20 +108,18 @@ export default function StudentProfile () {
   }
 
   const compareDate = (d1, d2) => {
-    let now = new Date();
-    let month = (now.getMonth() + 1);               
-    let day = now.getDate();
-    if (month < 10) 
-    month = "0" + month;
-    if (day < 10) 
-    day = "0" + day;
-    let today = now.getFullYear() + '-' + month + '-' + day;
-    
+    let now = new Date()
+    let month = now.getMonth() + 1
+    let day = now.getDate()
+    if (month < 10) month = '0' + month
+    if (day < 10) day = '0' + day
+    let today = now.getFullYear() + '-' + month + '-' + day
+
     let date1 = new Date(d1).getTime()
     let date2 = new Date(today).getTime()
     let date3 = new Date(d2).getTime()
 
-    if (date1 >= (date2 + 100000000) || date1 < date3) return true 
+    if (date1 >= date2 + 100000000 || date1 < date3) return true
   }
 
   return (
@@ -138,15 +136,15 @@ export default function StudentProfile () {
             <p className='text-slate-400 text-xs'>(id: {userData?.id})</p>
           </div>
           <div className='grid mb-2 md:mb-4'>
-            <label className='mb-2'>Balans</label>
+            <label className='mb-2'>Баланс</label>
             <p className='text-red-400'>
               {userData?.balance ? userData?.balance : 'Информация не введена'}
             </p>
           </div>
           <div className='grid mb-2 md:mb-4'>
-            <label className='mb-2'>Aloqa vositalari</label>
+            <label className='mb-2'>Контактные данные</label>
             <div>
-              <p className='text-xs mb-1'>Telefon:</p>
+              <p className='text-xs mb-1'>Телефон:</p>
               <span className='text-xs border border-green-400 rounded-sm p-1 flex items-center justify-center gap-1 w-36'>
                 <TelephoneFill className='text-green-400' />
                 {userData?.phone}
@@ -176,7 +174,7 @@ export default function StudentProfile () {
         </div>
       </div>
       <Modal
-        title='Добавить студента в группу'
+        title='Добавить пользователя'
         open={isModalOpen}
         footer={null}
         onCancel={handleCancel}
@@ -207,19 +205,27 @@ export default function StudentProfile () {
         <div>
           {group.group_id && (
             <p className='mb-4 text-xs'>
-              Дата начала группы {userGroupData?.group_start_date}
+              Дата старта группы {userGroupData?.group_start_date}
             </p>
           )}
         </div>
         <div className='w-full mb-4'>
           {group.group_id && (
-            <DatePicker
-              className='w-full'
-              onChange={(date, dateString) => {
-                setGroup({ ...group, start_date: dateString })
-              }}
-              disabledDate={(currentDate) => compareDate(currentDate.toDate(), userGroupData?.group_start_date)}
-            />
+            <div>
+              <p className='text-xs mb-1'>Дата от</p>
+              <DatePicker
+                className='w-full'
+                onChange={(date, dateString) => {
+                  setGroup({ ...group, start_date: dateString })
+                }}
+                disabledDate={currentDate =>
+                  compareDate(
+                    currentDate.toDate(),
+                    userGroupData?.group_start_date
+                  )
+                }
+              />
+            </div>
           )}
         </div>
         <Spin spinning={uploading}>
@@ -229,7 +235,7 @@ export default function StudentProfile () {
         </Spin>
       </Modal>
       <Tabs className='col-span-6 md:col-span-4'>
-        <Tabs.TabPane tab='Profil' key='item-1'>
+        <Tabs.TabPane tab='Профиль' key='item-1'>
           <label className='text-lg block w-full mb-2'>Группы</label>
           <div className='grid gap-2 mb-4'>
             <div className='rounded-sm flex flex-wrap gap-4 bg-orange-50 p-4 justify-between items-center'>
@@ -256,8 +262,8 @@ export default function StudentProfile () {
           <label className='text-lg block w-full'>Платежи</label>
           <Table columns={columns} className='overflow-auto mt-2'></Table>
         </Tabs.TabPane>
-        <Tabs.TabPane tab='Tarix' key='item-2'>
-          <div className='bg-orange-50 p-4'>Qaydlar mavjud emas</div>
+        <Tabs.TabPane tab='История' key='item-2'>
+          <div className='bg-orange-50 p-4'>Ничего не найдено</div>
         </Tabs.TabPane>
       </Tabs>
     </div>

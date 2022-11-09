@@ -45,11 +45,11 @@ export default function Students () {
     'PHP'
   ]
   const finance = [
-    'Bu oy to`lagan',
-    'Qarzdor',
-    'Qarzdor emas',
-    'Chegirmasi mavjud',
-    'Balansida pul bor'
+    'Есть долг',
+    'Есть скидки',
+    'Без долгов',
+    'Позитивный баланс',
+    'Оплатил в текущем месяце'
   ]
 
   // Table select functions
@@ -109,7 +109,7 @@ export default function Students () {
   const columns = [
     {
       key: '1',
-      title: 'ID',
+      title: '',
       dataIndex: 'id',
       width: 80,
       render: record => {
@@ -118,7 +118,7 @@ export default function Students () {
     },
     {
       key: '2',
-      title: 'Ism',
+      title: 'Имя',
       dataIndex: 'name',
       fixed: 'top',
       filteredValue: [searchText],
@@ -194,8 +194,8 @@ export default function Students () {
         <div className='text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md'>
           <Mortarboard />
         </div>
-        <p className='text-cyan-400 text-2xl'>O'quvchilar</p>
-        <p className='text-cyan-400'>Jami: {students.length} ta</p>
+        <p className='text-cyan-400 text-2xl'>Студенты</p>
+        <p className='text-cyan-400'>Количество: {students.length} </p>
         <MyButton
           onClick={() => {
             setVisible(!visible)
@@ -203,13 +203,13 @@ export default function Students () {
           }}
           className='md:ml-auto'
         >
-          Yangi o'quvchi qo'shish
+          Добавить
         </MyButton>
       </header>
       <div className='flex flex-wrap gap-2 mb-8'>
         <div className='w-42'>
           <Input.Search
-            placeholder='Qidirish - ism, email, telefon'
+            placeholder='Поиск по имени или телефону'
             onSearch={value => {
               setSearchText(value)
             }}
@@ -224,7 +224,7 @@ export default function Students () {
           mode='multiple'
           maxTagCount={2}
           className='min-w-[200px]'
-          placeholder="Kurslar bo'yicha"
+          placeholder='По курсам'
           allowClear
         >
           {courses.map((course, index) => {
@@ -237,7 +237,7 @@ export default function Students () {
         </Select>
         <Select
           mode='multiple'
-          placeholder='Moliyaviy holati'
+          placeholder='Финансовое ситуация'
           maxTagCount={2}
           allowClear
           className='min-w-[200px]'
@@ -254,11 +254,7 @@ export default function Students () {
       {/* Add a new student with Drawer */}
       <Drawer
         open={visible}
-        title={
-          modalType === 'add'
-            ? "Yangi o'quvchi qo'shish"
-            : "O'quvchini yangilash"
-        }
+        title={modalType === 'add' ? 'Добавить пользователя' : 'Редактировать'}
         onClose={() => {
           setVisible(!visible)
         }}

@@ -97,15 +97,15 @@ export default function AddStudentForm ({
               gender: '',
               additionPhone: ''
             })
-            message.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
+            message.success('Пользователь успешно добавлен!')
             dispatch(refreshStudentsData())
             setVisible()
           })
           .catch(err => {
             if (err.response.data.data.phone) {
-              message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
+              message.error('Этот номер телефона уже зарегистрирован!')
             } else {
-              message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+              message.error('Произошла ошибка! Попробуйте еще раз!')
             }
           })
           .finally(() => setUploading(false))
@@ -133,28 +133,28 @@ export default function AddStudentForm ({
               gender: '',
               additionPhone: ''
             })
-            message.success('Foydalanuvchi muvaffaqiyatli yangilandi')
+            message.success('Пользователь успешно обновлен')
             dispatch(refreshStudentsData())
             setVisible()
           })
           .catch(err => {
             if (err.response.data.data.phone) {
-              message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
+              message.error('Этот номер телефона уже зарегистрирован!')
             } else {
-              message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+              message.error('Произошла ошибка! Попробуйте еще раз!')
             }
           })
           .finally(() => setUploading(false))
       }
     } else {
-      message.error("Barcha maydonni to'ldiring!")
+      message.error('Заполните все поля!')
     }
   }
 
   return (
     <div>
       <form onSubmit={e => submit(e)}>
-        <p>Telefon</p>
+        <p>Телефон</p>
         <InputMask
           mask='99 999 99 99'
           onChange={e => {
@@ -173,7 +173,7 @@ export default function AddStudentForm ({
           )}
         </InputMask>
 
-        <p>Ism</p>
+        <p>Имя</p>
         <Input
           required
           id='firstName'
@@ -184,7 +184,7 @@ export default function AddStudentForm ({
           type='text'
           className='mb-4 mt-2'
         />
-        <p>Familiya</p>
+        <p>Фамилия</p>
         <Input
           required
           id='lastName'
@@ -195,7 +195,7 @@ export default function AddStudentForm ({
           type='text'
           className='mb-4 mt-2'
         />
-        <p>Manzil</p>
+        <p>Адрес</p>
         <Input
           required
           id='address'
@@ -206,7 +206,7 @@ export default function AddStudentForm ({
           value={student?.address}
           className='mb-4 mt-2'
         />
-        <p>Tug'ilgan sana</p>
+        <p>Дата рождения</p>
         <input
           required
           type='date'
@@ -217,7 +217,7 @@ export default function AddStudentForm ({
           }}
           className='mb-4 mt-2 p-2 border border-slate-400'
         />
-        <p>Jinsi</p>
+        <p>Пол</p>
         <Radio.Group value={student.gender} className='mb-4 mt-2'>
           <Radio
             checked={student?.gender === 'male'}
@@ -228,7 +228,7 @@ export default function AddStudentForm ({
               handle(e)
             }}
           >
-            Erkak
+            Мужчина
           </Radio>
           <Radio
             checked={student?.gender === 'female'}
@@ -239,7 +239,7 @@ export default function AddStudentForm ({
               handle(e)
             }}
           >
-            Ayol
+            Женщина
           </Radio>
         </Radio.Group>
         {/* <p>Izoh</p>
@@ -257,7 +257,7 @@ export default function AddStudentForm ({
             className='mb-4 mt-2'
           />
         </Form.Item>
-        <p>Qo'shimcha aloqa</p>
+        <p>Дополнительные контакты</p>
         <div className='flex gap-2'>
           <IconButton color='success' className='mb-4 mt-2'>
             <Telephone />
@@ -268,7 +268,7 @@ export default function AddStudentForm ({
         </div>
         <Spin spinning={uploading}>
           <MyButton htmlType='submit' color='primary'>
-            Yuborish
+            Отправить
           </MyButton>
         </Spin>
       </form>

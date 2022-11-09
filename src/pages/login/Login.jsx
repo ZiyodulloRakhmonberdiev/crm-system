@@ -1,18 +1,17 @@
-import { Button, Checkbox, Form, Input, message, Spin } from 'antd'
-import { useRef, useState, useEffect } from 'react'
-
-import axios from '../../axios/axios'
+import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
+
+import { Form, Input, message, Spin } from 'antd'
+import axios from '../../axios/axios'
 import { checkUserIdLoggedIn, login } from '../../redux/loginSlice'
+import { MyButton } from '../../UI/Button.style'
 
 const LOGIN_URL = 'https://crm.my-project.site/api/signIn'
 
 export default function Login () {
-  const userRef = useRef()
   const [user, setUser] = useState('')
   const [password, setPassword] = useState('')
-  const [errMsg, setErrMsg] = useState('')
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
@@ -31,13 +30,8 @@ export default function Login () {
   }, [location])
 
   useEffect(() => {
-    userRef.current.focus()
     checkUserIdLoggedIn()
   }, [])
-
-  useEffect(() => {
-    setErrMsg('')
-  }, [user, password])
 
   const onFinish = async e => {
     setLoading(true)
@@ -72,50 +66,41 @@ export default function Login () {
   }
 
   return (
-    <div className='absolute mx-auto inset-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 p-2'>
-      <Spin spinning={loading}>
-        <Form
-          onFinish={onFinish}
-          initialValues={{ remember: true }}
-          style={{ maxWidth: 400, top: '50%' }}
-          className='rounded-lg p-2 sm:p-8 sm:bg-white'
-        >
-          <Form.Item label='Telefon raqam' name='phone'>
+    <Spin spinning={loading}>
+      <div className='bg-gray-900 h-screen w-screen relative overflow-hidden flex justify-center items-center'>
+        <div className='h-96 w-96 bg-gradient-to-r from-green-400 to-blue-500 rounded-full absolute left-2/3 -top-56 transform rotate-160 animate-pulse'></div>
+        <div className='h-80 w-80 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-full absolute -bottom-44 md:-bottom-20 -left-40 md:-left-20 transform rotate-180 animate-pulse'></div>
+        <div className='container h-96 md:w-96 bg-white bg-opacity-10 rounded-2xl drop-shadow px-8 relative z-2 backdrop-filter backdrop-blur-lg'>
+          <Form
+            onFinish={onFinish}
+            className='h-full flex flex-col justify-evenly items-center -mx-3'
+          >
+            <div className='text-white text-xl md:text-2xl px-4 text-center tracking-widest'>
+              SAODAT LEARNING CENTER
+            </div>
             <Input
-              placeholder='Telefon'
+              type='text'
+              placeholder='телефон'
+              className='bg-transparent focus:outline-none text-white tracking-wide'
               onChange={e => setUser(e.target.value)}
-              ref={userRef}
               value={user}
               required
             />
-          </Form.Item>
-
-          <Form.Item label='Parol' name='password'>
             <Input.Password
               type='password'
-              name='password'
-              placeholder='Parol'
+              placeholder='пароль'
+              className='bg-transparent focus:outline-none text-white tracking-wide login-password'
+              visible={true}
               onChange={e => setPassword(e.target.value)}
               value={password}
               required
             />
-          </Form.Item>
-
-          <Form.Item>
-            <Form.Item name='remember' valuePropName='checked' noStyle>
-              <Checkbox>Eslab qolish</Checkbox>
-              <a className='login-form-forgot mr-2' href='!#'>
-                | Parolni unutdingizmi?
-              </a>
-            </Form.Item>
-          </Form.Item>
-          <Form.Item>
-            <Button htmlType='submit' className='bg-sky-500 text-white'>
-              Kirish
-            </Button>
-          </Form.Item>
-        </Form>
-      </Spin>
-    </div>
+            <MyButton color='primary' htmlType='submit'>
+              Вход
+            </MyButton>
+          </Form>
+        </div>
+      </div>
+    </Spin>
   )
 }

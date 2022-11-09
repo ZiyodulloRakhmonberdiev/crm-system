@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import ScrollToTop from './ScrollToTop'
 
 import Login from './pages/login/Login'
 import Layout from './components/Layout'
 import Dashboard from './pages/dashboard/Dashboard'
+import NotFound from './pages/404/NotFound'
+
 import Leads from './pages/leads/Leads'
 
 import Students from './pages/student/Students'
@@ -72,6 +73,7 @@ export default function App () {
           <Route path='/rooms' element={<Rooms />} />
         </Route>
         <Route path='/login' element={<Login />} />
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </div>
   )

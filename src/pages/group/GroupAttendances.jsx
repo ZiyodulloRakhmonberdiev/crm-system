@@ -80,7 +80,7 @@ const GroupAttendance = () => {
               Имя
             </th>
             {attendances?.days?.map(day => (
-              <th width='100'>{moment(day?.data).format('DD MMM')}</th>
+              <th width='100'>{moment(day?.data).format('DD MMM, YYYY')}</th>
             ))}
           </tr>
 
@@ -117,7 +117,12 @@ const GroupAttendance = () => {
                       align='center'
                       className='flex items-center justify-center'
                     >
-                      <div className='flex flex-row border rounded-full border-gray-400 w-10 transition hover:w-auto'>
+                      <div className={`
+                        flex flex-row border rounded-full 
+                        border-gray-400 w-10 transition 
+                        ${compareDate(day?.data) ? "opacity-60 bg-gray-200" : "hover:w-auto"}`}>
+                        
+                        
                         <button
                           disabled={uploading || compareDate(day.data)}
                           onClick={() => {
@@ -128,7 +133,18 @@ const GroupAttendance = () => {
                               params.id
                             )
                           }}
-                          className='bg-blue-500 text-white rounded-full p-1 w-8 h-8 opacity-0 hover:opacity-100 flex items-center justify-center transition'
+                          className={`
+                              bg-blue-500 
+                              text-white 
+                              rounded-full 
+                              p-1 w-8 h-8 
+                              opacity-0 
+                              ${compareDate(day?.data) ? "" : "hover:opacity-100"} 
+                              flex 
+                              items-center 
+                              justify-center 
+                              transition
+                              `}
                         >
                           <CheckCircle />
                         </button>
@@ -142,7 +158,17 @@ const GroupAttendance = () => {
                               params.id
                             )
                           }}
-                          className='bg-red-500 text-white rounded-full p-1 w-8 h-8 opacity-0 hover:opacity-100 flex items-center justify-center transition'
+                          className={`
+                            bg-red-500 
+                            text-white 
+                            rounded-full 
+                            p-1 
+                            w-8 
+                            h-8 
+                            opacity-0 
+                            ${compareDate(day?.data) ? "" : "hover:opacity-100"} 
+                            flex items-center justify-center 
+                            transition`}
                         >
                           <XCircle />
                         </button>

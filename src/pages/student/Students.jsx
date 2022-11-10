@@ -73,6 +73,7 @@ export default function Students () {
         <Link
           to={`/students/profile/${item.id}`}
           onClick={() => dispatch(setUserData(item))}
+          className='text-cyan-500'
         >
           {item?.first_name + ' ' + item?.last_name}
         </Link>
@@ -138,19 +139,19 @@ export default function Students () {
     },
     {
       key: '3',
-      title: 'Telefon',
+      title: 'Телефон',
       dataIndex: 'phone',
       fixed: 'top'
     },
     {
       key: '4',
-      title: 'Manzil',
+      title: 'Адрес',
       dataIndex: 'address',
       fixed: 'top'
     },
     {
       key: '5',
-      title: 'Amallar',
+      title: 'Действие',
       fixed: 'top',
       width: 120,
       dataIndex: 'actions'
@@ -159,10 +160,10 @@ export default function Students () {
 
   const onDeleteStudent = record => {
     Modal.confirm({
-      title: "O'chirilsinmi?",
-      okText: 'Ha',
+      title: 'Вы уверены что хотите удалить?',
+      okText: 'Да',
       okType: 'danger',
-      cancelText: "Yo'q"
+      cancelText: 'Отмена'
       // onOk: () => {
       //   setDataSource(pre => {
       //     return pre.filter(student => student.id !== record.id)
@@ -190,18 +191,20 @@ export default function Students () {
   }, [refreshStudents, currentPage])
   return (
     <div>
-      <header className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start mb-8 gap-4'>
+      <header className='bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8'>
         <div className='text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md'>
           <Mortarboard />
         </div>
-        <p className='text-cyan-400 text-2xl'>Студенты</p>
-        <p className='text-cyan-400'>Количество: {students.length} </p>
+        <div className='md:flex md:gap-4 items-center'>
+          <p className='text-cyan-400 text-2xl'>Студенты</p>
+          <p className='text-cyan-400'>Количество: {students.length} </p>
+        </div>
         <MyButton
           onClick={() => {
             setVisible(!visible)
             setModalType('add')
           }}
-          className='md:ml-auto'
+          className='md:ml-auto sm:w-1/3 md:w-auto'
         >
           Добавить
         </MyButton>

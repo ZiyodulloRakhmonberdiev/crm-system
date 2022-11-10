@@ -47,7 +47,7 @@ export default function Teachers () {
       ),
       phone: item?.phone?.toLocaleString(),
       gender: item?.gender,
-      salary_percentage: item?.salary_percentage ,
+      salary_percentage: item?.salary_percentage,
       actions: (
         <div className='flex gap-2'>
           <IconButton
@@ -75,31 +75,31 @@ export default function Teachers () {
   const columns = [
     {
       key: '1',
-      title: 'ID',
+      title: '',
       dataIndex: 'id',
       width: 80
     },
     {
       key: '2',
-      title: 'Ism',
+      title: 'Имя',
       dataIndex: 'name',
       fixed: 'top'
     },
     {
       key: '3',
-      title: 'Telefon',
+      title: 'Телефон',
       dataIndex: 'phone',
       fixed: 'top'
     },
     {
       key: '4',
-      title: 'Ish haqi stavkasi',
+      title: 'Зарплата',
       dataIndex: 'salary_percentage',
       fixed: 'top'
     },
     {
       key: '5',
-      title: 'Amallar',
+      title: 'Действие',
       width: 120,
       dataIndex: 'actions'
     }
@@ -107,10 +107,10 @@ export default function Teachers () {
   // Actions with table
   const onDeleteTeacher = record => {
     Modal.confirm({
-      title: "O'chirilsinmi?",
-      okText: 'Ha',
+      title: 'Вы уверены что хотите удалить?',
+      okText: 'Да',
       okType: 'danger',
-      cancelText: "Yo'q"
+      cancelText: 'Отмена'
       // onOk: () => {
       //   setDataSource(pre => {
       //     return pre.filter(teacher => teacher.id !== record.id)
@@ -139,12 +139,14 @@ export default function Teachers () {
   }, [refreshTeachers, currentPage])
   return (
     <div>
-      <header className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4 mb-8'>
+      <header className='bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8'>
         <div className='text-2xl text-violet-400 bg-violet-50 p-2 rounded-md'>
           <MicrosoftTeams />
         </div>
-        <p className='text-violet-400 text-2xl'>O'qituvchilar</p>
-        <p className='text-violet-400'>Jami: {teachers.length} ta</p>
+        <div className='md:flex md:gap-4 items-center'>
+          <p className='text-violet-400 text-2xl'>Учителя</p>
+          <p className='text-violet-400'>Количество: {teachers.length}</p>
+        </div>
         <MyButton
           onClick={() => {
             setVisible(!visible)
@@ -152,15 +154,15 @@ export default function Teachers () {
           }}
           className='md:ml-auto'
         >
-          Yangi o'qituvchi qo'shish
+          Добавить
         </MyButton>
       </header>
       <Drawer
         open={visible}
         title={
           modalType === 'add'
-            ? "Yangi o'qituvchi qo'shish"
-            : "O'qituvchini yangilash"
+            ? 'Добавить нового учителя'
+            : 'Редактирование учителя'
         }
         onClose={() => {
           setVisible(!visible)

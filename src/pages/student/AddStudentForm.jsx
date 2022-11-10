@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
-import { Input, Form, Radio, message, Spin } from 'antd'
+import { useDispatch } from 'react-redux'
+
 import { Telephone, Person } from 'react-bootstrap-icons'
+import InputMask from 'react-input-mask'
+import { Input, Form, Radio, message, Spin } from 'antd'
+
 import axios from '../../axios/axios'
+import { refreshStudentsData } from '../../redux/studentsSlice'
 import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
-import { useDispatch } from 'react-redux'
-import { refreshStudentsData } from '../../redux/studentsSlice'
-import InputMask from 'react-input-mask'
 
 export default function AddStudentForm ({
   modalType,
@@ -133,7 +135,7 @@ export default function AddStudentForm ({
               gender: '',
               additionPhone: ''
             })
-            message.success('Пользователь успешно обновлен')
+            message.success('Пользователь успешно обновлен!')
             dispatch(refreshStudentsData())
             setVisible()
           })
@@ -172,7 +174,6 @@ export default function AddStudentForm ({
             />
           )}
         </InputMask>
-
         <p>Имя</p>
         <Input
           required
@@ -245,7 +246,7 @@ export default function AddStudentForm ({
         {/* <p>Izoh</p>
         <Input.TextArea rows={4} className='mb-4 mt-2' id='comment' /> */}
         <Form.Item>
-          <p>Parol</p>
+          <p>Пароль</p>
           <Input.Password
             required={modalType === 'add'}
             id='password'

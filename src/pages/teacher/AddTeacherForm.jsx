@@ -72,15 +72,15 @@ export default function AddTeacherForm ({
               gender: '',
               salary_percentage: ''
             })
-            message.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
+            message.success('Учитель успешно добавлен!')
             dispatch(refreshTeachersData())
             setVisible()
           })
           .catch(err => {
             if (err.response.data.data.phone) {
-              message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
+              message.error('Этот номер телефона уже зарегистрирован!')
             } else {
-              message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+              message.error('Произошла ошибка! Попробуйте еще раз!')
             }
           })
           .finally(() => setUploading(false))
@@ -102,28 +102,28 @@ export default function AddTeacherForm ({
               gender: '',
               salary_percentage: ''
             })
-            message.success('Foydalanuvchi muvaffaqiyatli yangilandi')
+            message.success('Учитель успешно обновлен!')
             dispatch(refreshTeachersData())
             setVisible()
           })
           .catch(err => {
             if (err.response.data.data.phone) {
-              message.error("Bu telefon raqami oldin ro'yhatdan o'tgan!")
+              message.error('Этот номер телефона уже зарегистрирован!')
             } else {
-              message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+              message.error('Произошла ошибка! Попробуйте еще раз!')
             }
           })
           .finally(() => setUploading(false))
       }
     } else {
-      message.error("Barcha maydonni to'ldiring!")
+      message.error('Заполните все поля!')
     }
   }
 
   return (
     <div>
       <form onSubmit={e => submit(e)}>
-        <p>Telefon</p>
+        <p>Телефон</p>
         <InputMask
           mask='99 999 99 99'
           onChange={e => {
@@ -142,7 +142,7 @@ export default function AddTeacherForm ({
           )}
         </InputMask>
 
-        <p>Ism</p>
+        <p>Имя</p>
         <Input
           required
           id='name'
@@ -153,7 +153,7 @@ export default function AddTeacherForm ({
           type='text'
           className='mb-4 mt-2'
         />
-        <p>Jinsi</p>
+        <p>Пол</p>
         <Radio.Group value={teacher?.gender} className='mb-4 mt-2'>
           <Radio
             checked={teacher?.gender === 'male'}
@@ -164,7 +164,7 @@ export default function AddTeacherForm ({
               handle(e)
             }}
           >
-            Erkak
+            Мужчина
           </Radio>
           <Radio
             checked={teacher?.gender === 'female'}
@@ -175,10 +175,10 @@ export default function AddTeacherForm ({
               handle(e)
             }}
           >
-            Ayol
+            Женщина
           </Radio>
         </Radio.Group>
-        <p>Ish haqi stavkasi</p>
+        <p>Зарплата</p>
         <Input
           required
           id='salary_percentage'
@@ -190,9 +190,9 @@ export default function AddTeacherForm ({
           className='mb-4 mt-2'
         />
         <Form.Item>
-          <p>Parol</p>
+          <p>Пароль</p>
           <Input.Password
-            required={modalType === "add"}
+            required={modalType === 'add'}
             id='password'
             onChange={e => {
               handle(e)
@@ -204,7 +204,7 @@ export default function AddTeacherForm ({
         </Form.Item>
         <Spin spinning={uploading}>
           <MyButton htmlType='submit' color='primary'>
-            Yuborish
+            Отправить
           </MyButton>
         </Spin>
       </form>

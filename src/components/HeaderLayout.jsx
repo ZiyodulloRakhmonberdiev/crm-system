@@ -9,6 +9,7 @@ import {
   Mortarboard
 } from 'react-bootstrap-icons'
 import student from '../assets/img/student.png'
+import { MyButton } from '../UI/Button.style'
 
 export default function HeaderLayout () {
   return (
@@ -19,16 +20,14 @@ export default function HeaderLayout () {
           className='bg-white flex flex-col md:flex-row justify-between col-span-6 md:col-span-2 lg:col-span-4 p-4 rounded-lg gap-4 text-center md:text-left'
         >
           <div className='flex items-center md:items-start md:justify-around flex-col'>
-            <p className='text-lg text-violet-400'>O'quvchilar qaydnomasi</p>
+            <p className='text-lg text-violet-400'>Список студентов</p>
             <p className='text-slate-400'>
-              Bu oy o'quv markazi tarkibida
-              <span className='text-violet-400'> 45</span> ta o'quvchi
-              ro'yxatdan o'tdi. Hozirda o'quv markazida
-              <span className='text-violet-400'> 875</span> ta o'quvchi mavjud
+              В этом месяце в учебном центре зарегистрировались{' '}
+              <span className='text-violet-400'> 45</span> студентов. На данный
+              момент нам доверяют более{' '}
+              <span className='text-violet-400'> 100</span> студентов
             </p>
-            <button className='hover:bg-violet-400 text-violet-400 hover:text-white mt-2 border border-violet-400 transition rounded-sm p-2 w-40'>
-              Barchasini ko'rish
-            </button>
+            <MyButton color='primary'>Смотреть все</MyButton>
           </div>
           <div className='w-48 mx-auto'>
             <img src={student} alt='' className='w-full' />
@@ -41,8 +40,8 @@ export default function HeaderLayout () {
           <div className='text-2xl text-violet-400 bg-violet-50 p-2 rounded-md'>
             <Download />
           </div>
-          <p className='text-slate-400 my-4'>Arizalar</p>
-          <p className='text-slate-500 text-2xl'>123 ta</p>
+          <p className='text-slate-400 my-4'>Заявки</p>
+          <p className='text-slate-500 text-2xl'>123</p>
         </Link>
         <Link
           to='/groups'
@@ -51,8 +50,8 @@ export default function HeaderLayout () {
           <div className='text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md'>
             <TeamOutlined />
           </div>
-          <p className='text-slate-400 my-4'>Guruhlar</p>
-          <p className='text-slate-500 text-2xl'>18 ta</p>
+          <p className='text-slate-400 my-4'>Группы</p>
+          <p className='text-slate-500 text-2xl'>13</p>
         </Link>
         <Link
           to='/students'
@@ -61,8 +60,8 @@ export default function HeaderLayout () {
           <div className='text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md'>
             <Mortarboard />
           </div>
-          <p className='text-cyan-400 my-4'>Faol o'quvchilar</p>
-          <p className='text-cyan-400 text-2xl'>875</p>
+          <p className='text-cyan-400 my-4'>Студенты</p>
+          <p className='text-cyan-400 text-2xl'>108</p>
         </Link>
         <Link
           to='/'
@@ -72,8 +71,8 @@ export default function HeaderLayout () {
             <BoxArrowRight />
             <div />
           </div>
-          <p className='text-violet-400 my-4'>Guruhni tark etdi</p>
-          <p className='text-violet-400 text-2xl'>3 ta</p>
+          <p className='text-violet-400 my-4'>Ушли из активной группы</p>
+          <p className='text-violet-400 text-2xl'>3 </p>
         </Link>
         <Link
           to='/finance/debtors'
@@ -82,8 +81,8 @@ export default function HeaderLayout () {
           <div className='text-2xl text-red-400 bg-red-50 p-2 rounded-md'>
             <ExclamationCircle />
           </div>
-          <p className='text-red-400 my-4'>Qarzdorlar</p>
-          <p className='text-red-400 text-2xl'>3 ta</p>
+          <p className='text-red-400 my-4'>Должники</p>
+          <p className='text-red-400 text-2xl'>3 </p>
         </Link>
         <Link
           to='/'
@@ -92,8 +91,8 @@ export default function HeaderLayout () {
           <div className='text-2xl text-green-400 bg-green-50 p-2 rounded-md'>
             <Hourglass />
           </div>
-          <p className='text-green-400 my-4'>Sinov darsida</p>
-          <p className='text-green-500 text-2xl'>58 ta</p>
+          <p className='text-green-400 my-4'>На пробном уроке</p>
+          <p className='text-green-500 text-2xl'>5</p>
         </Link>
         <Link
           to='/'
@@ -102,8 +101,8 @@ export default function HeaderLayout () {
           <div className='text-2xl text-slate-400 bg-slate-50 p-2 rounded-md'>
             <Arrow90degLeft />
           </div>
-          <p className='text-slate-400 my-4'>Sinov darsidan keyin kelmadi</p>
-          <p className='text-slate-500 text-2xl'>42 ta</p>
+          <p className='text-slate-400 my-4'>Ушли после пробного периода</p>
+          <p className='text-slate-500 text-2xl'>14</p>
         </Link>
       </div>
     </>

@@ -155,17 +155,17 @@ export default function AddGroupForm ({
               days: '',
               course_id: ''
             })
-            message.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
+            message.success("Группа успешно добавлен!")
             dispatch(refreshGroupsData())
             setVisible()
           })
           .catch(err => {
             if (err.response.data.data.room_id) {
               message.error(
-                "Bu vaqtda bu xonaga boshqa guruh ro'yxatdan o'tgan!"
+                "Кабинет в это время занята!"
               )
             } else {
-              message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+              message.error("Произошла ошибка! Попробуйте еще раз!")
             }
           })
           .finally(() => setUploading(false))
@@ -193,29 +193,29 @@ export default function AddGroupForm ({
               days: '',
               course_id: ''
             })
-            message.success('Foydalanuvchi muvaffaqiyatli yangilandi')
+            message.success('Группа успешно обновлен!')
             dispatch(refreshGroupsData())
             setVisible()
           })
           .catch(err => {
             if (err.response.data.data.room_id) {
               message.error(
-                "Bu vaqtda bu xonaga boshqa guruh ro'yxatdan o'tgan!"
+                "Кабинет в это время занята!"
               )
             } else {
-              message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+              message.error("Произошла ошибка! Попробуйте еще раз!")
             }
           })
           .finally(() => setUploading(false))
       }
     } else {
-      message.error("Barcha maydonni to'ldiring!")
+      message.error("Заполните все поля!")
     }
   }
   return (
     <div>
       <form onSubmit={e => submit(e)}>
-        <p>Guruh nomi</p>
+        <p>Заполните все поля!</p>
         <Input
           required
           id='name'
@@ -226,13 +226,13 @@ export default function AddGroupForm ({
           type='text'
           className='mb-4 mt-2'
         />
-        <p>Kursni tanlang</p>
+        <p>Выберите курс</p>
         <Select
           value={group?.course_id}
           onChange={e => {
             setGroup({ ...group, course_id: e })
           }}
-          placeholder='Kursni tanlang'
+          placeholder='Выбрать варианты'
           className='w-full mb-4 mt-2'
           showSearch={true}
         >
@@ -244,13 +244,13 @@ export default function AddGroupForm ({
             )
           })}
         </Select>
-        <p>O'qituvchini tanlang</p>
+        <p>Выберите учителя</p>
         <Select
           value={group?.teacher_ids}
           onChange={e => {
             setGroup({ ...group, teacher_ids: e })
           }}
-          placeholder="O'qituvchini tanlang"
+          placeholder="Выбрать варианты"
           className='w-full mb-4 mt-2'
           showSearch={true}
           mode='multiple'
@@ -264,14 +264,14 @@ export default function AddGroupForm ({
           })}
         </Select>
 
-        <p>Boshlanish va tugash vaqtlari</p>
+        <p>Дата старта группы</p>
         <div className='flex gap-x-2 mb-4'>
           <input
             value={group?.group_start_date}
             id='group_start_date'
             onChange={e => handle(e)}
             type='date'
-            placeholder='Boshlash sanasi'
+            placeholder='Выбрать дату'
             className='rounded-md px-2 py-1 border-2 border-gray-200 mt-2 w-full'
           />
           <input
@@ -279,32 +279,32 @@ export default function AddGroupForm ({
             id='group_end_date'
             value={group?.group_end_date}
             type='date'
-            placeholder='Tugash sanasi'
+            placeholder='Выбрать дату'
             className='rounded-md px-2 py-1  border-2 border-gray-200 mt-2 w-full'
           />
         </div>
-        <p>Kunlar</p>
+        <p>Дни</p>
         <Select
           value={group?.days}
           onChange={e => {
             setGroup({ ...group, days: e })
           }}
-          placeholder='Kunlar tanlang'
+          placeholder='Выбрать варианты'
           className='w-full mb-4 mt-2'
           showSearch={true}
         >
-          <Select.Option value={'1,3,5'}>Toq kunlar</Select.Option>
-          <Select.Option value={'2,4,6'}>Juft kunlar</Select.Option>
-          <Select.Option value={'1,2,3,4,5,6'}>Har kuni</Select.Option>
-          <Select.Option value={'6,7'}>Dam olish kunlari</Select.Option>
+          <Select.Option value={'1,3,5'}>Нечетные дни</Select.Option>
+          <Select.Option value={'2,4,6'}>Четные дни</Select.Option>
+          <Select.Option value={'1,2,3,4,5,6'}>Каждый день</Select.Option>
+          <Select.Option value={'6,7'}>Другое</Select.Option>
         </Select>
-        <p>Xonani tanlang</p>
+        <p>Выберите аудиторию</p>
         <Select
           value={group?.room_id}
           onChange={e => {
             setGroup({ ...group, room_id: e })
           }}
-          placeholder='Xonani tanlang'
+          placeholder='Выбрать варианты'
           className='w-full mb-4 mt-2'
           showSearch={true}
         >
@@ -316,13 +316,13 @@ export default function AddGroupForm ({
             )
           })}
         </Select>
-        <p>Dars boshlanish vaqti</p>
+        <p>Время начала урока</p>
         <Select
           value={group?.time_id}
           onChange={e => {
             setGroup({ ...group, time_id: e })
           }}
-          placeholder='Kursni tanlang'
+          placeholder='Выбрать варианты'
           className='w-full mb-4 mt-2'
           showSearch={true}
         >
@@ -333,7 +333,7 @@ export default function AddGroupForm ({
         </Select>
         <Spin spinning={uploading}>
           <MyButton htmlType='submit' color='primary'>
-            Yuborish
+          Отправить
           </MyButton>
         </Spin>
       </form>

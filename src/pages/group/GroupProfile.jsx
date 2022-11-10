@@ -29,7 +29,7 @@ export default function GroupProfile () {
       <Drawer
         open={visible}
         title={
-          modalType === 'add' ? "Yangi guruh qo'shish" : 'Guruhni yangilash'
+          modalType === 'add' ? 'Добавить новую группу' : 'Изменить группу'
         }
         onClose={() => {
           setVisible(!visible)
@@ -45,7 +45,7 @@ export default function GroupProfile () {
         />
       </Drawer>
       <div className='text-xl mb-8 bg-white p-4 rounded-lg'>
-        {groupData?.name} guruhi
+        {groupData?.name}
       </div>
       <div className='grid gap-8 sm:grid-cols-2 lg:grid-cols-3'>
         <div className='flex flex-col drop-shadow-md hover:drop-shadow-2xl transition col-span-1'>
@@ -69,19 +69,23 @@ export default function GroupProfile () {
               {groupData?.name}
             </span>
             <div className='grid mb-2 md:mb-4 mt-4'>
-              <label className='text-slate-600'>Narxi:</label>
-              <p>{groupData?.price} so'm</p>
+              <label className='text-slate-600'>Цена:</label>
+              {groupData?.price == null ? (
+                'Не установлен'
+              ) : (
+                <p>{groupData?.price} UZS</p>
+              )}
             </div>
             <div className='grid mb-2 md:mb-4'>
-              <label className='text-slate-600'>Vaqt:</label>
+              <label className='text-slate-600'>Время:</label>
               <p>{groupData?.time?.time}</p>
             </div>
             <div className='grid mb-2 md:mb-4'>
-              <label className='text-slate-600'>Xonalar:</label>
-              <p>{groupData?.room?.name} xonasi</p>
+              <label className='text-slate-600'>Кабинеты:</label>
+              <p>{groupData?.room?.name}</p>
             </div>
             <div className='grid mb-2 md:mb-4'>
-              <label className='text-slate-600'>Mashg'ulotlar sanasi:</label>
+              <label className='text-slate-600'>Даты обучения:</label>
               <div className='flex items-center flex-wrap text-xs gap-1'>
                 <span>{groupData?.group_start_date} </span>
                 <DashLg />
@@ -90,7 +94,7 @@ export default function GroupProfile () {
             </div>
             <div className='grid mb-2 md:mb-4 p-4 border drop-shadow-md'>
               <label className='text-slate-600'>
-                Keyingi to'lov sanasi: 11.11.2022
+                Дата ближайшего списания оплаты: 11.11.2022
               </label>
             </div>
             <hr />
@@ -109,7 +113,7 @@ export default function GroupProfile () {
           </div>
         </div>
         <Tabs className='col-span-1 lg:col-span-2'>
-          <Tabs.TabPane tab='Davomat' key='item-1'>
+          <Tabs.TabPane tab='Посещаемость' key='item-1'>
             <div className='grid gap-2'>
               <div className='rounded-sm flex flex-wrap gap-4 bg-orange-50 p-4 justify-between items-center'>
                 <div className='grid gap-0.5'>
@@ -136,9 +140,9 @@ export default function GroupProfile () {
               </div>
             </div>
           </Tabs.TabPane>
-          <Tabs.TabPane tab='Tarix' key='item-2'>
+          <Tabs.TabPane tab='История' key='item-2'>
             <div className='rounded-sm flex flex-wrap gap-4 bg-pink-200 p-4 justify-between items-center'>
-              Hech narsa topilmadi
+              Ничего не найдено
             </div>
           </Tabs.TabPane>
         </Tabs>

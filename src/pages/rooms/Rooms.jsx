@@ -127,12 +127,14 @@ export default function Rooms () {
   }, [refreshRooms])
   return (
     <div>
-      <header className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4 mb-8'>
+      <header className='bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8'>
         <div className='text-2xl text-sky-400 bg-sky-50 p-2 rounded-md'>
           <DoorOpen />
         </div>
-        <p className='text-sky-400 text-2xl'>Xonalar</p>
-        <p className='text-sky-400'>Jami: {rooms?.data?.length} ta</p>
+        <div className='md:flex md:gap-4 items-center'>
+          <p className='text-sky-400 text-2xl'>Xonalar</p>
+          <p className='text-sky-400'>Jami: {rooms?.data?.length} ta</p>
+        </div>
         <MyButton
           onClick={() => {
             setVisible(!visible)

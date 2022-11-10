@@ -101,12 +101,14 @@ export default function Courses () {
   }, [refreshCourses])
   return (
     <div>
-      <header className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start gap-4 mb-8'>
+      <header className='bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8'>
         <div className='text-2xl text-pink-400 bg-pink-50 p-2 rounded-md'>
           <Palette2 />
         </div>
-        <p className='text-pink-400 text-2xl'>Kurslar</p>
-        <p className='text-pink-400'>Jami: {courses.length} ta</p>
+        <div className='md:flex md:gap-4 items-center'>
+          <p className='text-pink-400 text-2xl'>Kurslar</p>
+          <p className='text-pink-400'>Jami: {courses.length} ta</p>
+        </div>
         <MyButton
           onClick={() => {
             setVisible(!visible)

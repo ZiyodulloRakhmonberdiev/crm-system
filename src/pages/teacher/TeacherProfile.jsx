@@ -40,32 +40,38 @@ export default function TeacherProfile () {
   const columns = [
     {
       key: '1',
-      title: 'Guruhlar soni',
+      title: 'Группа',
       dataIndex: 'id',
       fixed: 'top'
     },
     {
       key: '2',
-      title: "O'quvchilar soni",
+      title: 'Студент',
       dataIndex: 'name',
       fixed: 'top'
     },
     {
       key: '3',
-      title: 'Darslar soni',
+      title: 'Уроков в периоде',
       dataIndex: 'phone',
       fixed: 'top'
     },
     {
       key: '4',
-      title: "Maosh miqdori: so'm",
+      title: 'Отмеченных уроков',
+      dataIndex: 'address',
+      fixed: 'top'
+    },
+    {
+      key: '5',
+      title: 'Сум',
       dataIndex: 'address',
       fixed: 'top'
     }
   ]
   return (
     <Tabs>
-      <Tabs.TabPane tab='Profil' key='item-1' className='pt-20'>
+      <Tabs.TabPane tab='Профиль' key='item-1' className='pt-20'>
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4'>
           <div>
             <Card className='md:p-4 mb-4 rounded-sm drop-shadow-md'>
@@ -81,11 +87,11 @@ export default function TeacherProfile () {
               </div>
 
               <div className='grid md:grid-cols-2 mb-2 md:mb-4'>
-                <label className='text-slate-600'>Telefon raqam:</label>
+                <label className='text-slate-600'>Телефон:</label>
                 <p>{teachersData?.phone}</p>
               </div>
               <div className='grid mb-2 md:mb-4'>
-                <label className='text-slate-600 mb-1'>Rollar:</label>
+                <label className='text-slate-600 mb-1'>Роли:</label>
                 <div className='flex flex-wrap gap-2'>
                   <span className='px-2 py-0.5 rounded-md text-violet-500 border border-violet-500 text-sm'>
                     CEO
@@ -99,7 +105,7 @@ export default function TeacherProfile () {
                 </div>
               </div>
               <div className='grid mb-2 md:mb-4'>
-                <label className='text-slate-600 mb-1'>Qaysi filial:</label>
+                <label className='text-slate-600 mb-1'>Филиалы:</label>
                 <div className='flex flex-wrap gap-2'>
                   <span className='px-2 py-0.5 rounded-md text-cyan-500 border border-cyan-500 text-sm'>
                     Saodat
@@ -109,7 +115,7 @@ export default function TeacherProfile () {
             </Card>
           </div>
           <div>
-            <p className='text-xl font-bold mb-4'>Guruhlar</p>
+            <p className='text-xl font-bold mb-4'>Группы</p>
             <div className='grid gap-2'>
               <div className='rounded-sm flex flex-wrap gap-4 bg-orange-50 p-4 justify-between items-center'>
                 <div className='grid gap-0.5'>
@@ -134,21 +140,12 @@ export default function TeacherProfile () {
             </div>
           </div>
           <div>
-            <p className='text-xl font-bold mb-4'>Guruh haqida</p>
+            <p className='text-xl font-bold mb-4'>О группе</p>
             <div className='rounded-sm bg-white p-4 drop-shadow'>
               <div className='grid md:grid-cols-2 border-b mb-2 md:mb-4'>
-                <label className='font-bold'>Guruh nomi:</label>
+                <label className='font-bold'>Название группы:</label>
                 <p className='text-slate-400'>Android 12</p>
               </div>
-              <div className='grid md:grid-cols-2 border-b mb-2 md:mb-4'>
-                <label className='font-bold'>O'qituvchi:</label>
-                <p className='text-slate-400'>Umar Bek</p>
-              </div>
-              <div className='grid md:grid-cols-2 border-b mb-2 md:mb-4'>
-                <label className='font-bold'>Qaysi filial:</label>
-                <p className='text-slate-400'>Saodat Learning Center</p>
-              </div>
-              <p className='font-bold mt-4 mb-2'>O'quvchilar ro'yxati</p>
               <div className='text-xs text-slate-400 '>
                 <div className='grid md:grid-cols-2 border-b md:border-b-0 mb-2'>
                   <Dropdown overlay={info}>
@@ -169,14 +166,14 @@ export default function TeacherProfile () {
               </div>
               <div className='text-right mt-4'>
                 <Link className='flex gap-2 items-center justify-end'>
-                  Guruhga o'tish <ArrowRight className='text-xs' />
+                  Перейти к группе <ArrowRight className='text-xs' />
                 </Link>
               </div>
             </div>
           </div>
         </div>
       </Tabs.TabPane>
-      <Tabs.TabPane tab='Ish haqi' key='item-2'>
+      <Tabs.TabPane tab='Зарплата' key='item-2'>
         <Table
           columns={columns}
           className='overflow-auto'

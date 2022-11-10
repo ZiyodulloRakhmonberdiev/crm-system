@@ -40,6 +40,31 @@ a {
   color: inherit;
 }
 
+/* .input-text {
+  @apply font-poppins bg-transparent border border-t-0 border-l-0 border-r-0 focus: outline-none text-white tracking-wide;
+} */
+
+.login-password {
+  padding: 0 !important;
+
+}
+
+.login-password input {
+  background: transparent !important;
+  color: #fff;
+  padding: 5px 8px !important;
+}
+
+.login-password span span {
+  padding: 5px !important;
+}
+
+.login-password span span svg {
+  color: #eee
+}
+
+.input-text {}
+
 .container {
   margin: 0 auto;
   max-width: 1920px;
@@ -94,3 +119,11 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+/* .attendance__btn-group {
+  display: flex;
+  width: 48px;
+  height: 24px;
+} */
+.attendance__btn-group:first-child,
+.attendance__btn-group:last-child {}

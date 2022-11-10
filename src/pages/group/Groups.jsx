@@ -15,7 +15,6 @@ import {
   fetchingGroups,
   fetchedGroups,
   fetchedError,
-  refreshGroupsData,
   setGroupData
 } from '../../redux/groupsSlice'
 import {
@@ -100,11 +99,11 @@ export default function Groups () {
     let returnData = null
     switch (days) {
       case ['1', '3', '5']:
-        returnData = 'Toq kunlar'
+        returnData = 'Нечетные дни'
       case ['2', '4', '6']:
-        returnData = 'Juft kunlar'
+        returnData = 'Четные дни'
       case ['6', '7'] || ['7']:
-        returnData = 'Dam olish kunlari'
+        returnData = 'Выходные'
       default:
         returnData = (
           <div className='flex flex-wrap gap-1'>
@@ -134,7 +133,7 @@ export default function Groups () {
         <Link
           to={`/groups/${item?.id}`}
           onClick={() => dispatch(setGroupData(item))}
-          className='text-violet-700'
+          className='text-cyan-700'
         >
           {item?.name}
         </Link>
@@ -150,7 +149,7 @@ export default function Groups () {
               )
             }}
             to={`/teachers/profile/${teacher?.id}`}
-            className='px-2 py-2 mb-1 mr-2 rounded-md text-violet-700'
+            className='px-2 py-2 mb-1 mr-2 rounded-md text-cyan-700'
           >
             {teacher?.name}
           </Link>
@@ -197,7 +196,7 @@ export default function Groups () {
   const columns = [
     {
       key: '1',
-      title: 'ID',
+      title: '',
       dataIndex: 'id',
       width: 40,
       render: record => {
@@ -206,7 +205,7 @@ export default function Groups () {
     },
     {
       key: '2',
-      title: 'Nomi',
+      title: 'Именование',
       dataIndex: 'name',
       fixed: 'top',
       render: record => {
@@ -215,7 +214,7 @@ export default function Groups () {
     },
     {
       key: '3',
-      title: 'Kurs',
+      title: 'Курсы',
       dataIndex: 'course',
       fixed: 'top',
       render: record => {
@@ -224,7 +223,7 @@ export default function Groups () {
     },
     {
       key: '4',
-      title: 'Xona',
+      title: 'Кабинет',
       dataIndex: 'room',
       fixed: 'top',
       render: record => {
@@ -233,7 +232,7 @@ export default function Groups () {
     },
     {
       key: '5',
-      title: `O'qituvchi`,
+      title: 'Учитель',
       dataIndex: 'teachers',
       fixed: 'top',
       render: record => {
@@ -243,7 +242,7 @@ export default function Groups () {
     },
     {
       key: '6',
-      title: 'Kunlar',
+      title: 'Дни',
       dataIndex: 'days',
       fixed: 'top',
       render: record => {
@@ -252,7 +251,7 @@ export default function Groups () {
     },
     {
       key: '7',
-      title: 'Davomiyligi',
+      title: 'Даты обучения',
       dataIndex: 'duration',
       fixed: 'top',
       render: record => {
@@ -261,7 +260,7 @@ export default function Groups () {
     },
     {
       key: '8',
-      title: `O'quvchilar`,
+      title: 'Студентов',
       dataIndex: 'student_count',
       fixed: 'top',
       render: record => {
@@ -270,7 +269,7 @@ export default function Groups () {
     },
     {
       key: '9',
-      title: 'Amallar',
+      title: 'Действие',
       dataIndex: 'actions',
       fixed: 'top',
       render: record => {
@@ -281,10 +280,10 @@ export default function Groups () {
 
   const onDeleteGroup = record => {
     Modal.confirm({
-      title: "O'chirilsinmi?",
-      okText: 'Ha',
+      title: 'Вы уверены что хотите удалить?',
+      okText: 'Да',
       okType: 'danger',
-      cancelText: "Yo'q"
+      cancelText: 'Отмена'
     })
   }
   const onEditGroup = Group => {
@@ -307,12 +306,14 @@ export default function Groups () {
   }, [refreshGroups, currentPage])
   return (
     <div>
-      <header className='bg-white flex flex-wrap flex-col md:flex-row p-4 rounded-lg items-center justify-start mb-8 gap-4'>
+      <header className='bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8'>
         <div className='text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md'>
           <TeamOutlined />
         </div>
-        <p className='text-cyan-400 text-2xl'>Guruhlar</p>
-        <p className='text-cyan-400'>Jami: {groups.length} ta</p>
+        <div className='md:flex md:gap-4 items-center'>
+          <p className='text-cyan-400 text-2xl'>Группы</p>
+          <p className='text-cyan-400'>Количество: {groups.length} </p>
+        </div>
         <MyButton
           onClick={() => {
             setVisible(!visible)
@@ -320,14 +321,14 @@ export default function Groups () {
           }}
           className='md:ml-auto'
         >
-          Yangi guruh qo'shish
+          Добавить
         </MyButton>
       </header>
       <div className='flex gap-4 mb-8'>
         <Select
           mode='multiple'
           maxTagCount={1}
-          placeholder='Guruhlar holati'
+          placeholder='Статус группы'
           allowClear
           className='min-w-[200px]'
         >
@@ -342,7 +343,7 @@ export default function Groups () {
         <Select
           mode='multiple'
           maxTagCount={2}
-          placeholder="Kurslar bo'yicha"
+          placeholder='По курсам'
           allowClear
           className='min-w-[200px]'
         >
@@ -356,7 +357,7 @@ export default function Groups () {
         </Select>
         <Select
           mode='multiple'
-          placeholder="O'qituvchi"
+          placeholder='Учителя'
           maxTagCount={2}
           className='min-w-[200px]'
         >
@@ -370,7 +371,7 @@ export default function Groups () {
         </Select>
         <Select
           mode='multiple'
-          placeholder="Kunlar bo'yicha"
+          placeholder='Дни'
           maxTagCount={2}
           allowClear
           className='min-w-[200px]'
@@ -393,9 +394,7 @@ export default function Groups () {
       <Drawer
         open={visible}
         title={
-          modalType === 'add'
-            ? "Yangi o'quvchi qo'shish"
-            : "O'quvchini yangilash"
+          modalType === 'add' ? 'Добавить новую группу' : 'Изменить группу'
         }
         onClose={() => {
           setVisible(!visible)

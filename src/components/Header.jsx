@@ -1,7 +1,7 @@
 import { Dropdown, Menu, Space, Input, Spin } from 'antd'
 import { BookmarkPlus, CashStack, Person } from 'react-bootstrap-icons'
 import { Select } from 'antd'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/img/logo.png'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
@@ -23,7 +23,7 @@ export default function Header () {
     <Menu
       items={[
         {
-          label: <a href=''>Yangi a'zo qo'shish</a>,
+          label: <a href=''>Добавить нового студента</a>,
           key: '0'
         }
       ]}
@@ -33,15 +33,21 @@ export default function Header () {
     <Menu
       items={[
         {
-          label: <a href=''>Mening hisobim</a>,
+          label: <a href=''>Мой аккаунт</a>,
           key: '0'
         },
         {
-          label: <a onClick={() => {
-            dispatch(logout())
-            localStorage.removeItem("crm_token")
-            navigate("/login", { replace: true })
-          }} >Chiqish</a>,
+          label: (
+            <a
+              onClick={() => {
+                dispatch(logout())
+                localStorage.removeItem('crm_token')
+                navigate('/login', { replace: true })
+              }}
+            >
+              Выход
+            </a>
+          ),
           key: '1'
         }
       ]}
@@ -51,7 +57,7 @@ export default function Header () {
     <Menu
       items={[
         {
-          label: <a href=''>To'lovni kiritish</a>,
+          label: <a href=''>Добавить новый платеж</a>,
           key: '0'
         }
       ]}
@@ -100,7 +106,7 @@ export default function Header () {
         </div>
         <div className='w-42 hidden lg:block'>
           <Input.Search
-            placeholder='Qidirish...'
+            placeholder='Поиск'
             allowClear
             className='min-w-[250px]'
           />

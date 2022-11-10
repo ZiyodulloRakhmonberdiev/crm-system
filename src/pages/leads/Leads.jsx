@@ -91,37 +91,39 @@ export default function Leads () {
     e.target.style.boxShadow = 'none'
   }
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-      {boards.map(board => (
-        <div
-          className='board relative'
-          onDragOver={e => dragOverHandler(e)}
-          onDrop={e => dropCardHandler(e, board)}
-        >
-          <div className='text-lg lg:text-2xl rounded-sm bg-blue-400 text-white p-2'>
-            {board.title}
-          </div>
+    <div>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+        {boards.map(board => (
           <div
-            style={{ height: '100vh' }}
-            className='mt-8 fixed overflow-y-scroll'
+            className='board relative'
+            onDragOver={e => dragOverHandler(e)}
+            onDrop={e => dropCardHandler(e, board)}
           >
-            {board.items.map(item => (
-              <div
-                className='item p-4 mb-2 cursor-grab border-b'
-                style={{ maxWidth: 350 }}
-                draggable={true}
-                onDragOver={e => dragOverHandler(e)}
-                onDragLeave={e => dragLeaveHandler(e)}
-                onDragStart={e => dragStartHandler(e, board, item)}
-                onDragEnd={e => dragEndHandler(e)}
-                onDrop={e => dropHandler(e, board, item)}
-              >
-                {item.title}
-              </div>
-            ))}
+            <div className='text-lg lg:text-2xl rounded-sm bg-blue-400 text-white p-2'>
+              {board.title}
+            </div>
+            <div
+              style={{ height: '100vh' }}
+              className='mt-8 fixed overflow-y-scroll'
+            >
+              {board.items.map(item => (
+                <div
+                  className='item p-4 mb-2 cursor-grab border-b'
+                  style={{ maxWidth: 350 }}
+                  draggable={true}
+                  onDragOver={e => dragOverHandler(e)}
+                  onDragLeave={e => dragLeaveHandler(e)}
+                  onDragStart={e => dragStartHandler(e, board, item)}
+                  onDragEnd={e => dragEndHandler(e)}
+                  onDrop={e => dropHandler(e, board, item)}
+                >
+                  {item.title}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }

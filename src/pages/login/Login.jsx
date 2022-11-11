@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
 
 import { Form, Input, message, Spin } from 'antd'
+import InputMask from 'react-input-mask'
 import axios from '../../axios/axios'
 import { checkUserIdLoggedIn, login } from '../../redux/loginSlice'
 import { MyButton } from '../../UI/Button.style'
@@ -10,7 +11,7 @@ import { MyButton } from '../../UI/Button.style'
 const LOGIN_URL = 'https://crm.my-project.site/api/signIn'
 
 export default function Login () {
-  const [user, setUser] = useState('')
+  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -36,10 +37,17 @@ export default function Login () {
   const onFinish = async e => {
     setLoading(true)
     axios
-      .post(LOGIN_URL, JSON.stringify({ phone: user, password }), {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: false
-      })
+      .post(
+        LOGIN_URL,
+        JSON.stringify({
+          phone: '+998' + phone?.split(' ').join(''),
+          password
+        }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: false
+        }
+      )
       .then(response => {
         dispatch(
           login({
@@ -51,7 +59,7 @@ export default function Login () {
             }
           })
         )
-        setUser('')
+        setPhone('')
         setPassword('')
         localStorage.setItem('crm_token', response?.data?.data?.token)
         message.success('Успешно введено')
@@ -78,14 +86,35 @@ export default function Login () {
             <div className='text-white text-xl md:text-2xl px-4 text-center tracking-widest'>
               SAODAT LEARNING CENTER
             </div>
-            <Input
+            <InputMask
+              mask='99 999 99 99'
+              onChange={e => {
+                setPhone(e.target.value)
+              }}
+              value={phone}
+              maskChar={null}
+            >
+              {props => (
+                <Input
+                  {...props}
+                  required
+                  addonBefore='+998'
+                  className='bg-transparent focus:outline-none text-white tracking-wide'
+                  placeholder='телефон'
+                  max='9'
+                  min='9'
+                />
+              )}
+            </InputMask>
+            {/* <Input
+            addonBefore
               type='text'
               placeholder='телефон'
               className='bg-transparent focus:outline-none text-white tracking-wide'
               onChange={e => setUser(e.target.value)}
               value={user}
               required
-            />
+            /> */}
             <Input.Password
               type='password'
               placeholder='пароль'

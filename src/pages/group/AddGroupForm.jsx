@@ -155,17 +155,15 @@ export default function AddGroupForm ({
               days: '',
               course_id: ''
             })
-            message.success("Группа успешно добавлен!")
+            message.success('Группа успешно добавлен!')
             dispatch(refreshGroupsData())
             setVisible()
           })
           .catch(err => {
             if (err.response.data.data.room_id) {
-              message.error(
-                "Кабинет в это время занята!"
-              )
+              message.error('Кабинет в это время занята!')
             } else {
-              message.error("Произошла ошибка! Попробуйте еще раз!")
+              message.error('Произошла ошибка! Попробуйте еще раз!')
             }
           })
           .finally(() => setUploading(false))
@@ -199,17 +197,15 @@ export default function AddGroupForm ({
           })
           .catch(err => {
             if (err.response.data.data.room_id) {
-              message.error(
-                "Кабинет в это время занята!"
-              )
+              message.error('Кабинет в это время занята!')
             } else {
-              message.error("Произошла ошибка! Попробуйте еще раз!")
+              message.error('Произошла ошибка! Попробуйте еще раз!')
             }
           })
           .finally(() => setUploading(false))
       }
     } else {
-      message.error("Заполните все поля!")
+      message.error('Заполните все поля!')
     }
   }
   return (
@@ -250,7 +246,7 @@ export default function AddGroupForm ({
           onChange={e => {
             setGroup({ ...group, teacher_ids: e })
           }}
-          placeholder="Выбрать варианты"
+          placeholder='Выбрать варианты'
           className='w-full mb-4 mt-2'
           showSearch={true}
           mode='multiple'
@@ -264,9 +260,24 @@ export default function AddGroupForm ({
           })}
         </Select>
 
-        <p>Дата старта группы</p>
+        <p className='mb-2'>Дата старта группы</p>
         <div className='flex gap-x-2 mb-4'>
-          <input
+          <DatePicker
+            required
+            onChange={(date, dateString) => {
+              setGroup({ ...group, group_start_date: dateString })
+            }}
+            placeholder='Выбрать дату'
+          />
+          <DatePicker
+            required
+            defaultValue={null}
+            onChange={(date, dateString) => {
+              setGroup({ ...group, group_start_date: dateString })
+            }}
+            placeholder='Выбрать дату'
+          />
+          {/* <input
             value={group?.group_start_date}
             id='group_start_date'
             onChange={e => handle(e)}
@@ -281,7 +292,7 @@ export default function AddGroupForm ({
             type='date'
             placeholder='Выбрать дату'
             className='rounded-md px-2 py-1  border-2 border-gray-200 mt-2 w-full'
-          />
+          /> */}
         </div>
         <p>Дни</p>
         <Select
@@ -333,7 +344,7 @@ export default function AddGroupForm ({
         </Select>
         <Spin spinning={uploading}>
           <MyButton htmlType='submit' color='primary'>
-          Отправить
+            Отправить
           </MyButton>
         </Spin>
       </form>

@@ -40,10 +40,6 @@ a {
   color: inherit;
 }
 
-/* .input-text {
-  @apply font-poppins bg-transparent border border-t-0 border-l-0 border-r-0 focus: outline-none text-white tracking-wide;
-} */
-
 .login-password {
   padding: 0 !important;
 
@@ -62,8 +58,6 @@ a {
 .login-password span span svg {
   color: #eee
 }
-
-.input-text {}
 
 .container {
   margin: 0 auto;
@@ -120,10 +114,16 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-/* .attendance__btn-group {
-  display: flex;
-  width: 48px;
-  height: 24px;
-} */
-.attendance__btn-group:first-child,
-.attendance__btn-group:last-child {}
+
+.attendance__btn-group .have,
+.attendance__btn-group .havenot {
+  opacity: 0;
+}
+
+.attendance__btn-group:hover .have {
+  opacity: 100;
+}
+
+.attendance__btn-group:hover .havenot {
+  opacity: 100;
+}

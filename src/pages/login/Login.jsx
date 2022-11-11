@@ -54,11 +54,11 @@ export default function Login () {
         setUser('')
         setPassword('')
         localStorage.setItem('crm_token', response?.data?.data?.token)
-        message.success('Muvaffaqiyatli')
+        message.success('Успешно введено')
         navigate('/', { replace: true })
       })
       .catch(err => {
-        message.error('Telefon raqam yoki parol xato!')
+        message.error('Введен неверный логин или пароль!')
       })
       .finally(() => {
         setLoading(false)

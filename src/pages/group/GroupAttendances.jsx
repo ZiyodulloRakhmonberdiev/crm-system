@@ -122,7 +122,7 @@ const GroupAttendance = () => {
                         border-gray-400 w-10 transition 
                         ${compareDate(day?.data) ? "opacity-60 bg-gray-200" : "hover:w-auto"}`}>
                         
-                        
+
                         <button
                           disabled={uploading || compareDate(day.data)}
                           onClick={() => {
@@ -145,6 +145,7 @@ const GroupAttendance = () => {
                               justify-center 
                               transition
                               `}
+
                         >
                           <CheckCircle />
                         </button>
@@ -158,6 +159,7 @@ const GroupAttendance = () => {
                               params.id
                             )
                           }}
+
                           className={`
                             bg-red-500 
                             text-white 
@@ -169,6 +171,7 @@ const GroupAttendance = () => {
                             ${compareDate(day?.data) ? "" : "hover:opacity-100"} 
                             flex items-center justify-center 
                             transition`}
+
                         >
                           <XCircle />
                         </button>

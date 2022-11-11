@@ -21,7 +21,7 @@ export default function HeaderLayout () {
         >
           <div className='flex items-center md:items-start md:justify-around flex-col'>
             <p className='text-lg text-violet-400'>Список студентов</p>
-            <p className='text-slate-400'>
+            <p className='text-slate-400 mb-2'>
               В этом месяце в учебном центре зарегистрировались{' '}
               <span className='text-violet-400'> 45</span> студентов. На данный
               момент нам доверяют более{' '}

@@ -2,8 +2,13 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Table, Modal, Drawer, Pagination } from 'antd'
-import { PencilSquare, Trash, MicrosoftTeams } from 'react-bootstrap-icons'
+import { Table, Modal, Drawer, Pagination, Dropdown, Menu } from 'antd'
+import {
+  PencilSquare,
+  Trash,
+  MicrosoftTeams,
+  ThreeDotsVertical
+} from 'react-bootstrap-icons'
 
 import { MyButton } from '../../UI/Button.style'
 import { IconButton } from '../../UI/IconButton.style'
@@ -30,7 +35,6 @@ export default function Teachers () {
   const { teachers, loading, refreshTeachers } = useSelector(
     state => state.teachers
   )
-
   // teachers static data
   let dataSource = []
   teachers?.map(item => {
@@ -41,6 +45,7 @@ export default function Teachers () {
         <Link
           to={`/teachers/profile/${item?.id}`}
           onClick={() => dispatch(setTeachersData(item))}
+          className='text-cyan-500'
         >
           {item?.name}
         </Link>
@@ -49,24 +54,36 @@ export default function Teachers () {
       gender: item?.gender,
       salary_percentage: item?.salary_percentage,
       actions: (
-        <div className='flex gap-2'>
-          <IconButton
-            color='primary'
-            onClick={() => {
-              onEditTeacher(item)
-            }}
-          >
-            <PencilSquare />
-          </IconButton>
-          <IconButton
-            color='danger'
-            onClick={() => {
-              onDeleteTeacher(item)
-            }}
-          >
-            <Trash />
-          </IconButton>
-        </div>
+        <Dropdown
+          overlay={
+            <div className='p-3 border bg-white drop-shadow-md flex flex-col gap-2'>
+              <a
+                key='0'
+                onClick={() => {
+                  onEditTeacher(item)
+                }}
+                className='flex items-center gap-2'
+              >
+                <PencilSquare className='text-gray-400 text-xl' />
+                <span>Редактировать</span>
+              </a>
+              <a
+                key='1'
+                onClick={() => {
+                  onDeleteTeacher(item)
+                }}
+                className='flex items-center gap-2'
+              >
+                <Trash className='text-red-400 text-xl' /> <span>Удалить</span>
+              </a>
+            </div>
+          }
+          trigger={['click']}
+        >
+          <a className='ant-dropdown-link' onClick={e => e.preventDefault()}>
+            <ThreeDotsVertical />
+          </a>
+        </Dropdown>
       )
     })
   })
@@ -100,7 +117,7 @@ export default function Teachers () {
     {
       key: '5',
       title: 'Действие',
-      width: 120,
+      width: 200,
       dataIndex: 'actions'
     }
   ]

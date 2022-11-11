@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 
 import { Telephone, Person } from 'react-bootstrap-icons'
 import InputMask from 'react-input-mask'
-import { Input, Form, Radio, message, Spin } from 'antd'
+import { Input, Form, Radio, message, Spin, DatePicker } from 'antd'
 
 import axios from '../../axios/axios'
 import { refreshStudentsData } from '../../redux/studentsSlice'
@@ -29,7 +29,7 @@ export default function AddStudentForm ({
     additionPhone: ''
   })
   const dispatch = useDispatch()
-
+  console.log(student?.birthday)
   useEffect(() => {
     if (modalType === 'add') {
       setStudent({
@@ -208,16 +208,21 @@ export default function AddStudentForm ({
           className='mb-4 mt-2'
         />
         <p>Дата рождения</p>
-        <input
+        <DatePicker
           required
+          defaultValue={student?.birthday}
+          className='mb-4 mt-2'
+          onChange={(date, dateString) => {
+            setStudent({ ...student, birthday: dateString })
+          }}
+        />
+        {/* <input
           type='date'
-          id='birthday'
-          value={student?.birthday}
           onChange={e => {
             handle(e)
           }}
-          className='mb-4 mt-2 p-2 border border-slate-400'
-        />
+          className=' p-2 border border-slate-400'
+        /> */}
         <p>Пол</p>
         <Radio.Group value={student.gender} className='mb-4 mt-2'>
           <Radio

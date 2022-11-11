@@ -26,13 +26,8 @@ export default function Sidebar () {
     }
   }
   const { Sider } = Layout
-  const [isOpenSearchModal, setIsOpenSearchModal] = useState(false)
   const items = [
     getItem(<Link to='/'>Главная страница</Link>, 'home', <House />),
-    getItem('Аккаунт', 'account', <UserOutlined />, [
-      getItem('Мой аккаунт', 'myAccount'),
-      getItem('Выход', 'exit')
-    ]),
     getItem('Добавить', 'add', <PlusCircle />, [
       getItem('Добавить пользователя', 'user'),
       getItem('Добавить платеж', 'payment')
@@ -66,28 +61,9 @@ export default function Sidebar () {
         </Link>,
         'rooms'
       )
-    ]),
-    getItem(
-      <span
-        onClick={() => {
-          setIsOpenSearchModal(!isOpenSearchModal)
-        }}
-      >
-        Поиск
-      </span>,
-      'search',
-      <Search
-        onClick={() => {
-          setIsOpenSearchModal(!isOpenSearchModal)
-        }}
-      />
-    )
+    ])
   ]
 
-  // Modal Search Function
-  const resetEditing = () => {
-    setIsOpenSearchModal(false)
-  }
   return (
     <Layout>
       <Sider
@@ -103,17 +79,6 @@ export default function Sidebar () {
           items={items}
         />
       </Sider>
-      <Modal
-        title='Поиск'
-        open={isOpenSearchModal}
-        okText='Поиск'
-        cancelText='Отмена'
-        onCancel={() => {
-          resetEditing()
-        }}
-      >
-        <Input placeholder='Поиск' className='mb-2' />
-      </Modal>
     </Layout>
   )
 }

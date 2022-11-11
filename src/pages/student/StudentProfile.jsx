@@ -90,7 +90,7 @@ export default function StudentProfile () {
         .catch(err => {
           console.log(err)
           if (err.response.data.data.student_id) {
-            message.error('Этот пользователь уже !')
+            message.error('Этот пользователь уже есть в этой группе!')
           } else {
             message.error('Произошла ошибка! Попробуйте еще раз!')
           }

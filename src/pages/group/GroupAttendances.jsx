@@ -117,7 +117,7 @@ const GroupAttendance = () => {
                       align='center'
                       className='flex items-center justify-center'
                     >
-                      <div className='flex flex-row border rounded-full border-gray-400 w-10 transition hover:w-auto'>
+                      <div className='flex flex-row border rounded-full border-gray-400 w-10 transition hover:w-auto attendance__btn-group'>
                         <button
                           disabled={uploading || compareDate(day.data)}
                           onClick={() => {
@@ -128,7 +128,7 @@ const GroupAttendance = () => {
                               params.id
                             )
                           }}
-                          className='bg-blue-500 text-white rounded-full p-1 w-8 h-8 opacity-0 hover:opacity-100 flex items-center justify-center transition'
+                          className='hover:bg-blue-500 hover:text-white text-blue-500 rounded-full p-1 w-8 h-8 flex items-center justify-center transition have'
                         >
                           <CheckCircle />
                         </button>
@@ -142,7 +142,7 @@ const GroupAttendance = () => {
                               params.id
                             )
                           }}
-                          className='bg-red-500 text-white rounded-full p-1 w-8 h-8 opacity-0 hover:opacity-100 flex items-center justify-center transition'
+                          className='hover:bg-red-500 hover:text-white text-red-500 rounded-full p-1 w-8 h-8 flex items-center justify-center transition havenot'
                         >
                           <XCircle />
                         </button>

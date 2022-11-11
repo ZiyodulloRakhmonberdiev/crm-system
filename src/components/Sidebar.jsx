@@ -28,10 +28,6 @@ export default function Sidebar () {
   const { Sider } = Layout
   const items = [
     getItem(<Link to='/'>Главная страница</Link>, 'home', <House />),
-    getItem('Добавить', 'add', <PlusCircle />, [
-      getItem('Добавить пользователя', 'user'),
-      getItem('Добавить платеж', 'payment')
-    ]),
     getItem(<Link to='/leads'>Заявки</Link>, 'application', <Download />),
     getItem(<Link to='/students'>Студенты</Link>, 'pupils', <Mortarboard />),
     getItem(

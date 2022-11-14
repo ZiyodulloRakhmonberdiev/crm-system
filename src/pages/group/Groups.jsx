@@ -361,7 +361,7 @@ export default function Groups () {
           maxTagCount={2}
           className='min-w-[200px]'
         >
-          {teachers.map((item, index) => {
+          {teachers?.data.map((item, index) => {
             return (
               <Select.Option key={index} value={item}>
                 {item}

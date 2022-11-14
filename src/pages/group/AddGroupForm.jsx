@@ -251,7 +251,7 @@ export default function AddGroupForm ({
           showSearch={true}
           mode='multiple'
         >
-          {teachers.map((teacher, index) => {
+          {teachers?.data.map((teacher, index) => {
             return (
               <Select.Option value={teacher?.id} key={index}>
                 {teacher.name}

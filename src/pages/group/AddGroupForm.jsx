@@ -24,8 +24,9 @@ export default function AddGroupForm ({
   const { teachers } = useSelector(state => state.teachers)
   const { courses } = useSelector(state => state.courses)
   const { rooms } = useSelector(state => state.rooms)
-  const [uploading, setUploading] = useState(false)
+  const dispatch = useDispatch()
   const url = '/api/groups'
+  const [uploading, setUploading] = useState(false)
   const [group, setGroup] = useState({
     name: '',
     time_id: '',
@@ -36,7 +37,7 @@ export default function AddGroupForm ({
     days: [],
     course_id: ''
   })
-  const dispatch = useDispatch()
+  const [times, setTimes] = useState([])
 
   // fetching courses
   useEffect(() => {
@@ -48,6 +49,11 @@ export default function AddGroupForm ({
       })
       .catch(err => {
         dispatch(fetchedError())
+      })
+    
+    axios.get("/api/times")
+      .then((res) => {
+        setTimes(res.data.data)
       })
   }, [])
 
@@ -251,7 +257,7 @@ export default function AddGroupForm ({
           showSearch={true}
           mode='multiple'
         >
-          {teachers.map((teacher, index) => {
+          {teachers?.data?.map((teacher, index) => {
             return (
               <Select.Option value={teacher?.id} key={index}>
                 {teacher.name}
@@ -337,10 +343,11 @@ export default function AddGroupForm ({
           className='w-full mb-4 mt-2'
           showSearch={true}
         >
-          <Select.Option value={1}>7:00</Select.Option>
-          <Select.Option value={2}>7:30</Select.Option>
-          <Select.Option value={3}>8:00</Select.Option>
-          <Select.Option value={4}>9:00</Select.Option>
+          {
+            times?.map((time) => (
+              <Select.Option value={time?.id}>{time?.time}</Select.Option>
+            ))
+          }
         </Select>
         <Spin spinning={uploading}>
           <MyButton htmlType='submit' color='primary'>

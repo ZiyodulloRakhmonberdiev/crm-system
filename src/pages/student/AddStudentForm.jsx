@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import { Telephone, Person } from "react-bootstrap-icons";
+import { Telephone, Person, Trash } from "react-bootstrap-icons";
 import InputMask from "react-input-mask";
 import { Input, Form, Radio, message, Spin, DatePicker } from "antd";
 import { v4 as uuidv4 } from "uuid";
@@ -33,7 +33,6 @@ export default function AddStudentForm({
     gender: "",
     additionPhone: [],
   });
-  console.log(student);
   const dispatch = useDispatch();
   useEffect(() => {
     if (modalType === "add") {
@@ -47,6 +46,8 @@ export default function AddStudentForm({
         gender: "",
         additionPhone: "",
       });
+      setInputFields([])
+
     } else {
       const {
         first_name,
@@ -67,6 +68,16 @@ export default function AddStudentForm({
         gender: gender,
         additionPhone: addition_phone,
       });
+      if (addition_phone) {
+        setInputFields([])
+        const newAddPhones = []
+        addition_phone.map((item) => {
+          newAddPhones.push({ ...item, id: uuidv4() })
+        })
+        setInputFields(newAddPhones)
+      } else {
+        setInputFields([])
+      }
     }
   }, [modalType, visible]);
 
@@ -91,7 +102,7 @@ export default function AddStudentForm({
             address: student.address,
             birthday: student.birthday,
             gender: student.gender,
-            addition_phone: student.additionPhone,
+            addition_phone: inputFields,
           })
           .then((res) => {
             setStudent({
@@ -127,7 +138,7 @@ export default function AddStudentForm({
             address: student.address,
             birthday: student.birthday,
             gender: student.gender,
-            addition_phone: student.additionPhone,
+            addition_phone: inputFields,
           })
           .then((res) => {
             setStudent({
@@ -158,30 +169,32 @@ export default function AddStudentForm({
     }
   }
 
+
   // Addition phone
-  const handleAddFields = () => {
-    if (inputFieldsType === "additionPhone") {
-      setInputFields([
-        ...inputFields,
-        { label: "Дополнительный телефон", phone: "" },
-      ]);
-    } else {
-      setInputFields([
-        ...inputFields,
-        { label: "Телефон родителей", phone: "" },
-      ]);
-    }
+  const handleAddFields = () => { 
+    setInputFields([
+      ...inputFields,
+      { label: "Дополнительный телефон", phone: "", id: Date.now() },
+    ]); 
   };
-  const handleChangeInput = (id, event) => {
-    const newInputFields = inputFields.map((i) => {
-      if (id === i.id) {
-        i[event.target.name] = event.target.value;
-      }
-      return i;
-    });
-    setStudent({ ...student, additionPhone: newInputFields });
-    setInputFields(newInputFields);
+
+
+  const handleChangeInput = (type, id, event) => {
+      setInputFields(prev => {
+        return inputFields?.map((item) => {
+          if (id===item.id){
+            return {
+              ...item,
+              phone: type === "phone" ? `+998${event.target.value.split(" ").join("")}` : item.phone,
+              label: type === "label" ? event.target.value : item.label
+            }
+          } else {
+            return item
+          }
+        })
+      })
   };
+ 
 
   const handleRemoveFields = (id) => {
     const values = [...inputFields];
@@ -307,35 +320,49 @@ export default function AddStudentForm({
             onClick={handleAddFields}
             color="success"
             className="mb-4 mt-2"
+            type="button"
           >
             <Telephone />
-          </IconButton>
-          <IconButton
-            onClick={handleAddFields}
-            color="primary"
-            className="mb-4 mt-2"
-          >
-            <Person />
-          </IconButton>
+          </IconButton> 
         </div>
         {inputFields.map((inputField) => (
           <div key={inputField.id}>
-            <p>Дополнительный телефон</p>
+            <div className="flex justify-between items-center mb-2">
+              <span>
+                Дополнительный телефон  
+              </span>
+              <span className="cursor-pointer text-red-400">
+                <Trash 
+                  onClick={() => {
+                    handleRemoveFields(inputField.id)
+                  }}
+                />
+              </span>
+            </div>
+            <Input 
+              placeholder="Пользователь телефона"
+              onChange={e => {
+                handleChangeInput("label", inputField.id, e)
+              }}
+              value={inputField.label}
+              required
+            />
             <InputMask
               mask="99 999 99 99"
               onChange={(event) => {
-                handleChangeInput(inputField.id, event);
+                handleChangeInput("phone", inputField.id, event);
               }}
-              value={inputField?.phone}
+              value={inputField?.phone?.slice(4, inputField?.length)} // +998
               maskChar={null}
+              required
             >
               {(props) => (
-                <Input
-                  name="phone"
-                  {...props}
-                  addonBefore="+998"
-                  className="mb-4 mt-2"
-                />
+                  <Input
+                    name="phone"
+                    {...props}
+                    addonBefore="+998"
+                    className="mb-4 mt-2"
+                  />
               )}
             </InputMask>
           </div>

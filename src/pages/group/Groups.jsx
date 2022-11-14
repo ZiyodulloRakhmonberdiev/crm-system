@@ -355,20 +355,20 @@ export default function Groups () {
             )
           })}
         </Select>
-        <Select
+        {/* <Select
           mode='multiple'
           placeholder='Учителя'
           maxTagCount={2}
           className='min-w-[200px]'
         >
-          {teachers.map((item, index) => {
+          {teachers?..map((item, index) => {
             return (
               <Select.Option key={index} value={item}>
                 {item}
               </Select.Option>
             )
           })}
-        </Select>
+        </Select> */}
         <Select
           mode='multiple'
           placeholder='Дни'

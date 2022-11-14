@@ -36,7 +36,7 @@ export default function Teachers () {
   )
   // teachers static data
   let dataSource = []
-  teachers?.map(item => {
+  teachers?.data?.map(item => {
     dataSource?.push({
       id: item?.id,
       uid: uuidv4(),

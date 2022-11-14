@@ -11,7 +11,6 @@ import {
 } from 'react-bootstrap-icons'
 
 import { MyButton } from '../../UI/Button.style'
-import { IconButton } from '../../UI/IconButton.style'
 import axios from '../../axios/axios'
 import AddTeacherForm from './AddTeacherForm'
 import { v4 as uuidv4 } from 'uuid'

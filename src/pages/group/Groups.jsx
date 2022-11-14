@@ -355,7 +355,7 @@ export default function Groups () {
             )
           })}
         </Select>
-        <Select
+        {/* <Select
           mode='multiple'
           placeholder='Учителя'
           maxTagCount={2}
@@ -368,7 +368,7 @@ export default function Groups () {
               </Select.Option>
             )
           })}
-        </Select>
+        </Select> */}
         <Select
           mode='multiple'
           placeholder='Дни'

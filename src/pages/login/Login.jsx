@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
 
-import { Form, Input, message, Spin } from 'antd'
+import { Form, Input, message, Spin, InputNumber } from 'antd'
 import InputMask from 'react-input-mask'
 import axios from '../../axios/axios'
 import { checkUserIdLoggedIn, login } from '../../redux/loginSlice'
@@ -106,15 +106,6 @@ export default function Login () {
                 />
               )}
             </InputMask>
-            {/* <Input
-            addonBefore
-              type='text'
-              placeholder='телефон'
-              className='bg-transparent focus:outline-none text-white tracking-wide'
-              onChange={e => setUser(e.target.value)}
-              value={user}
-              required
-            /> */}
             <Input.Password
               type='password'
               placeholder='пароль'

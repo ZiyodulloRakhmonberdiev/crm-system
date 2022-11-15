@@ -41,25 +41,6 @@ a {
   color: inherit;
 }
 
-.login-password {
-  padding: 0 !important;
-
-}
-
-.login-password input {
-  background: transparent !important;
-  color: #fff;
-  padding: 5px 8px !important;
-}
-
-.login-password span span {
-  padding: 5px !important;
-}
-
-.login-password span span svg {
-  color: #eee
-}
-
 .container {
   margin: 0 auto;
   max-width: 1920px;
@@ -129,8 +110,20 @@ input[type=number] {
   opacity: 100;
 }
 
-@media (min-width: 900px) {
-  .layout {
+.login-password {
+  padding: 0 !important;
+  padding-right: 5px !important;
+  border-radius: 0 !important;
+}
+
+
+.login-password input {
+  padding: 5px 8px !important;
+}
+
+@media (min-width: 992px) {
+  .layout-content {
     margin-left: 12rem !important;
+    padding: 2rem;
   }
 }

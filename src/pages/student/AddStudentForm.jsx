@@ -319,15 +319,17 @@ export default function AddStudentForm({
         </div>
         {inputFields.map((inputField) => (
           <div key={inputField.id}>
-            <div className="flex justify-between items-center mb-2">
-              <span>Дополнительный телефон</span>
-              <span className="cursor-pointer text-red-400">
-                <Trash
-                  onClick={() => {
-                    handleRemoveFields(inputField.id);
-                  }}
-                />
-              </span>
+            <div className="flex justify-between items-end mb-2">
+              <span>Пользователь телефона</span>
+              <button
+                onClick={() => {
+                  handleRemoveFields(inputField.id);
+                }}
+                color="dangerOutlined"
+                className="rounded-full bg-red-400 text-white p-2"
+              >
+                <Trash className="" />
+              </button>
             </div>
             <Input
               placeholder="Пользователь телефона"

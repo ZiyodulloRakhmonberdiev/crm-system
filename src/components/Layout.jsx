@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import ScrollToTop from "../ScrollToTop";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
@@ -24,9 +24,9 @@ const Layout = () => {
       <div>
         <Header />
         <div>
-          <Sidebar className="z-50" />
+          <Sidebar />
         </div>
-        <div className="ml-14 lg:ml-48 mt-14 p-2 lg:p-8 pb-16 mx-auto z-0">
+        <div className="ml-14 mt-14 p-2 pb-16 mx-auto layout-content">
           <ScrollToTop />
           <Outlet />
         </div>

@@ -1,4 +1,4 @@
-import { Spin } from 'antd'
+import { Input, Modal, Spin, Tooltip } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { CheckCircle, XCircle } from 'react-bootstrap-icons'
@@ -21,6 +21,17 @@ const GroupAttendance = () => {
   const { groupData } = useSelector(state => state.groups)
   const [refreshing, setRefreshing] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [description, setDescription] = useState("")
+  const [modalIsOpen, setModalIsOpen] = useState(false)
+
+  const [attendanceData, setAttendanceData] = useState({
+    attStatus: null,
+    date:null,
+    student_id: null,
+    group_id: null,
+    description
+  })
+
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(fetchingAtt())
@@ -36,24 +47,28 @@ const GroupAttendance = () => {
       })
   }, [refreshing])
 
-  const handleSetAttendanceStudent = (
-    attStatus,
-    date,
-    student_id,
-    group_id
-  ) => {
+  const handleSetAttendanceStudent = () => {
+    const {student_id,
+      group_id,
+      attStatus: status,
+      date} = attendanceData;
     setUploading(true)
     axios
       .post('/api/groups/attendance', {
         student_id,
         group_id,
-        status: attStatus,
-        date
+        status,
+        date,
+        description
       })
       .then(res => {
         setRefreshing(!refreshing)
       })
-      .finally(() => setUploading(false))
+      .finally(() => {
+        setUploading(false)
+        setModalIsOpen(false)
+        setDescription(null)
+      })
   }
 
   const compareDate = d1 => {
@@ -70,9 +85,19 @@ const GroupAttendance = () => {
     return date1 > date2
   }
 
+  
+
   if (error) return <center>Посещаемость при загрузке произошла ошибка</center>
   return (
     <Spin spinning={loading}>
+      <Modal 
+        open={modalIsOpen}
+        onCancel={() => setModalIsOpen(false)}
+        onOk={() => handleSetAttendanceStudent()}
+        title={"Описание..."}
+      >
+        <Input.TextArea onChange={e => setDescription(e.target.value)} value={description}></Input.TextArea>
+      </Modal>
       <div className=''>
         <table className='overflow-auto'>
           <tr className=' overflow-auto flex bg-slate-100 px-2 py-1 rounded-md'>
@@ -101,14 +126,20 @@ const GroupAttendance = () => {
                       align='center'
                       className='flex items-center justify-center'
                     >
-                      {current.status === 0 ? (
-                        <span className='bg-red-400 px-2 py-1 text-xs text-white rounded-md'>
-                          Нет
-                        </span>
+                      {!current.status ? (
+                        <Tooltip title={current?.description ? current?.description : "Нет описания"}>
+                          <span  
+                            className='cursor-pointer bg-red-400 px-2 py-1 text-xs text-white rounded-md'>
+                            Нет
+                          </span>
+                        </Tooltip>
                       ) : (
-                        <span className='bg-blue-400 px-2 py-1 text-xs text-white rounded-md'>
-                          Был
-                        </span>
+                        <Tooltip title={current?.description ? current?.description : "Нет описания"}>
+                          <span 
+                            className='cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md'>
+                            Был
+                          </span>
+                        </Tooltip>
                       )}
                     </td>
                   ) : (
@@ -126,12 +157,13 @@ const GroupAttendance = () => {
                         <button
                           disabled={uploading || compareDate(day.data)}
                           onClick={() => {
-                            handleSetAttendanceStudent(
-                              true,
-                              day?.data,
-                              student.id,
-                              params.id
-                            )
+                            setAttendanceData({
+                              attStatus: true,
+                              date: day?.data,
+                              student_id: student.id,
+                              group_id: params.id
+                            })
+                            setModalIsOpen(true)
                           }}
                           className={`
                               bg-blue-500 
@@ -151,13 +183,14 @@ const GroupAttendance = () => {
                         </button>
                         <button
                           disabled={uploading || compareDate(day.data)}
-                          onClick={() => {
-                            handleSetAttendanceStudent(
-                              false,
-                              day?.data,
-                              student.id,
-                              params.id
-                            )
+                          onClick={() => { 
+                            setAttendanceData({
+                              attStatus: false,
+                              date: day?.data,
+                              student_id: student.id,
+                              group_id: params.id
+                            })
+                            setModalIsOpen(true)
                           }}
 
                           className={`

@@ -135,9 +135,17 @@ export default function GroupProfile () {
                   </span>
                 </div>
               </div>
-              <div className='bg-white rounded-md px-6 py-4 overflow-x-auto '>
-                <GroupAttendance />
-              </div>
+                {
+                  groupData?.active ? (
+                    <div className='bg-white rounded-md px-6 py-4 overflow-x-auto '>
+                      <GroupAttendance />
+                    </div>
+                  ) : (
+                    <div className='text-center shadow-md rounded-md flex flex-wrap gap-4 bg-pink-200 p-4 justify-between items-center'>
+                      Группа не активна
+                    </div>
+                  )
+                }
             </div>
           </Tabs.TabPane>
           <Tabs.TabPane tab='История' key='item-2'>

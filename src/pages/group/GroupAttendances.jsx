@@ -5,16 +5,16 @@ import { CheckCircle, XCircle } from 'react-bootstrap-icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import axios from '../../axios/axios'
+import axios from "../../axios/axios";
 import {
   fetchedAtt,
   fetchingAtt,
-  fetchingErrorAtt
-} from '../../redux/attendancesSlice'
-moment.locale('ru')
+  fetchingErrorAtt,
+} from "../../redux/attendancesSlice";
+moment.locale("ru");
 
 const GroupAttendance = () => {
-  const params = useParams()
+  const params = useParams();
   const { attendances, loading, error } = useSelector(
     state => state.attendances
   )
@@ -34,18 +34,18 @@ const GroupAttendance = () => {
 
   const dispatch = useDispatch()
   useEffect(() => {
-    dispatch(fetchingAtt())
+    dispatch(fetchingAtt());
     axios
       .get(
         `/api/groups/${params?.id}/attendance?from=${groupData?.group_start_date}&to=${groupData?.group_end_date}`
       )
-      .then(res => {
-        dispatch(fetchedAtt(res.data))
+      .then((res) => {
+        dispatch(fetchedAtt(res.data));
       })
-      .catch(err => {
-        dispatch(fetchingErrorAtt())
-      })
-  }, [refreshing])
+      .catch((err) => {
+        dispatch(fetchingErrorAtt());
+      });
+  }, [refreshing]);
 
   const handleSetAttendanceStudent = () => {
     const {student_id,
@@ -54,15 +54,15 @@ const GroupAttendance = () => {
       date} = attendanceData;
     setUploading(true)
     axios
-      .post('/api/groups/attendance', {
+      .post("/api/groups/attendance", {
         student_id,
         group_id,
         status,
         date,
         description
       })
-      .then(res => {
-        setRefreshing(!refreshing)
+      .then((res) => {
+        setRefreshing(!refreshing);
       })
       .finally(() => {
         setUploading(false)
@@ -71,19 +71,19 @@ const GroupAttendance = () => {
       })
   }
 
-  const compareDate = d1 => {
-    let now = new Date()
-    let month = now.getMonth() + 1
-    let day = now.getDate()
-    if (month < 10) month = '0' + month
-    if (day < 10) day = '0' + day
-    let today = now.getFullYear() + '-' + month + '-' + day
+  const compareDate = (d1) => {
+    let now = new Date();
+    let month = now.getMonth() + 1;
+    let day = now.getDate();
+    if (month < 10) month = "0" + month;
+    if (day < 10) day = "0" + day;
+    let today = now.getFullYear() + "-" + month + "-" + day;
 
-    let date1 = new Date(d1).getTime()
-    let date2 = new Date(today).getTime()
+    let date1 = new Date(d1).getTime();
+    let date2 = new Date(today).getTime();
 
-    return date1 > date2
-  }
+    return date1 > date2;
+  };
 
   
 
@@ -104,27 +104,27 @@ const GroupAttendance = () => {
             <th width='200' align='left'>
               Имя
             </th>
-            {attendances?.days?.map(day => (
-              <th width='100'>{moment(day?.data).format('DD MMM, YYYY')}</th>
+            {attendances?.days?.map((day) => (
+              <th width="100">{moment(day?.data).format("DD MMM, YYYY")}</th>
             ))}
           </tr>
 
           <tbody>
-            {attendances?.students?.map(student => (
-              <tr className='flex p-2  border-b border-gray-100'>
-                <td width={200} className='bg-gray-100 rounded-md p-1'>
+            {attendances?.students?.map((student) => (
+              <tr className="flex p-2  border-b border-gray-100">
+                <td width={200} className="bg-gray-100 rounded-md p-1">
                   {student?.first_name} {student?.last_name}
                 </td>
-                {attendances?.days?.map(day => {
+                {attendances?.days?.map((day) => {
                   const current = student.attendance.find(
-                    att => att?.date === day?.data
-                  )
+                    (att) => att?.date === day?.data
+                  );
 
                   return current ? (
                     <td
-                      width='100'
-                      align='center'
-                      className='flex items-center justify-center'
+                      width="100"
+                      align="center"
+                      className="flex items-center justify-center"
                     >
                       {!current.status ? (
                         <Tooltip title={current?.description ? current?.description : "Нет описания"}>
@@ -144,16 +144,20 @@ const GroupAttendance = () => {
                     </td>
                   ) : (
                     <td
-                      width='100'
-                      align='center'
-                      className='flex items-center justify-center'
+                      width="100"
+                      align="center"
+                      className="flex items-center justify-center"
                     >
-                      <div className={`
+                      <div
+                        className={`
                         flex flex-row border rounded-full 
                         border-gray-400 w-10 transition 
-                        ${compareDate(day?.data) ? "opacity-60 bg-gray-200" : "hover:w-auto"}`}>
-                        
-
+                        ${
+                          compareDate(day?.data)
+                            ? "opacity-60 bg-gray-200"
+                            : "hover:w-auto"
+                        }`}
+                      >
                         <button
                           disabled={uploading || compareDate(day.data)}
                           onClick={() => {
@@ -171,13 +175,16 @@ const GroupAttendance = () => {
                               rounded-full 
                               p-1 w-8 h-8 
                               opacity-0 
-                              ${compareDate(day?.data) ? "" : "hover:opacity-100"} 
+                              ${
+                                compareDate(day?.data)
+                                  ? ""
+                                  : "hover:opacity-100"
+                              } 
                               flex 
                               items-center 
                               justify-center 
                               transition
                               `}
-
                         >
                           <CheckCircle />
                         </button>
@@ -192,7 +199,6 @@ const GroupAttendance = () => {
                             })
                             setModalIsOpen(true)
                           }}
-
                           className={`
                             bg-red-500 
                             text-white 
@@ -201,16 +207,17 @@ const GroupAttendance = () => {
                             w-8 
                             h-8 
                             opacity-0 
-                            ${compareDate(day?.data) ? "" : "hover:opacity-100"} 
+                            ${
+                              compareDate(day?.data) ? "" : "hover:opacity-100"
+                            } 
                             flex items-center justify-center 
                             transition`}
-
                         >
                           <XCircle />
                         </button>
                       </div>
                     </td>
-                  )
+                  );
                 })}
               </tr>
             ))}
@@ -218,7 +225,7 @@ const GroupAttendance = () => {
         </table>
       </div>
     </Spin>
-  )
-}
+  );
+};
 
-export default GroupAttendance
+export default GroupAttendance;

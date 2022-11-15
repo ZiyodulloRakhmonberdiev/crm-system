@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   branches: [],
   selected_branch: null,
-  loading: false
+  loading: false,
+  refreshBranches: true,
 }
 
 const branchesSlice = createSlice({
@@ -17,13 +18,20 @@ const branchesSlice = createSlice({
       state.loading = false
       state.branches = action.payload
     },
+    fetchedError: state => {
+      state.loading = false
+      state.error = true
+    },
     setSelectedBranch: (state, action) => {
       state.selected_branch = action.payload
-    }
+    },
+    refreshBranchesData: state => {
+      state.refreshBranches = !state.refreshBranches
+    },
   }
 })
 
 
-export const { fetchingBranches, fetchedBranches, setSelectedBranch } = branchesSlice.actions
+export const { fetchingBranches,  fetchedBranches, fetchedError, setSelectedBranch, refreshBranchesData, } = branchesSlice.actions
 const branchesReducer = branchesSlice.reducer
 export default branchesReducer

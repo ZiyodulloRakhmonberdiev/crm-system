@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const IconButton = styled.button`
   width: 35px;
@@ -9,9 +9,9 @@ export const IconButton = styled.button`
   border-radius: 8px;
   font-size: 16px;
   transition: all 0.3s ease;
-  ${props => {
+  ${(props) => {
     switch (props.color) {
-      case 'danger':
+      case "danger":
         return `
           border: 1px solid rgb(248 113 113);
           color: rgb(248 113 113);
@@ -19,8 +19,8 @@ export const IconButton = styled.button`
             background-color: rgb(248 113 113);
             color: #fff;
           }
-        `
-      case 'dangerOutlined':
+        `;
+      case "dangerOutlined":
         return `
         background-color: rgb(248 113 113);
         color: #fff;
@@ -29,8 +29,8 @@ export const IconButton = styled.button`
           border: 1px solid rgb(248 113 113);
           color: rgb(248 113 113);
           }
-        `
-      case 'success':
+        `;
+      case "success":
         return `
           border: 1px solid #26d526;
           color: #26d526;
@@ -38,8 +38,8 @@ export const IconButton = styled.button`
             background-color: #26d526;
             color: #fff;
           }
-        `
-      case 'primary':
+        `;
+      case "primary":
         return `
           border: 1px solid #60A5FA;
           color: #60A5FA;
@@ -47,8 +47,8 @@ export const IconButton = styled.button`
             background-color: #60A5FA;
             color: #fff;
           }
-        `
-      case 'primaryOutlined':
+        `;
+      case "primaryOutlined":
         return `
         background-color: #60A5FA;
         color: #fff;
@@ -57,7 +57,7 @@ export const IconButton = styled.button`
           background-color: #FFF;
           color: #60A5FA;
           }
-        `
+        `;
     }
   }}
-`
+`;

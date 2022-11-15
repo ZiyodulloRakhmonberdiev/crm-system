@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import { Telephone, Person, Trash } from "react-bootstrap-icons";
+import { Telephone, Trash } from "react-bootstrap-icons";
 import InputMask from "react-input-mask";
-import { Input, Form, Radio, message, Spin, DatePicker } from "antd";
+import { Input, Form, Radio, message, Spin } from "antd";
 import { v4 as uuidv4 } from "uuid";
 
 import axios from "../../axios/axios";
@@ -19,8 +19,6 @@ export default function AddStudentForm({
 }) {
   const [uploading, setUploading] = useState(false);
   const [inputFields, setInputFields] = useState([]);
-  const [inputFieldsType, setInputFieldsType] = useState("additionPhone");
-  // const [inputFieldsParents, setInputFieldsParents] = useState([])
 
   const url = "/api/students";
   const [student, setStudent] = useState({
@@ -46,8 +44,7 @@ export default function AddStudentForm({
         gender: "",
         additionPhone: "",
       });
-      setInputFields([])
-
+      setInputFields([]);
     } else {
       const {
         first_name,
@@ -69,14 +66,14 @@ export default function AddStudentForm({
         additionPhone: addition_phone,
       });
       if (addition_phone) {
-        setInputFields([])
-        const newAddPhones = []
+        setInputFields([]);
+        const newAddPhones = [];
         addition_phone.map((item) => {
-          newAddPhones.push({ ...item, id: uuidv4() })
-        })
-        setInputFields(newAddPhones)
+          newAddPhones.push({ ...item, id: uuidv4() });
+        });
+        setInputFields(newAddPhones);
       } else {
-        setInputFields([])
+        setInputFields([]);
       }
     }
   }, [modalType, visible]);
@@ -169,32 +166,32 @@ export default function AddStudentForm({
     }
   }
 
-
   // Addition phone
-  const handleAddFields = () => { 
+  const handleAddFields = () => {
     setInputFields([
       ...inputFields,
       { label: "Дополнительный телефон", phone: "", id: Date.now() },
-    ]); 
+    ]);
   };
-
 
   const handleChangeInput = (type, id, event) => {
-      setInputFields(prev => {
-        return inputFields?.map((item) => {
-          if (id===item.id){
-            return {
-              ...item,
-              phone: type === "phone" ? `+998${event.target.value.split(" ").join("")}` : item.phone,
-              label: type === "label" ? event.target.value : item.label
-            }
-          } else {
-            return item
-          }
-        })
-      })
+    setInputFields((prev) => {
+      return inputFields?.map((item) => {
+        if (id === item.id) {
+          return {
+            ...item,
+            phone:
+              type === "phone"
+                ? `+998${event.target.value.split(" ").join("")}`
+                : item.phone,
+            label: type === "label" ? event.target.value : item.label,
+          };
+        } else {
+          return item;
+        }
+      });
+    });
   };
- 
 
   const handleRemoveFields = (id) => {
     const values = [...inputFields];
@@ -259,23 +256,18 @@ export default function AddStudentForm({
           className="mb-4 mt-2"
         />
         <p>Дата рождения</p>
-        <DatePicker
-          required
-          defaultValue={student?.birthday}
-          className="mb-4 mt-2"
-          onChange={(date, dateString) => {
-            setStudent({ ...student, birthday: dateString });
+        <input
+          id="birthday"
+          type="date"
+          onChange={(e) => {
+            handle(e);
           }}
+          placeholder="mana"
+          value={student?.birthday}
+          className="p-1 mb-4 mt-2 rounded-sm border border-slate-300"
         />
-        {/* <input
-          type='date'
-          onChange={e => {
-            handle(e)
-          }}
-          className=' p-2 border border-slate-400'
-        /> */}
         <p>Пол</p>
-        <Radio.Group value={student.gender} className="mb-4 mt-2">
+        <Radio.Group value={student?.gender} className="mb-4 mt-2">
           <Radio
             checked={student?.gender === "male"}
             value="male"
@@ -323,26 +315,26 @@ export default function AddStudentForm({
             type="button"
           >
             <Telephone />
-          </IconButton> 
+          </IconButton>
         </div>
         {inputFields.map((inputField) => (
           <div key={inputField.id}>
-            <div className="flex justify-between items-center mb-2">
-              <span>
-                Дополнительный телефон  
-              </span>
-              <span className="cursor-pointer text-red-400">
-                <Trash 
-                  onClick={() => {
-                    handleRemoveFields(inputField.id)
-                  }}
-                />
-              </span>
+            <div className="flex justify-between items-end mb-2">
+              <span>Пользователь телефона</span>
+              <button
+                onClick={() => {
+                  handleRemoveFields(inputField.id);
+                }}
+                color="dangerOutlined"
+                className="rounded-full bg-red-400 text-white p-2"
+              >
+                <Trash className="" />
+              </button>
             </div>
-            <Input 
+            <Input
               placeholder="Пользователь телефона"
-              onChange={e => {
-                handleChangeInput("label", inputField.id, e)
+              onChange={(e) => {
+                handleChangeInput("label", inputField.id, e);
               }}
               value={inputField.label}
               required
@@ -357,12 +349,12 @@ export default function AddStudentForm({
               required
             >
               {(props) => (
-                  <Input
-                    name="phone"
-                    {...props}
-                    addonBefore="+998"
-                    className="mb-4 mt-2"
-                  />
+                <Input
+                  name="phone"
+                  {...props}
+                  addonBefore="+998"
+                  className="mb-4 mt-2"
+                />
               )}
             </InputMask>
           </div>

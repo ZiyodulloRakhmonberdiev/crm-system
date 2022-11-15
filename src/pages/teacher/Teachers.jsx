@@ -1,42 +1,42 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-import { Table, Modal, Drawer, Pagination, Dropdown, Menu } from 'antd'
+import { Table, Modal, Drawer, Pagination, Dropdown, Menu } from "antd";
 import {
   PencilSquare,
   Trash,
   MicrosoftTeams,
-  ThreeDotsVertical
-} from 'react-bootstrap-icons'
+  ThreeDotsVertical,
+} from "react-bootstrap-icons";
 
-import { MyButton } from '../../UI/Button.style'
-import axios from '../../axios/axios'
-import AddTeacherForm from './AddTeacherForm'
-import { v4 as uuidv4 } from 'uuid'
+import { MyButton } from "../../UI/Button.style";
+import axios from "../../axios/axios";
+import AddTeacherForm from "./AddTeacherForm";
+import { v4 as uuidv4 } from "uuid";
 import {
   fetchingTeachers,
   fetchedTeachers,
   fetchedError,
-  setTeachersData
-} from '../../redux/teachersSlice'
+  setTeachersData,
+} from "../../redux/teachersSlice";
 
-export default function Teachers () {
-  const [editingTeacher, setEditingTeacher] = useState(null)
-  const [visible, setVisible] = useState(false)
+export default function Teachers() {
+  const [editingTeacher, setEditingTeacher] = useState(null);
+  const [visible, setVisible] = useState(false);
 
-  const [modalType, setModalType] = useState('add')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [per_page, setPerPage] = useState(30)
-  const [last_page, setLastPage] = useState(1)
+  const [modalType, setModalType] = useState("add");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [per_page, setPerPage] = useState(30);
+  const [last_page, setLastPage] = useState(1);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { teachers, loading, refreshTeachers } = useSelector(
-    state => state.teachers
-  )
+    (state) => state.teachers
+  );
   // teachers static data
-  let dataSource = []
-  teachers?.data?.map(item => {
+  let dataSource = [];
+  teachers?.data?.map((item) => {
     dataSource?.push({
       id: item?.id,
       uid: uuidv4(),
@@ -44,7 +44,7 @@ export default function Teachers () {
         <Link
           to={`/teachers/profile/${item?.id}`}
           onClick={() => dispatch(setTeachersData(item))}
-          className='text-cyan-500'
+          className="text-cyan-500"
         >
           {item?.name}
         </Link>
@@ -55,120 +55,122 @@ export default function Teachers () {
       actions: (
         <Dropdown
           overlay={
-            <div className='p-3 border bg-white drop-shadow-md flex flex-col gap-2'>
+            <div className="p-3 border bg-white drop-shadow-md flex flex-col gap-2">
               <a
-                key='0'
+                key="0"
                 onClick={() => {
-                  onEditTeacher(item)
+                  onEditTeacher(item);
                 }}
-                className='flex items-center gap-2'
+                className="flex items-center gap-2"
               >
-                <PencilSquare className='text-gray-400 text-xl' />
+                <PencilSquare className="text-gray-400 text-xl" />
                 <span>Редактировать</span>
               </a>
               <a
-                key='1'
+                key="1"
                 onClick={() => {
-                  onDeleteTeacher(item)
+                  onDeleteTeacher(item);
                 }}
-                className='flex items-center gap-2'
+                className="flex items-center gap-2"
               >
-                <Trash className='text-red-400 text-xl' /> <span>Удалить</span>
+                <Trash className="text-red-400 text-xl" /> <span>Удалить</span>
               </a>
             </div>
           }
-          trigger={['click']}
+          trigger={["click"]}
         >
-          <a className='ant-dropdown-link' onClick={e => e.preventDefault()}>
+          <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
             <ThreeDotsVertical />
           </a>
         </Dropdown>
-      )
-    })
-  })
+      ),
+    });
+  });
 
   // Table headers
   const columns = [
     {
-      key: '1',
-      title: '',
-      dataIndex: 'id',
-      width: 80
+      key: "1",
+      title: "",
+      dataIndex: "id",
+      width: 80,
     },
     {
-      key: '2',
-      title: 'Имя',
-      dataIndex: 'name',
-      fixed: 'top'
+      key: "2",
+      title: "Имя",
+      dataIndex: "name",
+      fixed: "top",
     },
     {
-      key: '3',
-      title: 'Телефон',
-      dataIndex: 'phone',
-      fixed: 'top'
+      key: "3",
+      title: "Телефон",
+      dataIndex: "phone",
+      fixed: "top",
     },
     {
-      key: '4',
-      title: 'Зарплата',
-      dataIndex: 'salary_percentage',
-      fixed: 'top'
+      key: "4",
+      title: "Зарплата",
+      dataIndex: "salary_percentage",
+      fixed: "top",
     },
     {
-      key: '5',
-      title: 'Действие',
+      key: "5",
+      title: "Действие",
       width: 200,
-      dataIndex: 'actions'
-    }
-  ]
+      dataIndex: "actions",
+    },
+  ];
   // Actions with table
-  const onDeleteTeacher = record => {
+  const onDeleteTeacher = (record) => {
     Modal.confirm({
-      title: 'Вы уверены что хотите удалить?',
-      okText: 'Да',
-      okType: 'danger',
-      cancelText: 'Отмена'
+      title: "Вы уверены что хотите удалить?",
+      okText: "Да",
+      okType: "danger",
+      cancelText: "Отмена",
       // onOk: () => {
       //   setDataSource(pre => {
       //     return pre.filter(teacher => teacher.id !== record.id)
       //   })
       // }
-    })
-  }
+    });
+  };
 
-  const onEditTeacher = teacher => {
-    setModalType('update')
-    setVisible(true)
-    setEditingTeacher({ ...teacher })
-  }
+  const onEditTeacher = (teacher) => {
+    setModalType("update");
+    setVisible(true);
+    setEditingTeacher({ ...teacher });
+  };
 
   // fetching teachers
   useEffect(() => {
-    dispatch(fetchingTeachers())
+    dispatch(fetchingTeachers());
     axios
       .get(`/api/teachers?page=${currentPage}`)
-      .then(res => {
-        dispatch(fetchedTeachers(res?.data?.data))
+      .then((res) => {
+        dispatch(fetchedTeachers(res?.data?.data));
       })
-      .catch(err => {
-        dispatch(fetchedError())
-      })
-  }, [refreshTeachers, currentPage])
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, [refreshTeachers, currentPage]);
   return (
     <div>
-      <header className='bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8'>
-        <div className='text-2xl text-violet-400 bg-violet-50 p-2 rounded-md'>
+      <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
+        <div className="text-2xl text-violet-400 bg-violet-50 p-2 rounded-md">
           <MicrosoftTeams />
         </div>
-        <div className='md:flex md:gap-4 items-center'>
-          <p className='text-violet-400 text-2xl'>Учителя</p>
-          <p className='text-violet-400'>Количество: {teachers.length}</p>
+        <div className="md:flex md:gap-4 items-center">
+          <p className="text-violet-400 text-2xl">Учителя</p>
+          <p className="text-violet-400">
+            Количество: {teachers?.data?.length}
+          </p>
         </div>
         <MyButton
           onClick={() => {
-            setVisible(!visible)
-            setModalType('add')
+            setVisible(!visible);
+            setModalType("add");
           }}
-          className='md:ml-auto'
+          className="md:ml-auto"
         >
           Добавить
         </MyButton>
@@ -176,12 +178,12 @@ export default function Teachers () {
       <Drawer
         open={visible}
         title={
-          modalType === 'add'
-            ? 'Добавить нового учителя'
-            : 'Редактирование учителя'
+          modalType === "add"
+            ? "Добавить нового учителя"
+            : "Редактирование учителя"
         }
         onClose={() => {
-          setVisible(!visible)
+          setVisible(!visible);
         }}
         maskClosable={true}
       >
@@ -197,10 +199,10 @@ export default function Teachers () {
         columns={columns}
         dataSource={dataSource}
         scroll={{
-          x: 1000
+          x: 1000,
         }}
         pagination={false}
-        rowKey={record => record.uid}
+        rowKey={(record) => record.uid}
       ></Table>
       <br />
       <center>
@@ -209,11 +211,11 @@ export default function Teachers () {
           total={last_page * per_page}
           current={currentPage}
           onChange={(page, x) => {
-            setCurrentPage(page)
-            setPerPage(x)
+            setCurrentPage(page);
+            setPerPage(x);
           }}
         />
       </center>
     </div>
-  )
+  );
 }

@@ -1,150 +1,138 @@
 // import type { RadioChangeEvent } from 'antd'
-import { useState, useEffect } from 'react'
-import { Input, message, Spin } from 'antd'
-import axios from '../../axios/axios'
-import { MyButton } from '../../UI/Button.style'
-import { useDispatch, useSelector } from 'react-redux'
-import { refreshRoomsData } from '../../redux/roomsSlice'
+import { useState, useEffect } from "react";
+import { Input, message, Spin } from "antd";
+import axios from "../../axios/axios";
+import { MyButton } from "../../UI/Button.style";
+import { useDispatch, useSelector } from "react-redux";
+import { refreshRoomsData } from "../../redux/roomsSlice";
 
-export default function AddRoomsForm ({
+export default function AddRoomsForm({
   modalType,
   editingRoom,
   visible,
-  setVisible
+  setVisible,
 }) {
-  const [uploading, setUploading] = useState(false)
-  const { selected_branch } = useSelector(state => state.branches)
-  const dispatch = useDispatch()
-  const url = '/api/rooms'
+  const [uploading, setUploading] = useState(false);
+  const { selected_branch } = useSelector((state) => state.branches);
+  const dispatch = useDispatch();
+  const url = "/api/rooms";
 
   const [room, setRoom] = useState({
-    name: '',
-    capacity: '',
-    branch_id: selected_branch?.id
-  })
+    name: "",
+    capacity: "",
+    branch_id: selected_branch?.id,
+  });
 
   useEffect(() => {
-    if (modalType === 'add') {
+    if (modalType === "add") {
       setRoom({
-        name: '',
-        capacity: '',
-        branch_id: selected_branch?.id
-      })
+        name: "",
+        capacity: "",
+        branch_id: selected_branch?.id,
+      });
     } else {
-      const { name, capacity, branch_id, room_id } = editingRoom
+      const { name, capacity, branch_id, room_id } = editingRoom;
       setRoom({
         name: name,
         capacity: capacity,
         branch_id: branch_id,
-        room_id: room_id
-      })
+        room_id: room_id,
+      });
     }
-  }, [modalType, visible])
+  }, [modalType, visible]);
 
-  function handle (e) {
-    const newRoom = { ...room }
-    newRoom[e.target.id] = e.target.value
-    setRoom(newRoom)
+  function handle(e) {
+    const newRoom = { ...room };
+    newRoom[e.target.id] = e.target.value;
+    setRoom(newRoom);
   }
 
-  function submit (e) {
-    e.preventDefault()
-    const { name, capacity, branch_id, room_id } = room
+  function submit(e) {
+    e.preventDefault();
+    const { name, capacity } = room;
     if (name && capacity) {
-      setUploading(true)
-      if (modalType === 'add') {
+      setUploading(true);
+      if (modalType === "add") {
         axios
           .post(url, {
             name: room.name,
             capacity: room.capacity,
-            branch_id: selected_branch?.id
+            branch_id: selected_branch?.id,
           })
-          .then(res => {
+          .then((res) => {
             setRoom({
-              name: '',
-              capacity: ''
-            })
-            message.success("Xona muvaffaqiyatli qo'shildi")
-            dispatch(refreshRoomsData())
-            setVisible()
+              name: "",
+              capacity: "",
+            });
+            message.success("Кабинет успешно добавлен!");
+            dispatch(refreshRoomsData());
+            setVisible();
           })
-          .catch(err => {
-            message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+          .catch((err) => {
+            message.error("Произошла ошибка! Попробуйте еще раз!");
           })
-          .finally(() => setUploading(false))
-      } else if (modalType === 'update') {
+          .finally(() => setUploading(false));
+      } else if (modalType === "update") {
         axios
-          .patch(url + '/' + editingRoom?.id, {
+          .patch(url + "/" + editingRoom?.id, {
             room_id: editingRoom?.id,
             name: room?.name,
             capacity: room?.capacity,
-            branch_id: selected_branch?.id
+            branch_id: selected_branch?.id,
           })
-          .then(res => {
+          .then((res) => {
             setRoom({
-              name: '',
-              capacity: ''
-            })
-            message.success('Xona muvaffaqiyatli yangilandi')
-            dispatch(refreshRoomsData())
-            setVisible()
+              name: "",
+              capacity: "",
+            });
+            message.success("Кабинет успешно обновлен!");
+            dispatch(refreshRoomsData());
+            setVisible();
           })
-          .catch(err => {
-            console.log(err)
-            message.error("Xatolik yuz berdi! Qayta urinib ko'ring!")
+          .catch((err) => {
+            console.log(err);
+            message.error("Произошла ошибка! Попробуйте еще раз!");
           })
-          .finally(() => setUploading(false))
+          .finally(() => setUploading(false));
       }
     } else {
-      message.error("Barcha maydonni to'ldiring!")
+      message.error("Заполните все поля!");
     }
   }
 
   return (
     <div>
-      <form onSubmit={e => submit(e)}>
-        <p>Xona nomi</p>
+      <form onSubmit={(e) => submit(e)}>
+        <p>Название</p>
         <Input
           required
-          id='name'
+          id="name"
           value={room?.name}
-          onChange={e => {
-            handle(e)
+          onChange={(e) => {
+            handle(e);
           }}
-          type='text'
-          className='mb-4 mt-2'
-          name='name'
+          type="text"
+          className="mb-4 mt-2"
+          name="name"
         />
-        <p>Talaba sig'imi</p>
+        <p>Студенческая емкость</p>
         <Input
-          type='number'
+          type="number"
           required
-          id='capacity'
+          id="capacity"
           value={room?.capacity}
-          onChange={e => {
-            handle(e)
+          onChange={(e) => {
+            handle(e);
           }}
-          className='mb-4 mt-2'
-          name='capacity'
+          className="mb-4 mt-2"
+          name="capacity"
         />
-        {/* <p>Branch ID</p>
-        <Input
-          type='number'
-          required
-          id='branch_id'
-          value={room?.branch_id}
-          onChange={e => {
-            handle(e)
-          }}
-          className='mb-4 mt-2'
-          name='branch_id'
-        /> */}
         <Spin spinning={uploading}>
-          <MyButton htmlType='submit' color='primary'>
-            Yuborish
+          <MyButton htmlType="submit" color="primary">
+            Отправить
           </MyButton>
         </Spin>
       </form>
     </div>
-  )
+  );
 }

@@ -35,6 +35,7 @@ import Courses from './pages/courses/Courses'
 import CourseProfile from './pages/courses/CourseProfile'
 
 import Rooms from './pages/rooms/Rooms'
+import Branches from './pages/branches/Branches'
 
 export default function App () {
   return (
@@ -71,6 +72,7 @@ export default function App () {
           <Route path='/courses/:id' element={<CourseProfile />} />
 
           <Route path='/rooms' element={<Rooms />} />
+          <Route path='/branches' element={<Branches />} />
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='*' element={<NotFound />} />

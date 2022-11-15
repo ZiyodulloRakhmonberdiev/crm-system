@@ -1,90 +1,89 @@
-import { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import { Input, message, Spin, Select, DatePicker } from 'antd'
-import axios from '../../axios/axios'
-import { MyButton } from '../../UI/Button.style'
-import { refreshGroupsData } from '../../redux/groupsSlice'
+import { Input, message, Spin, Select, DatePicker } from "antd";
+import axios from "../../axios/axios";
+import { MyButton } from "../../UI/Button.style";
+import { refreshGroupsData } from "../../redux/groupsSlice";
 import {
   fetchedCourses,
   fetchedError,
-  fetchingCourses
-} from '../../redux/coursesSlice'
-import { fetchedTeachers, fetchingTeachers } from '../../redux/teachersSlice'
-import { fetchedRooms, fetchingRooms } from '../../redux/roomsSlice'
+  fetchingCourses,
+} from "../../redux/coursesSlice";
+import { fetchedTeachers, fetchingTeachers } from "../../redux/teachersSlice";
+import { fetchedRooms, fetchingRooms } from "../../redux/roomsSlice";
 
-const { RangePicker } = DatePicker
+const { RangePicker } = DatePicker;
 
-export default function AddGroupForm ({
+export default function AddGroupForm({
   modalType,
   editingGroup,
   visible,
-  setVisible
+  setVisible,
 }) {
-  const { teachers } = useSelector(state => state.teachers)
-  const { courses } = useSelector(state => state.courses)
-  const { rooms } = useSelector(state => state.rooms)
-  const dispatch = useDispatch()
-  const url = '/api/groups'
-  const [uploading, setUploading] = useState(false)
+  const { teachers } = useSelector((state) => state.teachers);
+  const { courses } = useSelector((state) => state.courses);
+  const { rooms } = useSelector((state) => state.rooms);
+  const dispatch = useDispatch();
+  const url = "/api/groups";
+  const [uploading, setUploading] = useState(false);
   const [group, setGroup] = useState({
-    name: '',
-    time_id: '',
-    group_start_date: '',
-    group_end_date: '',
+    name: "",
+    time_id: "",
+    group_start_date: "",
+    group_end_date: "",
     teacher_ids: [],
-    room_id: '',
+    room_id: "",
     days: [],
-    course_id: ''
-  })
-  const [times, setTimes] = useState([])
+    course_id: "",
+  });
+  const [times, setTimes] = useState([]);
 
   // fetching courses
   useEffect(() => {
-    dispatch(fetchingCourses())
+    dispatch(fetchingCourses());
     axios
       .get(`/api/courses`)
-      .then(res => {
-        dispatch(fetchedCourses(res?.data?.data))
-      })
-      .catch(err => {
-        dispatch(fetchedError())
-      })
-    
-    axios.get("/api/times")
       .then((res) => {
-        setTimes(res.data.data)
+        dispatch(fetchedCourses(res?.data?.data));
       })
-  }, [])
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+
+    axios.get("/api/times").then((res) => {
+      setTimes(res.data.data);
+    });
+  }, []);
 
   // fetching teachers
   useEffect(() => {
-    dispatch(fetchingTeachers())
-    axios.get(`/api/teachers`).then(res => {
-      dispatch(fetchedTeachers(res?.data?.data))
-    })
-  }, [])
+    dispatch(fetchingTeachers());
+    axios.get(`/api/teachers`).then((res) => {
+      dispatch(fetchedTeachers(res?.data?.data));
+    });
+  }, []);
 
   // fetching rooms
   useEffect(() => {
-    dispatch(fetchingRooms())
-    axios.get(`/api/rooms`).then(res => {
-      dispatch(fetchedRooms(res?.data?.data?.data))
-    })
-  }, [])
+    dispatch(fetchingRooms());
+    axios.get(`/api/rooms`).then((res) => {
+      dispatch(fetchedRooms(res?.data?.data?.data));
+    });
+  }, []);
 
   useEffect(() => {
-    if (modalType === 'add') {
+    if (modalType === "add") {
       setGroup({
-        name: '',
-        time_id: '',
-        group_start_date: '',
-        group_end_date: '',
+        name: "",
+        time_id: "",
+        group_start_date: "",
+        group_end_date: "",
         teacher_ids: [],
-        room_id: '',
-        days: '',
-        course_id: ''
-      })
+        room_id: "",
+        days: "",
+        course_id: "",
+      });
     } else {
       const {
         name,
@@ -93,12 +92,12 @@ export default function AddGroupForm ({
         group_end_date,
         room,
         days,
-        course
-      } = editingGroup
-      const teachers_ids = []
-      editingGroup?.tachers?.map(item => {
-        teachers_ids.push(item.id)
-      })
+        course,
+      } = editingGroup;
+      const teachers_ids = [];
+      editingGroup?.tachers?.map((item) => {
+        teachers_ids.push(item.id);
+      });
       setGroup({
         name: name,
         time_id: time?.id,
@@ -106,19 +105,19 @@ export default function AddGroupForm ({
         group_end_date: group_end_date,
         teacher_ids: teachers_ids,
         room_id: room?.id,
-        days: days?.join(','),
-        course_id: course?.id
-      })
+        days: days?.join(","),
+        course_id: course?.id,
+      });
     }
-  }, [modalType, visible])
+  }, [modalType, visible]);
 
-  function handle (e) {
-    const newGroup = { ...group }
-    newGroup[e.target.id] = e.target.value
-    setGroup(newGroup)
+  function handle(e) {
+    const newGroup = { ...group };
+    newGroup[e.target.id] = e.target.value;
+    setGroup(newGroup);
   }
-  function submit (e) {
-    e.preventDefault()
+  function submit(e) {
+    e.preventDefault();
     const {
       name,
       time_id,
@@ -126,8 +125,8 @@ export default function AddGroupForm ({
       teacher_ids,
       room_id,
       days,
-      course_id
-    } = group
+      course_id,
+    } = group;
     if (
       name &&
       time_id &&
@@ -137,8 +136,8 @@ export default function AddGroupForm ({
       days &&
       course_id
     ) {
-      setUploading(true)
-      if (modalType === 'add') {
+      setUploading(true);
+      if (modalType === "add") {
         axios
           .post(url, {
             name: group.name,
@@ -147,35 +146,35 @@ export default function AddGroupForm ({
             group_end_date: group.group_end_date,
             teacher_ids: group.teacher_ids,
             room_id: group.room_id,
-            days: group.days?.split(','),
-            course_id: group.course_id
+            days: group.days?.split(","),
+            course_id: group.course_id,
           })
-          .then(res => {
+          .then((res) => {
             setGroup({
-              name: '',
-              time_id: '',
-              group_start_date: '',
-              group_end_date: '',
+              name: "",
+              time_id: "",
+              group_start_date: "",
+              group_end_date: "",
               teacher_ids: [],
-              room_id: '',
-              days: '',
-              course_id: ''
-            })
-            message.success('Группа успешно добавлен!')
-            dispatch(refreshGroupsData())
-            setVisible()
+              room_id: "",
+              days: "",
+              course_id: "",
+            });
+            message.success("Группа успешно добавлен!");
+            dispatch(refreshGroupsData());
+            setVisible();
           })
-          .catch(err => {
+          .catch((err) => {
             if (err.response.data.data.room_id) {
-              message.error('Кабинет в это время занята!')
+              message.error("Кабинет в это время занята!");
             } else {
-              message.error('Произошла ошибка! Попробуйте еще раз!')
+              message.error("Произошла ошибка! Попробуйте еще раз!");
             }
           })
-          .finally(() => setUploading(false))
-      } else if (modalType === 'update') {
+          .finally(() => setUploading(false));
+      } else if (modalType === "update") {
         axios
-          .patch(url + '/' + editingGroup?.id, {
+          .patch(url + "/" + editingGroup?.id, {
             group_id: editingGroup?.id,
             name: group.name,
             time_id: group.time_id,
@@ -183,59 +182,59 @@ export default function AddGroupForm ({
             group_end_date: group.group_end_date,
             teacher_ids: group.teacher_ids,
             room_id: group.room_id,
-            days: group.days?.split(','),
-            course_id: group.course_id
+            days: group.days?.split(","),
+            course_id: group.course_id,
           })
-          .then(res => {
+          .then((res) => {
             setGroup({
-              name: '',
-              time_id: '',
-              group_start_date: '',
-              group_end_date: '',
+              name: "",
+              time_id: "",
+              group_start_date: "",
+              group_end_date: "",
               teacher_ids: [],
-              room_id: '',
-              days: '',
-              course_id: ''
-            })
-            message.success('Группа успешно обновлен!')
-            dispatch(refreshGroupsData())
-            setVisible()
+              room_id: "",
+              days: "",
+              course_id: "",
+            });
+            message.success("Группа успешно обновлен!");
+            dispatch(refreshGroupsData());
+            setVisible();
           })
-          .catch(err => {
+          .catch((err) => {
             if (err.response.data.data.room_id) {
-              message.error('Кабинет в это время занята!')
+              message.error("Кабинет в это время занята!");
             } else {
-              message.error('Произошла ошибка! Попробуйте еще раз!')
+              message.error("Произошла ошибка! Попробуйте еще раз!");
             }
           })
-          .finally(() => setUploading(false))
+          .finally(() => setUploading(false));
       }
     } else {
-      message.error('Заполните все поля!')
+      message.error("Заполните все поля!");
     }
   }
   return (
     <div>
-      <form onSubmit={e => submit(e)}>
-        <p>Заполните все поля!</p>
+      <form onSubmit={(e) => submit(e)}>
+        <p>Название группы</p>
         <Input
           required
-          id='name'
+          id="name"
           value={group?.name}
-          onChange={e => {
-            setGroup({ ...group, name: e.target.value })
+          onChange={(e) => {
+            setGroup({ ...group, name: e.target.value });
           }}
-          type='text'
-          className='mb-4 mt-2'
+          type="text"
+          className="mb-4 mt-2"
         />
         <p>Выберите курс</p>
         <Select
           value={group?.course_id}
-          onChange={e => {
-            setGroup({ ...group, course_id: e })
+          onChange={(e) => {
+            setGroup({ ...group, course_id: e });
           }}
-          placeholder='Выбрать варианты'
-          className='w-full mb-4 mt-2'
+          placeholder="Выбрать варианты"
+          className="w-full mb-4 mt-2"
           showSearch={true}
         >
           {courses.map((course, index) => {
@@ -243,87 +242,69 @@ export default function AddGroupForm ({
               <Select.Option value={course?.id} key={index}>
                 {course.name}
               </Select.Option>
-            )
+            );
           })}
         </Select>
         <p>Выберите учителя</p>
         <Select
           value={group?.teacher_ids}
-          onChange={e => {
-            setGroup({ ...group, teacher_ids: e })
+          onChange={(e) => {
+            setGroup({ ...group, teacher_ids: e });
           }}
-          placeholder='Выбрать варианты'
-          className='w-full mb-4 mt-2'
+          placeholder="Выбрать варианты"
+          className="w-full mb-4 mt-2"
           showSearch={true}
-          mode='multiple'
+          mode="multiple"
         >
-
           {teachers?.data?.map((teacher, index) => {
             return (
               <Select.Option value={teacher?.id} key={index}>
                 {teacher.name}
               </Select.Option>
-            )
+            );
           })}
         </Select>
 
-        <p className='mb-2'>Дата старта группы</p>
-        <div className='flex gap-x-2 mb-4'>
-          <DatePicker
-            required
-            onChange={(date, dateString) => {
-              setGroup({ ...group, group_start_date: dateString })
-            }}
-            placeholder='Выбрать дату'
-          />
-          <DatePicker
-            required
-            defaultValue={null}
-            onChange={(date, dateString) => {
-              setGroup({ ...group, group_start_date: dateString })
-            }}
-            placeholder='Выбрать дату'
-          />
-          {/* <input
+        <p>Дата старта группы</p>
+        <div className="flex gap-x-2 mb-4 mt-2">
+          <input
             value={group?.group_start_date}
-            id='group_start_date'
-            onChange={e => handle(e)}
-            type='date'
-            placeholder='Выбрать дату'
-            className='rounded-md px-2 py-1 border-2 border-gray-200 mt-2 w-full'
+            id="group_start_date"
+            onChange={(e) => handle(e)}
+            type="date"
+            className="rounded-sm p-1 border border-slate-300"
           />
           <input
-            onChange={e => handle(e)}
-            id='group_end_date'
+            onChange={(e) => handle(e)}
+            id="group_end_date"
             value={group?.group_end_date}
-            type='date'
-            placeholder='Выбрать дату'
-            className='rounded-md px-2 py-1  border-2 border-gray-200 mt-2 w-full'
-          /> */}
+            type="date"
+            className="rounded-sm p-1 border border-slate-300"
+          />
         </div>
         <p>Дни</p>
         <Select
           value={group?.days}
-          onChange={e => {
-            setGroup({ ...group, days: e })
+          onChange={(e) => {
+            setGroup({ ...group, days: e });
           }}
-          placeholder='Выбрать варианты'
-          className='w-full mb-4 mt-2'
+          placeholder="Выбрать варианты"
+          className="w-full mb-4 mt-2"
           showSearch={true}
         >
-          <Select.Option value={'1,3,5'}>Нечетные дни</Select.Option>
-          <Select.Option value={'2,4,6'}>Четные дни</Select.Option>
-          <Select.Option value={'1,2,3,4,5,6'}>Каждый день</Select.Option>
-          <Select.Option value={'6,7'}>Другое</Select.Option>
+          <Select.Option value={"1,3,5"}>Нечетные дни</Select.Option>
+          <Select.Option value={"2,4,6"}>Четные дни</Select.Option>
+          <Select.Option value={"1,2,3,4,5,6"}>Каждый день</Select.Option>
+          <Select.Option value={"6,7"}>Другое</Select.Option>
         </Select>
         <p>Выберите аудиторию</p>
         <Select
           value={group?.room_id}
-          onChange={e => {
-            setGroup({ ...group, room_id: e })
+          onChange={(e) => {
+            setGroup({ ...group, room_id: e });
           }}
-          placeholder='Выбрать варианты'
-          className='w-full mb-4 mt-2'
+          placeholder="Выбрать варианты"
+          className="w-full mb-4 mt-2"
           showSearch={true}
         >
           {rooms?.map((room, index) => {
@@ -331,31 +312,29 @@ export default function AddGroupForm ({
               <Select.Option value={room?.id} key={room.id}>
                 {room.name}
               </Select.Option>
-            )
+            );
           })}
         </Select>
         <p>Время начала урока</p>
         <Select
           value={group?.time_id}
-          onChange={e => {
-            setGroup({ ...group, time_id: e })
+          onChange={(e) => {
+            setGroup({ ...group, time_id: e });
           }}
-          placeholder='Выбрать варианты'
-          className='w-full mb-4 mt-2'
+          placeholder="Выбрать варианты"
+          className="w-full mb-4 mt-2"
           showSearch={true}
         >
-          {
-            times?.map((time) => (
-              <Select.Option value={time?.id}>{time?.time}</Select.Option>
-            ))
-          }
+          {times?.map((time) => (
+            <Select.Option value={time?.id}>{time?.time}</Select.Option>
+          ))}
         </Select>
         <Spin spinning={uploading}>
-          <MyButton htmlType='submit' color='primary'>
+          <MyButton htmlType="submit" color="primary">
             Отправить
           </MyButton>
         </Spin>
       </form>
     </div>
-  )
+  );
 }

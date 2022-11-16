@@ -67,13 +67,14 @@ export default function Login() {
         navigate("/", { replace: true });
       })
       .catch((err) => {
+        console.log(err);
         message.error("Введен неверный логин или пароль!");
       })
       .finally(() => {
         setLoading(false);
       });
   };
-
+  console.log(localStorage.getItem("crm_token"));
   return (
     <Spin spinning={loading}>
       <div className="bg-gray-900 h-screen w-screen relative overflow-hidden flex justify-center items-center">
@@ -97,13 +98,11 @@ export default function Login() {
             >
               {(props) => (
                 <Input
-                  {...props}
                   required
+                  {...props}
                   addonBefore="+998"
                   className="bg-white focus:outline-none tracking-wide"
                   placeholder="телефон"
-                  max="9"
-                  min="9"
                 />
               )}
             </InputMask>
@@ -111,7 +110,6 @@ export default function Login() {
               type="password"
               placeholder="пароль"
               className="bg-white focus:outline-none tracking-wide login-password"
-              visible={true}
               onChange={(e) => setPassword(e.target.value)}
               value={password}
               required

@@ -7,6 +7,8 @@ import { IconButton } from "../../UI/IconButton.style";
 import { changeUpdateGroupData } from "../../redux/groupsSlice";
 import AddGroupForm from "./AddGroupForm";
 import GroupAttendance from "./GroupAttendances";
+import { MyMessage } from "../../UI/Message.style";
+import { MyButton } from "../../UI/Button.style";
 
 export default function GroupProfile() {
   const { groupData } = useSelector((state) => state.groups);
@@ -44,6 +46,10 @@ export default function GroupProfile() {
           setVisible={() => setVisible(false)}
         />
       </Drawer>
+      <MyMessage>
+        <span> Эта группа уже завершилась. Нажмите на кнопку, чтобы заархивировать её </span>
+        <MyButton>Архивировать группу</MyButton>
+      </MyMessage>
       <div className="text-xl mb-8 bg-white p-4 rounded-lg">
         {groupData?.name}
       </div>

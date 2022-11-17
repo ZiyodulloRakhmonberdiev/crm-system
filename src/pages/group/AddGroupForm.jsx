@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Input, message, Spin, Select, DatePicker } from "antd";
+import { Input, message, Spin, Select } from "antd";
 import axios from "../../axios/axios";
 import { MyButton } from "../../UI/Button.style";
 import { refreshGroupsData } from "../../redux/groupsSlice";
@@ -12,8 +12,6 @@ import {
 } from "../../redux/coursesSlice";
 import { fetchedTeachers, fetchingTeachers } from "../../redux/teachersSlice";
 import { fetchedRooms, fetchingRooms } from "../../redux/roomsSlice";
-
-const { RangePicker } = DatePicker;
 
 export default function AddGroupForm({
   modalType,

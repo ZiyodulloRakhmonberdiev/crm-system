@@ -6,7 +6,8 @@ const initialState = {
   error: false,
   refreshStudents: true,
   userData: {},
-  userGroupData: {}
+  userGroupData: {},
+  studentGroups: []
 }
 
 const studentsSlice = createSlice({
@@ -24,6 +25,9 @@ const studentsSlice = createSlice({
       state.loading = false
       state.error = true
     },
+    fetchingStudentGroups: (state, action) => {
+      state.studentGroups = action.payload
+    },
     refreshStudentsData: state => {
       state.refreshStudents = !state.refreshStudents
     },
@@ -38,6 +42,7 @@ const studentsSlice = createSlice({
 
 export const {
   fetchingStudents,
+  fetchingStudentGroups,
   fetchedStudents,
   fetchedError,
   refreshStudentsData,

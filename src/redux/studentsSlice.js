@@ -3,11 +3,12 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   students: [],
   loading: false,
+  loadingJoinedGroups: false,
   error: false,
   refreshStudents: true,
   userData: {},
   userGroupData: {},
-  studentGroups: []
+  studentJoinedGroups: []
 }
 
 const studentsSlice = createSlice({
@@ -25,12 +26,12 @@ const studentsSlice = createSlice({
       state.loading = false
       state.error = true
     },
-    fetchingStudentGroups: (state, action) => {
-      state.loading = true
+    fetchingStudentJoinedGroups: (state, action) => {
+      state.loadingJoinedGroups = true
     },
-    fetchedStudentGroups: (state, action) => {
-      state.loading = false
-      state.studentGroups = action.payload
+    fetchedStudentJoinedGroups: (state, action) => {
+      state.loadingJoinedGroups = false
+      state.studentJoinedGroups = action.payload
     },
     refreshStudentsData: state => {
       state.refreshStudents = !state.refreshStudents
@@ -46,8 +47,8 @@ const studentsSlice = createSlice({
 
 export const {
   fetchingStudents,
-  fetchingStudentGroups,
-  fetchedStudentGroups,
+  fetchingStudentJoinedGroups,
+  fetchedStudentJoinedGroups,
   fetchedStudents,
   fetchedError,
   refreshStudentsData,

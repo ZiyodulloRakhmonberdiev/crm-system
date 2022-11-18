@@ -7,11 +7,10 @@ import InputMask from "react-input-mask";
 import axios from "../../axios/axios";
 import { MyButton } from "../../UI/Button.style";
 import {
-  fetchedStudentGroups,
+  fetchedStudentJoinedGroups,
   fetchedStudents,
-  fetchingStudentGroups,
+  fetchingStudentJoinedGroups,
   fetchingStudents,
-  refreshStudentsData,
 } from "../../redux/studentsSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -20,10 +19,9 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const url = "/api/payments";
-  const { students, studentGroups, loading } = useSelector(
+  const { students, studentJoinedGroups, loadingJoinedGroups } = useSelector(
     (state) => state.students
   );
-
   const [payment, setPayment] = useState({
     student_id: "",
     group_id: "",
@@ -51,14 +49,15 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
     });
   }, []);
 
-  // fetching students groups
+  // fetching students joined groups
   useEffect(() => {
-    dispatch(fetchingStudentGroups());
+    payment?.student_id && dispatch(fetchingStudentJoinedGroups());
     payment?.student_id &&
       axios.get(`/api/students/${payment?.student_id}/groups`).then((res) => {
-        dispatch(fetchedStudentGroups(res?.data?.data));
+        dispatch(fetchedStudentJoinedGroups(res?.data));
       });
   }, [payment?.student_id]);
+
   function handle(e) {
     const newPayment = { ...payment };
     newPayment[e.target.id] = e.target.value;
@@ -89,9 +88,9 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
         })
         .then((res) => {
           setPayment({
-            student_id: null,
-            group_id: null,
-            amount: null,
+            student_id: "",
+            group_id: "",
+            amount: "",
             payment_type: "",
             date: "",
             description: "",
@@ -132,7 +131,7 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
           })}
         </Select>
         <p>Группа</p>
-        <Spin spinning={loading}>
+        <Spin spinning={loadingJoinedGroups}>
           <Select
             disabled={!payment?.student_id}
             value={payment?.group_id}
@@ -143,7 +142,7 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
             className="w-full mb-4 mt-2"
             showSearch={true}
           >
-            {studentGroups.map((group, index) => {
+            {studentJoinedGroups?.data?.map((group, index) => {
               return (
                 <Select.Option value={group?.id} key={index}>
                   {group?.name}
@@ -158,7 +157,7 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
           onChange={(e) => {
             setPayment({ ...payment, amount: e.target.value });
           }}
-          value={payment.amount}
+          value={payment?.amount}
           maskChar={null}
         >
           {(props) => (

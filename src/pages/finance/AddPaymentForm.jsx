@@ -7,6 +7,7 @@ import InputMask from "react-input-mask";
 import axios from "../../axios/axios";
 import { MyButton } from "../../UI/Button.style";
 import {
+  fetchedStudentGroups,
   fetchedStudents,
   fetchingStudentGroups,
   fetchingStudents,
@@ -16,11 +17,12 @@ import { useNavigate } from "react-router-dom";
 
 export default function AddPaymentForm({ visible, setVisiblePayment }) {
   const [uploading, setUploading] = useState(false);
-  const [selectStudent, setSelectStudent] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const url = "/api/payments";
-  const { students, studentGroups } = useSelector((state) => state.students);
+  const { students, studentGroups, loading } = useSelector(
+    (state) => state.students
+  );
 
   const [payment, setPayment] = useState({
     student_id: "",
@@ -51,16 +53,12 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
 
   // fetching students groups
   useEffect(() => {
-    setSelectStudent(true);
+    dispatch(fetchingStudentGroups());
     payment?.student_id &&
-      axios
-        .get(`/api/students/${payment?.student_id}/groups`)
-        .then((res) => {
-          dispatch(fetchingStudentGroups(res?.data?.data));
-        })
-        .finally(setSelectStudent(false));
+      axios.get(`/api/students/${payment?.student_id}/groups`).then((res) => {
+        dispatch(fetchedStudentGroups(res?.data?.data));
+      });
   }, [payment?.student_id]);
-
   function handle(e) {
     const newPayment = { ...payment };
     newPayment[e.target.id] = e.target.value;
@@ -134,7 +132,7 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
           })}
         </Select>
         <p>Группа</p>
-        <Spin spinning={selectStudent}>
+        <Spin spinning={loading}>
           <Select
             disabled={!payment?.student_id}
             value={payment?.group_id}

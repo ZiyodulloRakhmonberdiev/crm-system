@@ -178,7 +178,7 @@ export default function Header() {
       </Drawer>
       <Drawer
         open={visiblePayment}
-        title={"Добавить студента"}
+        title={"Добавить оплату"}
         onClose={() => {
           setVisiblePayment(!visiblePayment);
         }}

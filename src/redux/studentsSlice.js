@@ -26,6 +26,10 @@ const studentsSlice = createSlice({
       state.error = true
     },
     fetchingStudentGroups: (state, action) => {
+      state.loading = true
+    },
+    fetchedStudentGroups: (state, action) => {
+      state.loading = false
       state.studentGroups = action.payload
     },
     refreshStudentsData: state => {
@@ -43,6 +47,7 @@ const studentsSlice = createSlice({
 export const {
   fetchingStudents,
   fetchingStudentGroups,
+  fetchedStudentGroups,
   fetchedStudents,
   fetchedError,
   refreshStudentsData,

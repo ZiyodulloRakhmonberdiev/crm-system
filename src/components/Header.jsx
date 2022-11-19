@@ -21,9 +21,11 @@ import {
 } from "../redux/branchesSlice";
 import { logout } from "../redux/loginSlice";
 import AddStudentForm from "../pages/student/AddStudentForm";
+import AddPaymentForm from "../pages/finance/AddPaymentForm";
 
 export default function Header() {
   const [visible, setVisible] = useState(false);
+  const [visiblePayment, setVisiblePayment] = useState(false);
   const [modalType, setModalType] = useState("add");
   const [isOpenSearchModal, setIsOpenSearchModal] = useState(false);
 
@@ -114,13 +116,16 @@ export default function Header() {
                 <PlusCircle className="text-gray-400 text-xl" />
                 <span>Добавить студента</span>
               </a>
-              <a key="1" className="flex items-center gap-2">
+              <a
+                key="1"
+                className="flex items-center gap-2"
+                onClick={() => setVisiblePayment(!visiblePayment)}
+              >
                 <CashStack className="text-gray-400 text-xl" />
                 <span>Добавить оплату</span>
               </a>
             </div>
           }
-          trigger={["click"]}
         >
           <a>
             <Space className="border border-cyan-500 rounded-full p-2 bg-cyan-500 text-white hover:bg-white hover:text-cyan-400 transition">
@@ -149,7 +154,6 @@ export default function Header() {
               </a>
             </div>
           }
-          trigger={["click"]}
         >
           <a>
             <Space className="border border-slate-500 rounded-full p-2 bg-slate-500 text-white hover:bg-white hover:text-slate-400 transition">
@@ -170,6 +174,19 @@ export default function Header() {
           modalType={modalType}
           visible={visible}
           setVisible={() => setVisible(false)}
+        />
+      </Drawer>
+      <Drawer
+        open={visiblePayment}
+        title={"Добавить оплату"}
+        onClose={() => {
+          setVisiblePayment(!visiblePayment);
+        }}
+        maskClosable={true}
+      >
+        <AddPaymentForm
+          visible={visiblePayment}
+          setVisiblePayment={() => setVisiblePayment(false)}
         />
       </Drawer>
     </header>

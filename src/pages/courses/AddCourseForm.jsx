@@ -19,6 +19,8 @@ export default function AddCourseForm({
     price: "",
     lesson_duration: "",
     month: "",
+    lessons_per_module: "",
+    description: "",
   });
   const [uploading, setUploading] = useState(false);
   const dispatch = useDispatch();
@@ -30,14 +32,25 @@ export default function AddCourseForm({
         price: "",
         lesson_duration: "",
         month: "",
+        lessons_per_module: "",
+        description: "",
       });
     } else {
-      const { name, price, month, lesson_duration } = editingCourse;
+      const {
+        name,
+        price,
+        month,
+        lesson_duration,
+        lessons_per_module,
+        description,
+      } = editingCourse;
       setCourse({
         name: name,
         price: price,
         lesson_duration: lesson_duration,
         month: month,
+        lessons_per_module: lessons_per_module,
+        description: description,
       });
     }
   }, [modalType, visible]);
@@ -50,16 +63,18 @@ export default function AddCourseForm({
 
   function submit(e) {
     e.preventDefault();
-    const { name, price, lesson_duration, month } = course;
-    if (name && price && lesson_duration && month) {
+    const { name, price, lesson_duration, month, lessons_per_module } = course;
+    if (name && price && lesson_duration && month && lessons_per_module) {
       setUploading(true);
       if (modalType === "add") {
         axios
           .post(url, {
-            name: course.name,
-            price: course.price,
-            lesson_duration: course.lesson_duration,
-            month: course.month,
+            name: course?.name,
+            price: course?.price,
+            lesson_duration: course?.lesson_duration,
+            month: course?.month,
+            lessons_per_module: course?.lessons_per_module,
+            description: course?.description,
           })
           .then((res) => {
             setCourse({
@@ -67,6 +82,8 @@ export default function AddCourseForm({
               price: "",
               lesson_duration: "",
               month: "",
+              lessons_per_module: "",
+              description: "",
             });
             message.success("Курс успешно добавлен!");
             dispatch(refreshCoursesData());
@@ -80,10 +97,12 @@ export default function AddCourseForm({
         axios
           .patch(url + "/" + editingCourse?.id, {
             course_id: editingCourse?.id,
-            name: course.name,
-            price: course.price,
-            lesson_duration: course.lesson_duration,
-            month: course.month,
+            name: course?.name,
+            price: course?.price,
+            lesson_duration: course?.lesson_duration,
+            month: course?.month,
+            lessons_per_module: course?.lessons_per_module,
+            description: course?.description,
           })
           .then((res) => {
             if (changeUpdateCourseDataFunc) {
@@ -94,6 +113,8 @@ export default function AddCourseForm({
               price: "",
               lesson_duration: "",
               month: "",
+              lessons_per_module: "",
+              description: "",
             });
             message.success("Курс успешно обновлен!");
             dispatch(refreshCoursesData());
@@ -158,6 +179,29 @@ export default function AddCourseForm({
           }}
           className="mb-4 mt-2"
           name="price"
+        />
+        <p>Уроков за модуль (сколько)</p>
+        <Input
+          required
+          type="number"
+          id="lessons_per_module"
+          value={course?.lessons_per_module}
+          onChange={(e) => {
+            handle(e);
+          }}
+          className="mb-4 mt-2"
+          name="lessons_per_module"
+        />
+        <p>Описание</p>
+        <Input.TextArea
+          rows={4}
+          className="mb-4 mt-2"
+          onChange={(e) => {
+            handle(e);
+          }}
+          name="description"
+          id="description"
+          value={course?.description}
         />
         <Spin spinning={uploading}>
           <MyButton htmlType="submit" color="primary">

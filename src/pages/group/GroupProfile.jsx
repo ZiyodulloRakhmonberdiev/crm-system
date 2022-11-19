@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { DashLg, PencilSquare, Trash } from "react-bootstrap-icons";
 import { Drawer, Tabs } from "antd";
+
 import { IconButton } from "../../UI/IconButton.style";
 import { changeUpdateGroupData } from "../../redux/groupsSlice";
 import AddGroupForm from "./AddGroupForm";
@@ -112,40 +114,38 @@ export default function GroupProfile() {
             </div>
           </div>
         </div>
-        <Tabs className='col-span-1 lg:col-span-2'>
-          <Tabs.TabPane tab='Посещаемость' key='item-1'>
-            <div className='grid gap-2'>
-              <div className='rounded-sm flex flex-wrap gap-4 bg-orange-50 p-4 justify-between items-center'>
-                <div className='grid gap-0.5'>
+        <Tabs className="col-span-1 lg:col-span-2">
+          <Tabs.TabPane tab="Посещаемость" key="item-1">
+            <div className="grid gap-2">
+              <div className="rounded-sm flex flex-wrap gap-4 bg-orange-50 p-4 justify-between items-center">
+                <div className="grid gap-0.5">
                   <div>
-                    <span className='py-0.5 px-2 bg-orange-200 rounded-sm text-xs text-center'>
+                    <span className="py-0.5 px-2 bg-orange-200 rounded-sm text-xs text-center">
                       tesla
                     </span>
                   </div>
-                  <span className='font-bold text-md'>Android 12-guruh</span>
+                  <span className="font-bold text-md">Android 12-guruh</span>
                 </div>
-                <div className='grid gap-0.5 text-xs'>
+                <div className="grid gap-0.5 text-xs">
                   <span>Toq kunlar</span>
                   <span>02.11.2022 - 12.12.2022</span>
                   <span>14:00</span>
                 </div>
                 <div>
-                  <span className='bg-orange-500 rounded-sm text-white px-1 py-0.5'>
+                  <span className="bg-orange-500 rounded-sm text-white px-1 py-0.5">
                     12
                   </span>
                 </div>
               </div>
-                {
-                  groupData?.active ? (
-                    <div className='bg-white rounded-md px-6 py-4 overflow-x-auto '>
-                      <GroupAttendance />
-                    </div>
-                  ) : (
-                    <div className='text-center shadow-md rounded-md flex flex-wrap gap-4 bg-pink-200 p-4 justify-between items-center'>
-                      Группа не активна
-                    </div>
-                  )
-                }
+              {groupData?.active ? (
+                <div className="bg-white rounded-md px-6 py-4 overflow-x-auto ">
+                  <GroupAttendance />
+                </div>
+              ) : (
+                <div className="text-center shadow-md rounded-md flex flex-wrap gap-4 bg-pink-200 p-4 justify-between items-center">
+                  Группа не активна
+                </div>
+              )}
             </div>
           </Tabs.TabPane>
           <Tabs.TabPane tab="История" key="item-2">

@@ -63,7 +63,7 @@ export default function Students() {
 
   // students static data
   let dataSource = [];
-  students?.map((item) => {
+  students?.data?.map((item) => {
     dataSource?.push({
       id: item?.id,
       uid: uuidv4(),
@@ -177,7 +177,7 @@ export default function Students() {
     axios
       .get(`/api/students?page=${currentPage}`)
       .then((res) => {
-        dispatch(fetchedStudents(res?.data?.data?.data));
+        dispatch(fetchedStudents(res?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -191,7 +191,7 @@ export default function Students() {
         </div>
         <div className="md:flex md:gap-4 items-center">
           <p className="text-cyan-400 text-2xl">Студенты</p>
-          <p className="text-cyan-400">Количество: {students?.length} </p>
+          <p className="text-cyan-400">Количество: {students?.data?.length} </p>
         </div>
         <MyButton
           onClick={() => {

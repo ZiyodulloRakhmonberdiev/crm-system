@@ -65,17 +65,21 @@ export default function CourseProfile() {
             {coursesData?.name}
           </div>
           <div className="bg-white p-8">
-            <div className="grid md:grid-cols-2 mb-2 md:mb-4">
+            <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Цена:</label>
               <p>{coursesData?.price} сум</p>
             </div>
-            <div className="grid md:grid-cols-2 mb-2 md:mb-4">
+            <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Продолжительность урока:</label>
               <p>{coursesData?.lesson_duration} минут</p>
             </div>
-            <div className="grid md:grid-cols-2 mb-2 md:mb-4">
+            <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Продолжительность курса:</label>
               <p>{coursesData?.month} месяцев</p>
+            </div>
+            <div className="grid mb-2 md:mb-4">
+              <label className="text-slate-600">Описание:</label>
+              <p>{coursesData?.description}</p>
             </div>
           </div>
         </div>

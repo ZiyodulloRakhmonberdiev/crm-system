@@ -18,7 +18,7 @@ import Groups from './pages/group/Groups'
 import GroupProfile from './pages/group/GroupProfile'
 
 import Finance from './pages/finance/Finance'
-import Payment from './pages/finance/Payment'
+import Payment from './pages/finance/AllPayments'
 import TakeOff from './pages/finance/TakeOff'
 import Spend from './pages/finance/Spend'
 import Salary from './pages/finance/Salary'
@@ -36,6 +36,7 @@ import CourseProfile from './pages/courses/CourseProfile'
 
 import Rooms from './pages/rooms/Rooms'
 import Branches from './pages/branches/Branches'
+import AllPayments from './pages/finance/AllPayments'
 
 export default function App () {
   return (
@@ -55,7 +56,7 @@ export default function App () {
           <Route path='/teachers/profile/:id' element={<TeacherProfile />} />
 
           <Route path='/finance' element={<Finance />} />
-          <Route path='/finance/payment' element={<Payment />} />
+          <Route path='/finance/allpayments' element={<AllPayments />} />
           <Route path='/finance/takeoff' element={<TakeOff />} />
           <Route path='/finance/spend' element={<Spend />} />
           <Route path='/finance/salary' element={<Salary />} />

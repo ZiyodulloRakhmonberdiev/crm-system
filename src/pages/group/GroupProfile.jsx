@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { DashLg, PencilSquare, Trash } from "react-bootstrap-icons";
@@ -201,6 +202,7 @@ export default function GroupProfile() {
                 <div className="shadow-md rounded-md bg-white p-4 ">
                   Группа не активна
                 </div>
+
               )}
             </div>
           </Tabs.TabPane>

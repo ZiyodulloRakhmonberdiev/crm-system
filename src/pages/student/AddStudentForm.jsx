@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import { Telephone, Trash } from "react-bootstrap-icons";
+import { Telephone, Trash, X } from "react-bootstrap-icons";
 import InputMask from "react-input-mask";
 import { Input, Form, Radio, message, Spin } from "antd";
 import { v4 as uuidv4 } from "uuid";
@@ -326,9 +326,9 @@ export default function AddStudentForm({
                   handleRemoveFields(inputField.id);
                 }}
                 color="dangerOutlined"
-                className="rounded-full bg-red-400 text-white p-2"
+                className="border rounded-full text-slate-400 p-1"
               >
-                <Trash className="" />
+                <X className="text-xl" />
               </button>
             </div>
             <Input

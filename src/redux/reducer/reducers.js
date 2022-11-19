@@ -8,6 +8,7 @@ import employeesReducer from '../employeesSlice'
 import coursesReducer from '../coursesSlice'
 import roomsReducer from '../roomsSlice'
 import { attendancesReducer } from '../attendancesSlice'
+import financesReducer from '../financesSlice'
 
 export const reducers = combineReducers({
   login: loginReducer,
@@ -18,5 +19,6 @@ export const reducers = combineReducers({
   employees: employeesReducer,
   courses: coursesReducer,
   rooms: roomsReducer,
-  attendances: attendancesReducer
+  attendances: attendancesReducer,
+  finances: financesReducer
 })

@@ -335,7 +335,7 @@ export default function Groups() {
         >
           {groupsStatus.map((course, index) => {
             return (
-              <Select.Option key={index} value={course}>
+              <Select.Option key={course.id} value={course}>
                 {course}
               </Select.Option>
             );

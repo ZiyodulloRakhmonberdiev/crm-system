@@ -3,19 +3,28 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { DashLg, PencilSquare, Trash } from "react-bootstrap-icons";
-import { Drawer, Tabs } from "antd";
+import { Drawer, message, Spin, Tabs, Tooltip } from "antd";
 
 import { IconButton } from "../../UI/IconButton.style";
-import { changeUpdateGroupData } from "../../redux/groupsSlice";
+import {
+  changeUpdateGroupData,
+  refreshGroupsData,
+} from "../../redux/groupsSlice";
 import AddGroupForm from "./AddGroupForm";
 import GroupAttendance from "./GroupAttendances";
+import axios from "../../axios/axios";
+import { MyMessage } from "../../UI/Message.style";
+import { MyButton } from "../../UI/Button.style";
+import { Link, useParams } from "react-router-dom";
 
 export default function GroupProfile() {
   const { groupData } = useSelector((state) => state.groups);
   const [editingGroup, setEditingGroup] = useState(null);
   const [visible, setVisible] = useState(false);
   const [modalType, setModalType] = useState("add");
+  const [uploading, setUploading] = useState(false);
   const dispatch = useDispatch();
+
   const onEditGroup = (group) => {
     setModalType("update");
     setVisible(true);
@@ -24,6 +33,34 @@ export default function GroupProfile() {
 
   const changeUpdateGroupDataFunc = (data) => {
     dispatch(changeUpdateGroupData(data));
+  };
+  const params = useParams();
+  const url = "/api/groups";
+  console.log(groupData);
+  const handleActiveGroup = () => {
+    setUploading(true);
+    axios
+      .patch(url + "/" + params.id, {
+        group_id: params?.id,
+        name: groupData?.name,
+        time_id: groupData?.time_id,
+        group_start_date: groupData?.group_start_date,
+        group_end_date: groupData?.group_end_date,
+        teacher_ids: groupData?.teacher_ids,
+        room_id: groupData?.room_id,
+        days: groupData?.days,
+        course_id: groupData?.course_id,
+        active: true,
+      })
+      .then((res) => {
+        message.success("Группа активирована!");
+        dispatch(refreshGroupsData());
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error("Произошла ошибка! Попробуйте еще раз!");
+      })
+      .finally(() => setUploading(false));
   };
 
   return (
@@ -46,6 +83,22 @@ export default function GroupProfile() {
           setVisible={() => setVisible(false)}
         />
       </Drawer>
+      {groupData?.active ? (
+        ""
+      ) : (
+        <MyMessage color="warning">
+          <span>
+            Эта группа еще не активна. Нажмите кнопку, чтобы активировать её
+          </span>
+          <Tooltip title="Активировать" placement="left">
+            <Spin spinning={uploading}>
+              <MyButton color="warning" onClick={() => handleActiveGroup}>
+                Активировать группу
+              </MyButton>
+            </Spin>
+          </Tooltip>
+        </MyMessage>
+      )}
       <div className="text-xl mb-8 bg-white p-4 rounded-lg">
         {groupData?.name}
       </div>
@@ -79,12 +132,33 @@ export default function GroupProfile() {
               )}
             </div>
             <div className="grid mb-2 md:mb-4">
+              <label className="text-slate-600">Учителя:</label>
+              <p>
+                {groupData?.tachers?.map((teacher) => (
+                  <Link
+                    key={teacher.id}
+                    to={`/teachers/profile/${teacher?.id}`}
+                    className="text-cyan-500"
+                  >
+                    {teacher.name}
+                  </Link>
+                ))}
+              </p>
+            </div>
+            <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Время:</label>
-              <p>{groupData?.time?.time}</p>
+              <div className="flex gap-2">
+                <p>{groupData?.time?.time}</p>
+                <p>({groupData?.course?.lesson_duration} минут)</p>
+              </div>
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Кабинеты:</label>
               <p>{groupData?.room?.name}</p>
+            </div>
+            <div className="grid mb-2 md:mb-4">
+              <label className="text-slate-600">Курсы:</label>
+              <p>{groupData?.course?.name}</p>
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Даты обучения:</label>
@@ -100,6 +174,9 @@ export default function GroupProfile() {
               </label>
             </div>
             <hr />
+            <p className="mt-2">
+              Количество студентов: {groupData?.student_count}
+            </p>
             <div className="grid text-xs py-4 gap-1">
               <div className="flex justify-between flex-wrap">
                 <span className="bg-slate-100 rounded-md p-1">Ali Akbarov</span>
@@ -117,34 +194,15 @@ export default function GroupProfile() {
         <Tabs className="col-span-1 lg:col-span-2">
           <Tabs.TabPane tab="Посещаемость" key="item-1">
             <div className="grid gap-2">
-              <div className="rounded-sm flex flex-wrap gap-4 bg-orange-50 p-4 justify-between items-center">
-                <div className="grid gap-0.5">
-                  <div>
-                    <span className="py-0.5 px-2 bg-orange-200 rounded-sm text-xs text-center">
-                      tesla
-                    </span>
-                  </div>
-                  <span className="font-bold text-md">Android 12-guruh</span>
-                </div>
-                <div className="grid gap-0.5 text-xs">
-                  <span>Toq kunlar</span>
-                  <span>02.11.2022 - 12.12.2022</span>
-                  <span>14:00</span>
-                </div>
-                <div>
-                  <span className="bg-orange-500 rounded-sm text-white px-1 py-0.5">
-                    12
-                  </span>
-                </div>
-              </div>
               {groupData?.active ? (
                 <div className="bg-white rounded-md px-6 py-4 overflow-x-auto ">
                   <GroupAttendance />
                 </div>
               ) : (
-                <div className="text-center shadow-md rounded-md flex flex-wrap gap-4 bg-pink-200 p-4 justify-between items-center">
+                <div className="shadow-md rounded-md bg-white p-4 ">
                   Группа не активна
                 </div>
+
               )}
             </div>
           </Tabs.TabPane>

@@ -117,7 +117,7 @@ export default function StudentProfile() {
           student_id: params.id,
           start_date: group.start_date,
         })
-        .then(() => {
+        .then((res) => {
           setGroup({
             group_id: "",
             start_date: "",
@@ -127,7 +127,7 @@ export default function StudentProfile() {
         })
         .catch((err) => {
           console.log(err);
-          if (err.response.data.data.student_id) {
+          if (err?.response?.data?.message === "student id already exists") {
             message.error("Этот пользователь уже есть в этой группе!");
           } else {
             message.error("Произошла ошибка! Попробуйте еще раз!");
@@ -177,10 +177,7 @@ export default function StudentProfile() {
           </div>
           <div className="grid mb-2 md:mb-4">
             <label className="mb-2">Баланс</label>
-            <p className="text-red-400">
-              {userData?.balance ? userData?.balance : "Информация не введена"}{" "}
-              сум
-            </p>
+            <p className="text-red-400">{userData?.balance} сум</p>
           </div>
           <div className="grid mb-2 md:mb-4">
             <label className="mb-2">Контактные данные</label>

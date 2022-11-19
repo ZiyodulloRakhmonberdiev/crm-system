@@ -142,7 +142,7 @@ export default function Groups() {
       course: item?.course?.name,
       room: item?.room?.name,
       teachers: item?.tachers?.map((teacher) => (
-        <>
+        <div key={teacher.id}>
           <Link
             onClick={() => {
               dispatch(
@@ -155,7 +155,7 @@ export default function Groups() {
             {teacher?.name}
           </Link>
           <br />
-        </>
+        </div>
       )),
       days: (
         <>

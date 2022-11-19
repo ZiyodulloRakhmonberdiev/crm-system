@@ -32,8 +32,13 @@ export default function StudentProfile() {
   // states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const { userData, userGroupData, refreshStudentsData, studentJoinedGroups } =
-    useSelector((state) => state.students);
+  const {
+    userData,
+    userGroupData,
+    refreshStudentsData,
+    studentJoinedGroups,
+    loadingJoinedGroups,
+  } = useSelector((state) => state.students);
   const { groups } = useSelector((state) => state.groups);
   const [group, setGroup] = useState({
     group_id: "",
@@ -284,31 +289,33 @@ export default function StudentProfile() {
       <Tabs className="col-span-6 md:col-span-3 lg:col-span-4">
         <Tabs.TabPane tab="Профиль" key="item-1">
           <label className="text-lg block w-full mb-2">Группы</label>
-          <div className="grid lg:grid-cols-2 gap-2 mb-4">
-            {studentJoinedGroups?.data?.map((group) => (
-              <div
-                className="flex justify-between flex-col sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
-                key={group?.id}
-              >
-                <Link
-                  to={`/groups/${group.id}`}
-                  onClick={() => dispatch(setGroupData(group))}
-                  className="font-bold text-md"
+          <Spin spinning={loadingJoinedGroups}>
+            <div className="grid lg:grid-cols-2 gap-2 mb-4">
+              {studentJoinedGroups?.data?.map((group) => (
+                <div
+                  className="flex justify-between flex-col sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
+                  key={group?.id}
                 >
-                  {group?.name}
-                </Link>
-                {group?.active ? (
-                  <span className="font-bold text-green-400">
-                    Группа активна
-                  </span>
-                ) : (
-                  <span className="font-bold text-red-400">
-                    Группа неактивна
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
+                  <Link
+                    to={`/groups/${group.id}`}
+                    onClick={() => dispatch(setGroupData(group))}
+                    className="font-bold text-md"
+                  >
+                    {group?.name}
+                  </Link>
+                  {group?.active ? (
+                    <span className="font-bold text-green-400">
+                      Группа активна
+                    </span>
+                  ) : (
+                    <span className="font-bold text-red-400">
+                      Группа неактивна
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </Spin>
           <label className="text-lg block w-full">Платежи</label>
           <Table columns={columns} className="overflow-auto mt-2"></Table>
         </Tabs.TabPane>

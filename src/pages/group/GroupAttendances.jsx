@@ -1,38 +1,39 @@
-import { Input, Modal, Spin, Tooltip } from 'antd'
-import moment from 'moment'
-import React, { useEffect, useState } from 'react'
-import { CheckCircle, XCircle } from 'react-bootstrap-icons'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-import axios from "../../axios/axios";
+import { Input, Modal, Spin, Tooltip } from "antd";
+import { CheckCircle, XCircle } from "react-bootstrap-icons";
+import moment from "moment";
+
 import {
   fetchedAtt,
   fetchingAtt,
   fetchingErrorAtt,
 } from "../../redux/attendancesSlice";
+import axios from "../../axios/axios";
 moment.locale("ru");
 
 const GroupAttendance = () => {
   const params = useParams();
   const { attendances, loading, error } = useSelector(
-    state => state.attendances
-  )
-  const { groupData } = useSelector(state => state.groups)
-  const [refreshing, setRefreshing] = useState(false)
-  const [uploading, setUploading] = useState(false)
-  const [description, setDescription] = useState("")
-  const [modalIsOpen, setModalIsOpen] = useState(false)
+    (state) => state.attendances
+  );
+  const { groupData } = useSelector((state) => state.groups);
+  const [refreshing, setRefreshing] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [description, setDescription] = useState("");
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const [attendanceData, setAttendanceData] = useState({
     attStatus: null,
-    date:null,
+    date: null,
     student_id: null,
     group_id: null,
-    description
-  })
+    description,
+  });
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchingAtt());
     axios
@@ -48,28 +49,25 @@ const GroupAttendance = () => {
   }, [refreshing]);
 
   const handleSetAttendanceStudent = () => {
-    const {student_id,
-      group_id,
-      attStatus: status,
-      date} = attendanceData;
-    setUploading(true)
+    const { student_id, group_id, attStatus: status, date } = attendanceData;
+    setUploading(true);
     axios
       .post("/api/groups/attendance", {
         student_id,
         group_id,
         status,
         date,
-        description
+        description,
       })
       .then((res) => {
         setRefreshing(!refreshing);
       })
       .finally(() => {
-        setUploading(false)
-        setModalIsOpen(false)
-        setDescription(null)
-      })
-  }
+        setUploading(false);
+        setModalIsOpen(false);
+        setDescription(null);
+      });
+  };
 
   const compareDate = (d1) => {
     let now = new Date();
@@ -85,23 +83,24 @@ const GroupAttendance = () => {
     return date1 > date2;
   };
 
-  
-
-  if (error) return <center>Посещаемость при загрузке произошла ошибка</center>
+  if (error) return <center>Посещаемость при загрузке произошла ошибка</center>;
   return (
     <Spin spinning={loading}>
-      <Modal 
+      <Modal
         open={modalIsOpen}
         onCancel={() => setModalIsOpen(false)}
         onOk={() => handleSetAttendanceStudent()}
         title={"Описание..."}
       >
-        <Input.TextArea onChange={e => setDescription(e.target.value)} value={description}></Input.TextArea>
+        <Input.TextArea
+          onChange={(e) => setDescription(e.target.value)}
+          value={description}
+        ></Input.TextArea>
       </Modal>
-      <div className=''>
-        <table className='overflow-auto'>
-          <tr className=' overflow-auto flex bg-slate-100 px-2 py-1 rounded-md'>
-            <th width='200' align='left'>
+      <div className="">
+        <table className="overflow-auto">
+          <tr className=" overflow-auto flex bg-slate-100 px-2 py-1 rounded-md">
+            <th width="200" align="left">
               Имя
             </th>
             {attendances?.days?.map((day) => (
@@ -127,16 +126,26 @@ const GroupAttendance = () => {
                       className="flex items-center justify-center"
                     >
                       {!current.status ? (
-                        <Tooltip title={current?.description ? current?.description : "Нет описания"}>
-                          <span  
-                            className='cursor-pointer bg-red-400 px-2 py-1 text-xs text-white rounded-md'>
+                        <Tooltip
+                          title={
+                            current?.description
+                              ? current?.description
+                              : "Нет описания"
+                          }
+                        >
+                          <span className="cursor-pointer bg-red-400 px-2 py-1 text-xs text-white rounded-md">
                             Нет
                           </span>
                         </Tooltip>
                       ) : (
-                        <Tooltip title={current?.description ? current?.description : "Нет описания"}>
-                          <span 
-                            className='cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md'>
+                        <Tooltip
+                          title={
+                            current?.description
+                              ? current?.description
+                              : "Нет описания"
+                          }
+                        >
+                          <span className="cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md">
                             Был
                           </span>
                         </Tooltip>
@@ -165,9 +174,9 @@ const GroupAttendance = () => {
                               attStatus: true,
                               date: day?.data,
                               student_id: student.id,
-                              group_id: params.id
-                            })
-                            setModalIsOpen(true)
+                              group_id: params.id,
+                            });
+                            setModalIsOpen(true);
                           }}
                           className={`
                               bg-blue-500 
@@ -190,14 +199,14 @@ const GroupAttendance = () => {
                         </button>
                         <button
                           disabled={uploading || compareDate(day.data)}
-                          onClick={() => { 
+                          onClick={() => {
                             setAttendanceData({
                               attStatus: false,
                               date: day?.data,
                               student_id: student.id,
-                              group_id: params.id
-                            })
-                            setModalIsOpen(true)
+                              group_id: params.id,
+                            });
+                            setModalIsOpen(true);
                           }}
                           className={`
                             bg-red-500 

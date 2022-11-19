@@ -1,23 +1,17 @@
-import {
-  PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { Input, Layout, Menu, Modal } from "antd";
-import { useState } from "react";
+import { PieChartOutlined, TeamOutlined } from "@ant-design/icons";
+import { Layout, Menu } from "antd";
 import {
   CashStack,
   Download,
   MicrosoftTeams,
   Mortarboard,
-  PlusCircle,
-  Search,
   House,
   Wallet2,
   DoorOpen,
   Layers,
   Palette2,
   Git,
+  Coin,
 } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
@@ -41,7 +35,17 @@ export default function Sidebar() {
       <MicrosoftTeams />
     ),
     getItem(<Link to="/groups">Группы</Link>, "groups", <TeamOutlined />),
-    getItem(<Link to="/finance">Финансы</Link>, "finance", <CashStack />),
+    getItem("Финансы", "finance", <CashStack />, [
+      getItem(
+        <Link
+          className="flex items-center justify-start gap-3"
+          to="/finance/allpayments"
+        >
+          <Coin /> Все платежи
+        </Link>,
+        "allpayments"
+      ),
+    ]),
     getItem(<Link to="/report">Отчеты</Link>, "report", <PieChartOutlined />),
     getItem("Дополнительные", "addition", <Wallet2 />, [
       getItem(

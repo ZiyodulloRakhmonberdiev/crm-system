@@ -67,8 +67,13 @@ export default function Login() {
         navigate("/", { replace: true });
       })
       .catch((err) => {
-        console.log(err);
-        message.error("Введен неверный логин или пароль!");
+        if (err?.response?.data?.message === "phone or password incorrect") {
+          message.error("Введен неверный логин или пароль!");
+        } else if (err?.message === "Network Error") {
+          message.error("У вас нет подключения к интернету!");
+        } else {
+          message.error("Произошла ошибка! Попробуйте еще раз!");
+        }
       })
       .finally(() => {
         setLoading(false);

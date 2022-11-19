@@ -41,6 +41,9 @@ const studentsSlice = createSlice({
     },
     setUserGroupData: (state, action) => {
       state.userGroupData = action.payload
+    },
+    changeUpdateUserData: (state, action) => {
+      state.userData = { ...state.userData, ...action.payload }
     }
   }
 })
@@ -53,7 +56,8 @@ export const {
   fetchedError,
   refreshStudentsData,
   setUserData,
-  setUserGroupData
+  setUserGroupData,
+  changeUpdateUserData
 } = studentsSlice.actions
 const studentsReducer = studentsSlice.reducer
 export default studentsReducer

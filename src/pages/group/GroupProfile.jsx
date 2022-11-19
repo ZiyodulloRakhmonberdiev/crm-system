@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
 
 import { DashLg, PencilSquare, Trash } from "react-bootstrap-icons";
 import { Drawer, message, Spin, Tabs, Tooltip } from "antd";
@@ -15,7 +15,6 @@ import GroupAttendance from "./GroupAttendances";
 import axios from "../../axios/axios";
 import { MyMessage } from "../../UI/Message.style";
 import { MyButton } from "../../UI/Button.style";
-import { Link, useParams } from "react-router-dom";
 
 export default function GroupProfile() {
   const { groupData } = useSelector((state) => state.groups);
@@ -202,7 +201,6 @@ export default function GroupProfile() {
                 <div className="shadow-md rounded-md bg-white p-4 ">
                   Группа не активна
                 </div>
-
               )}
             </div>
           </Tabs.TabPane>

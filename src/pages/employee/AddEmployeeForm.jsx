@@ -62,7 +62,7 @@ export default function AddEmployeeForm({
         axios
           .post(url, {
             name: employee.name,
-            phone: "+998" + employee.phone?.split(" ").join(""),
+            phone: "+998" + employee?.phone?.split(" ").join(""),
             roles: employee.roles,
             gender: employee.gender,
             salary: employee.salary,
@@ -81,7 +81,7 @@ export default function AddEmployeeForm({
             setVisible();
           })
           .catch((err) => {
-            if (err.response.data.data.phone) {
+            if (err?.response?.data?.data?.phone) {
               message.error("Этот номер телефона уже зарегистрирован!");
             } else {
               message.error("Произошла ошибка! Попробуйте еще раз!");
@@ -92,12 +92,12 @@ export default function AddEmployeeForm({
         axios
           .patch(url + "/" + editingEmployee?.id, {
             employee_id: editingEmployee?.id,
-            name: employee.name,
-            phone: "+998" + employee.phone?.split(" ").join(""),
-            roles: employee.roles,
-            gender: employee.gender,
-            salary: employee.salary,
-            password: employee.password,
+            name: employee?.name,
+            phone: "+998" + employee?.phone?.split(" ").join(""),
+            roles: employee?.roles,
+            gender: employee?.gender,
+            salary: employee?.salary,
+            password: employee?.password,
           })
           .then((res) => {
             setEmployee({
@@ -112,7 +112,7 @@ export default function AddEmployeeForm({
             setVisible();
           })
           .catch((err) => {
-            if (err.response.data.data.phone) {
+            if (err?.response?.data?.data?.phone) {
               message.error("Этот номер телефона уже зарегистрирован!");
             } else {
               message.error("Произошла ошибка! Попробуйте еще раз!");
@@ -134,7 +134,7 @@ export default function AddEmployeeForm({
           onChange={(e) => {
             setEmployee({ ...employee, phone: e.target.value });
           }}
-          value={employee.phone}
+          value={employee?.phone}
           maskChar={null}
         >
           {(props) => (
@@ -146,7 +146,6 @@ export default function AddEmployeeForm({
             />
           )}
         </InputMask>
-
         <p>Имя</p>
         <Input
           required
@@ -160,19 +159,35 @@ export default function AddEmployeeForm({
         />
         <p>Роль</p>
         <Checkbox.Group
-          value={employee.roles}
+          value={employee?.roles}
           options={[
             {
-              label: "asas",
-              value: "ceo",
+              label: "CEO",
+              value: "CEO",
             },
             {
-              label: "Cashier",
-              value: "cashier",
+              label: "Branch Director",
+              value: "Branch Director",
             },
             {
               label: "Administrator",
               value: "Administrator",
+            },
+            {
+              label: "Limited Administrator",
+              value: "Limited Administrator",
+            },
+            {
+              label: "Teacher",
+              value: "Teacher",
+            },
+            {
+              label: "Marketer",
+              value: "Marketer",
+            },
+            {
+              label: "Cashier",
+              value: "cashier",
             },
           ]}
           onChange={(e) => {

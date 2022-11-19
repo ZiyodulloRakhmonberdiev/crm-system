@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Tabs, Table, Modal, Select, DatePicker, message, Spin } from "antd";
+import {
+  Tabs,
+  Table,
+  Modal,
+  Select,
+  DatePicker,
+  message,
+  Spin,
+  Drawer,
+} from "antd";
 import {
   CashStack,
   Envelope,
@@ -21,17 +30,24 @@ import {
 import axios from "../../axios/axios";
 import { MyButton } from "../../UI/Button.style";
 import {
+  changeUpdateUserData,
   fetchedStudentJoinedGroups,
   fetchingStudentJoinedGroups,
   setUserData,
   setUserGroupData,
 } from "../../redux/studentsSlice";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import AddStudentForm from "./AddStudentForm";
+import AddPaymentForm from "../finance/AddPaymentForm";
 
 export default function StudentProfile() {
   // states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [visible, setVisible] = useState(false);
+  const [visiblePayment, setVisiblePayment] = useState(false);
+  const [modalType, setModalType] = useState("add");
   const {
     userData,
     userGroupData,
@@ -147,6 +163,12 @@ export default function StudentProfile() {
     setIsModalOpen(false);
   };
 
+  // editing student
+  const onEditStudent = (student) => {
+    setModalType("update");
+    setVisible(true);
+    setEditingStudent({ ...student });
+  };
   const compareDate = (d1, d2) => {
     let now = new Date();
     let month = now.getMonth() + 1;
@@ -160,6 +182,10 @@ export default function StudentProfile() {
     let date3 = new Date(d2).getTime();
 
     if (date1 >= date2 + 100000000 || date1 < date3) return true;
+  };
+  // update user data after refreshing or editing
+  const changeUpdateUserDataFunc = (data) => {
+    dispatch(changeUpdateUserData(data));
   };
 
   return (
@@ -192,22 +218,30 @@ export default function StudentProfile() {
           <div className="grid mb-2 md:mb-4 ">
             <label className="mb-2">Дополнительные:</label>
             {userData?.addition_phone?.map((item) => (
-              <div key={item.id} className="flex flex-col justify-start">
-                <p className="text-slate-400">{item.label}</p>
+              <div key={item?.id} className="flex flex-col justify-start">
+                <p className="text-slate-400">{item?.label}</p>
                 <span className="text-xs flex items-center justify-start gap-1 text-slate-400">
-                  <TelephoneFill className="text-green-400" /> {item.phone}
+                  <TelephoneFill className="text-green-400" /> {item?.phone}
                 </span>
               </div>
             ))}
           </div>
           <div className="flex flex-row flex-wrap gap-3">
-            <IconButton color="success">
+            <IconButton
+              color="success"
+              onClick={() => {
+                onEditStudent(userData);
+              }}
+            >
               <EditOutlined />
             </IconButton>
             <IconButton color="primary">
               <Envelope />
             </IconButton>
-            <IconButton color="success">
+            <IconButton
+              color="success"
+              onClick={() => setVisiblePayment(!visiblePayment)}
+            >
               <CashStack />
             </IconButton>
             <IconButton color="primary" onClick={showModal}>
@@ -222,6 +256,36 @@ export default function StudentProfile() {
           </div>
         </div>
       </div>
+      <Drawer
+        open={visible}
+        title={modalType === "add" ? "Добавить пользователя" : "Редактировать"}
+        onClose={() => {
+          setVisible(!visible);
+        }}
+        maskClosable={true}
+      >
+        <AddStudentForm
+          changeUpdateUserDataFunc={changeUpdateUserDataFunc}
+          modalType={modalType}
+          editingStudent={editingStudent}
+          visible={visible}
+          setVisible={() => setVisible(false)}
+        />
+      </Drawer>
+      <Drawer
+        open={visiblePayment}
+        title={"Добавить оплату"}
+        onClose={() => {
+          setVisiblePayment(!visiblePayment);
+        }}
+        maskClosable={true}
+      >
+        <AddPaymentForm
+          visible={visiblePayment}
+          editingStudent={editingStudent}
+          setVisiblePayment={() => setVisiblePayment(false)}
+        />
+      </Drawer>
       <Modal
         title="Добавить пользователя"
         open={isModalOpen}
@@ -237,7 +301,7 @@ export default function StudentProfile() {
           className="w-full mb-1"
           showSearch={true}
         >
-          {groups.map((item, index) => {
+          {groups?.map((item, index) => {
             return (
               <Select.Option value={item?.id} key={index}>
                 <button
@@ -245,21 +309,21 @@ export default function StudentProfile() {
                     dispatch(setUserGroupData(item));
                   }}
                 >
-                  {item.name}
+                  {item?.name}
                 </button>
               </Select.Option>
             );
           })}
         </Select>
         <div>
-          {group.group_id && (
+          {group?.group_id && (
             <p className="mb-4 text-xs">
               Дата старта группы {userGroupData?.group_start_date}
             </p>
           )}
         </div>
         <div className="w-full mb-4">
-          {group.group_id && (
+          {group?.group_id && (
             <div>
               <p className="text-xs mb-1">Дата от</p>
               <DatePicker
@@ -294,7 +358,7 @@ export default function StudentProfile() {
                   key={group?.id}
                 >
                   <Link
-                    to={`/groups/${group.id}`}
+                    to={`/groups/${group?.id}`}
                     onClick={() => dispatch(setGroupData(group))}
                     className="font-bold text-md"
                   >

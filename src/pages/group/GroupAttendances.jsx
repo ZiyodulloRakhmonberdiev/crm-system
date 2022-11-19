@@ -83,7 +83,7 @@ const GroupAttendance = () => {
     return date1 > date2;
   };
 
-  if (error) return <center>Посещаемость при загрузке произошла ошибка</center>;
+  if (error) return <center>При загрузке произошла ошибка</center>;
   return (
     <Spin spinning={loading}>
       <Modal

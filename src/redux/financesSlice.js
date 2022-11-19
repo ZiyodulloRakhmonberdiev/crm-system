@@ -2,10 +2,9 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   allPayments: [],
+  allPaymentsAmount: "",
   loading: false,
   error: false,
-  // refreshAllPayments: true,
-  // groupData: {}
 }
 
 const financesSlice = createSlice({
@@ -19,29 +18,26 @@ const financesSlice = createSlice({
       state.loading = false
       state.allPayments = action.payload
     },
+    fetchingAllPaymentsAmount: state => {
+      state.loading = true
+    },
+    fetchedAllPaymentsAmount: (state, action) => {
+      state.loading = false
+      state.allPaymentsAmount = action.payload
+    },
     fetchedError: state => {
       state.loading = false
       state.error = true
     },
-    // refreshGroupsData: state => {
-    //   state.refreshGroups = !state.refreshGroups
-    // },
-    // setGroupData: (state, action) => {
-    //   state.groupData = action.payload
-    // },
-    // changeUpdateGroupData: (state, action) => {
-    //   state.groupData = { ...state.groupData, ...action.payload }
-    // }
   }
 })
 
 export const {
   fetchingAllPayments,
   fetchedAllPayments,
+  fetchingAllPaymentsAmount,
+  fetchedAllPaymentsAmount,
   fetchedError,
-  // refreshGroupsData,
-  // setGroupData,
-  // changeUpdateGroupData
 } = financesSlice.actions
 const financesReducer = financesSlice.reducer
 export default financesReducer

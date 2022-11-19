@@ -9,14 +9,16 @@ import { Coin } from "react-bootstrap-icons";
 import { setUserData } from "../../redux/studentsSlice";
 import {
   fetchedAllPayments,
+  fetchedAllPaymentsAmount,
   fetchedError,
   fetchingAllPayments,
+  fetchingAllPaymentsAmount,
 } from "../../redux/financesSlice";
 import axios from "../../axios/axios";
 
 export default function AllPayments() {
   // states
-  const { allPayments, loading, error } = useSelector(
+  const { allPayments, allPaymentsAmount, loading, error } = useSelector(
     (state) => state.finances
   );
 
@@ -106,6 +108,20 @@ export default function AllPayments() {
         dispatch(fetchedError());
       });
   }, []);
+
+  // fetching all payments amount
+  useEffect(() => {
+    dispatch(fetchingAllPaymentsAmount());
+    axios
+      .get(`/api/payments/amount?from=2022-11-01&to=2022-11-30`)
+      .then((res) => {
+        console.log(res);
+        dispatch(fetchedAllPaymentsAmount(res?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, []);
   return (
     <div>
       <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
@@ -114,7 +130,10 @@ export default function AllPayments() {
         </div>
         <div className="md:flex md:gap-4 items-center">
           <p className="text-blue-400 text-2xl">Все платежи</p>
-          <p className="text-blue-400">Всего платежей: </p>
+          <p className="text-blue-400">
+            Всего платежей:{" "}
+            <span className="text-xl">{allPaymentsAmount?.amount}</span> сум
+          </p>
         </div>
       </header>
       <div className="flex gap-2"></div>

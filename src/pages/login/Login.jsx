@@ -79,7 +79,6 @@ export default function Login() {
         setLoading(false);
       });
   };
-  console.log(localStorage.getItem("crm_token"));
   return (
     <Spin spinning={loading}>
       <div className="bg-gray-900 h-screen w-screen relative overflow-hidden flex justify-center items-center">

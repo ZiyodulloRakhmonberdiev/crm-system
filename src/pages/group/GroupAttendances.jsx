@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Input, Modal, Spin, Tooltip } from "antd";
-import { CheckCircle, XCircle } from "react-bootstrap-icons";
+import { CheckCircle, X, XCircle } from "react-bootstrap-icons";
 import moment from "moment";
 
 import {
@@ -147,7 +147,10 @@ const GroupAttendance = () => {
                               : "Нет описания"
                           }
                         >
-                          <span className="cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md">
+                          <span className="cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper transition">
+                            <button className="absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn">
+                              <X />
+                            </button>
                             Был
                           </span>
                         </Tooltip>
@@ -170,13 +173,13 @@ const GroupAttendance = () => {
                         }`}
                       >
                         <button
-                          disabled={uploading || compareDate(day.data)}
+                          disabled={uploading || compareDate(day?.data)}
                           onClick={() => {
                             setAttendanceData({
                               attStatus: true,
                               date: day?.data,
-                              student_id: student.id,
-                              group_id: params.id,
+                              student_id: student?.id,
+                              group_id: params?.id,
                             });
                             setModalIsOpen(true);
                           }}

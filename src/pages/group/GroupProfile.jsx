@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 
-import { DashLg, PencilSquare, Trash } from "react-bootstrap-icons";
+import { DashLg, Dot, PencilSquare, Slash, Trash } from "react-bootstrap-icons";
 import { Drawer, message, Spin, Tabs, Tooltip } from "antd";
 
 import { IconButton } from "../../UI/IconButton.style";
@@ -15,15 +15,33 @@ import GroupAttendance from "./GroupAttendances";
 import axios from "../../axios/axios";
 import { MyMessage } from "../../UI/Message.style";
 import { MyButton } from "../../UI/Button.style";
+import {
+  fetchedTeachers,
+  fetchingTeachers,
+  setTeachersData,
+} from "../../redux/teachersSlice";
+import {
+  fetchedCourses,
+  fetchedError,
+  fetchingCourses,
+  setCoursesData,
+} from "../../redux/coursesSlice";
 
 export default function GroupProfile() {
-  const { groupData } = useSelector((state) => state.groups);
+  // states
   const [editingGroup, setEditingGroup] = useState(null);
   const [visible, setVisible] = useState(false);
   const [modalType, setModalType] = useState("add");
   const [uploading, setUploading] = useState(false);
+  const { groupData } = useSelector((state) => state.groups);
+  const { teachers } = useSelector((state) => state.teachers);
+  const { students } = useSelector((state) => state.students);
+  const { courses, coursesData } = useSelector((state) => state.courses);
+
+  // hooks
   const dispatch = useDispatch();
 
+  // functions
   const onEditGroup = (group) => {
     setModalType("update");
     setVisible(true);
@@ -61,6 +79,27 @@ export default function GroupProfile() {
       .finally(() => setUploading(false));
   };
 
+  // fetching courses
+  useEffect(() => {
+    dispatch(fetchingCourses());
+    axios
+      .get(`/api/courses`)
+      .then((res) => {
+        dispatch(fetchedCourses(res?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, []);
+
+  // fetching teachers
+  useEffect(() => {
+    dispatch(fetchingTeachers());
+    axios.get(`/api/teachers`).then((res) => {
+      dispatch(fetchedTeachers(res?.data?.data));
+    });
+  }, []);
+
   return (
     <>
       <Drawer
@@ -97,8 +136,11 @@ export default function GroupProfile() {
           </Tooltip>
         </MyMessage>
       )}
-      <div className="text-xl mb-8 bg-white p-4 rounded-lg">
-        {groupData?.name}
+      <div className="text-xl mb-8 bg-white p-4 rounded-lg flex flex-wrap gap-4 items-center">
+        {groupData?.name} <Dot /> {groupData?.course?.name} <Dot />{" "}
+        {groupData?.tachers?.map((teacher) => (
+          <span key={teacher?.id}>{teacher?.name}</span>
+        ))}
       </div>
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         <div className="flex flex-col drop-shadow-md hover:drop-shadow-2xl transition col-span-1">
@@ -122,26 +164,45 @@ export default function GroupProfile() {
               {groupData?.name}
             </span>
             <div className="grid mb-2 md:mb-4 mt-4">
-              <label className="text-slate-600">Цена:</label>
-              {groupData?.price == null ? (
-                "Не установлен"
-              ) : (
-                <p>{groupData?.price} UZS</p>
-              )}
+              <label className="text-slate-600">Курсы:</label>
+              <Link
+                to={`/courses/${groupData?.course?.id}`}
+                className="text-cyan-500"
+                onClick={() =>
+                  dispatch(
+                    setCoursesData(
+                      courses?.find((x) => x?.id === groupData?.course?.id)
+                    )
+                  )
+                }
+              >
+                {groupData?.course?.name}
+              </Link>
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Учителя:</label>
               <p>
                 {groupData?.tachers?.map((teacher) => (
                   <Link
-                    key={teacher.id}
+                    key={teacher?.id}
                     to={`/teachers/profile/${teacher?.id}`}
                     className="text-cyan-500"
+                    onClick={() =>
+                      dispatch(
+                        setTeachersData(
+                          teachers?.data?.find((x) => x?.id === teacher?.id)
+                        )
+                      )
+                    }
                   >
-                    {teacher.name}
+                    {teacher?.name}
                   </Link>
                 ))}
               </p>
+            </div>
+            <div className="grid mb-2 md:mb-4">
+              <label className="text-slate-600">Цена:</label>
+              <p>{coursesData?.price} сум</p>
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Время:</label>
@@ -153,10 +214,6 @@ export default function GroupProfile() {
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Кабинеты:</label>
               <p>{groupData?.room?.name}</p>
-            </div>
-            <div className="grid mb-2 md:mb-4">
-              <label className="text-slate-600">Курсы:</label>
-              <p>{groupData?.course?.name}</p>
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Даты обучения:</label>

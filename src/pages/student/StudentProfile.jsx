@@ -60,7 +60,7 @@ export default function StudentProfile() {
   const [group, setGroup] = useState({
     group_id: "",
     start_date: "",
-    student_id: userData.id,
+    student_id: userData?.id,
   });
 
   // hooks
@@ -97,13 +97,10 @@ export default function StudentProfile() {
   ];
 
   useEffect(() => {
-    if (!userData.id) {
-      dispatch(setUserData(students?.find((x) => x?.id === userData?.id)));
+    if (userData?.id == undefined) {
+      dispatch(setUserData(students?.find((x) => x?.id === params?.id)));
       // navigate("/", { replace: true });
     }
-    // axios.get(`/api/students/${params.id}`).then((res) => {
-    //   dispatch(setUserData(res?.data));
-    // });
   });
 
   // fetching groups for join
@@ -366,7 +363,7 @@ export default function StudentProfile() {
                         setGroupData(groups?.find((x) => x?.id === group?.id))
                       )
                     }
-                    className="font-bold text-md"
+                    className="font-bold text-md text-cyan-500"
                   >
                     {group?.name}
                   </Link>

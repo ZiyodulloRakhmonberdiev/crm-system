@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Input, Modal, Spin, Tooltip } from "antd";
 import { CheckCircle, X, XCircle } from "react-bootstrap-icons";
 import moment from "moment";
-
+import "moment/locale/uz";
 import {
   fetchedAtt,
   fetchingAtt,
@@ -106,13 +106,18 @@ const GroupAttendance = () => {
               Имя
             </th>
             {attendances?.days?.map((day) => (
-              <th width="100">{moment(day?.data).format("DD MMM, YYYY")}</th>
+              <th key={day?.id} width="100">
+                {moment(day?.data).format("DD MMM, YYYY")}
+              </th>
             ))}
           </tr>
 
           <tbody>
             {attendances?.students?.map((student) => (
-              <tr className="flex p-2  border-b border-gray-100">
+              <tr
+                key={student?.id}
+                className="flex p-2  border-b border-gray-100"
+              >
                 <td width={200} className="bg-gray-100 rounded-md p-1">
                   {student?.first_name} {student?.last_name}
                 </td>
@@ -123,6 +128,7 @@ const GroupAttendance = () => {
 
                   return current ? (
                     <td
+                      key={day?.id}
                       width="100"
                       align="center"
                       className="flex items-center justify-center"
@@ -135,7 +141,10 @@ const GroupAttendance = () => {
                               : "Нет описания"
                           }
                         >
-                          <span className="cursor-pointer bg-red-400 px-2 py-1 text-xs text-white rounded-md">
+                          <span className="cursor-pointer bg-red-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper">
+                            <button className="absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn">
+                              <X />
+                            </button>
                             Нет
                           </span>
                         </Tooltip>
@@ -147,7 +156,7 @@ const GroupAttendance = () => {
                               : "Нет описания"
                           }
                         >
-                          <span className="cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper transition">
+                          <span className="cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper">
                             <button className="absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn">
                               <X />
                             </button>
@@ -172,18 +181,19 @@ const GroupAttendance = () => {
                             : "hover:w-auto"
                         }`}
                       >
-                        <button
-                          disabled={uploading || compareDate(day?.data)}
-                          onClick={() => {
-                            setAttendanceData({
-                              attStatus: true,
-                              date: day?.data,
-                              student_id: student?.id,
-                              group_id: params?.id,
-                            });
-                            setModalIsOpen(true);
-                          }}
-                          className={`
+                        <Tooltip title="Был">
+                          <button
+                            disabled={uploading || compareDate(day?.data)}
+                            onClick={() => {
+                              setAttendanceData({
+                                attStatus: true,
+                                date: day?.data,
+                                student_id: student?.id,
+                                group_id: params?.id,
+                              });
+                              setModalIsOpen(true);
+                            }}
+                            className={`
                               have
                               text-blue-500 
                               hover:bg-blue-500 
@@ -202,23 +212,23 @@ const GroupAttendance = () => {
                               justify-center 
                               transition
                               `}
-                        >
-                          <Tooltip title="Был">
+                          >
                             <CheckCircle />
-                          </Tooltip>
-                        </button>
-                        <button
-                          disabled={uploading || compareDate(day?.data)}
-                          onClick={() => {
-                            setAttendanceData({
-                              attStatus: false,
-                              date: day?.data,
-                              student_id: student?.id,
-                              group_id: params?.id,
-                            });
-                            setModalIsOpen(true);
-                          }}
-                          className={`
+                          </button>
+                        </Tooltip>
+                        <Tooltip title="Нет">
+                          <button
+                            disabled={uploading || compareDate(day?.data)}
+                            onClick={() => {
+                              setAttendanceData({
+                                attStatus: false,
+                                date: day?.data,
+                                student_id: student?.id,
+                                group_id: params?.id,
+                              });
+                              setModalIsOpen(true);
+                            }}
+                            className={`
                             havenot
                             hover:bg-red-400 
                             text-red-400 
@@ -233,11 +243,10 @@ const GroupAttendance = () => {
                             } 
                             flex items-center justify-center 
                             transition`}
-                        >
-                          <Tooltip title="Нет">
+                          >
                             <XCircle />
-                          </Tooltip>
-                        </button>
+                          </button>
+                        </Tooltip>
                       </div>
                     </td>
                   );

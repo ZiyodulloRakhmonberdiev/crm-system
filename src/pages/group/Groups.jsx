@@ -116,6 +116,7 @@ export default function Groups() {
             {days?.map((item) => {
               return (
                 <span
+                  key={item?.id}
                   className="px-1 py-0.5 rounded-md text-white bg-gray-400 font-semibold"
                   style={{ fontSize: "10px" }}
                 >
@@ -338,9 +339,9 @@ export default function Groups() {
           allowClear
           className="min-w-[200px]"
         >
-          {groupsStatus.map((course, index) => {
+          {groupsStatus.map((course) => {
             return (
-              <Select.Option key={course.id} value={course}>
+              <Select.Option key={course?.id} value={course}>
                 {course}
               </Select.Option>
             );
@@ -382,9 +383,9 @@ export default function Groups() {
           allowClear
           className="min-w-[200px]"
         >
-          {days.map((item, index) => {
+          {days?.map((item) => {
             return (
-              <Select.Option key={index} value={item}>
+              <Select.Option key={item?.id} value={item}>
                 {item}
               </Select.Option>
             );

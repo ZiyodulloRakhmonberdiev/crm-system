@@ -22,6 +22,7 @@ import {
   fetchingTeachers,
   setTeachersData,
 } from "../../redux/teachersSlice";
+import { fetchedCourses, fetchingCourses } from "../../redux/coursesSlice";
 
 export default function Groups() {
   const [visible, setVisible] = useState(false);
@@ -30,27 +31,24 @@ export default function Groups() {
   const [per_page, setPerPage] = useState(30);
   const [last_page, setLastPage] = useState(1);
   const dispatch = useDispatch();
+  const { courses } = useSelector((state) => state.courses);
+  const { teachers } = useSelector((state) => state.teachers);
   const { groups, loading, error, refreshGroups, groupData } = useSelector(
     (state) => state.groups
   );
-  const { teachers, refreshTeachers } = useSelector((state) => state.teachers);
 
-  // Multi Select input which is on the heading
-  const courses = [
-    "English",
-    "Russian",
-    "MobileDev",
-    "WebDev",
-    "SMM",
-    "Python",
-    "PHP",
-  ];
   const groupsStatus = [
-    "Faol guruhlar",
-    "Arxiv guruhlar",
-    "Yakunlangan guruhlar",
+    "Активные группы",
+    "Неактивные группы",
+    "Архивные группы",
   ];
-  const days = ["Toq kunlar", "Juft kunlar", "Har kuni", "Boshqa"];
+  const days = [
+    "Нечетные дни",
+    "Четные дни",
+    "Выходные",
+    "Каждый день",
+    "Другой",
+  ];
 
   // Search functions which is in the heading on the page
   const [editingGroup, setEditingGroup] = useState(null);
@@ -60,6 +58,14 @@ export default function Groups() {
     dispatch(fetchingTeachers());
     axios.get(`/api/teachers`).then((res) => {
       dispatch(fetchedTeachers(res?.data?.data));
+    });
+  }, []);
+
+  // fetching courses
+  useEffect(() => {
+    dispatch(fetchingCourses());
+    axios.get(`/api/courses`).then((res) => {
+      dispatch(fetchedCourses(res?.data?.data));
     });
   }, []);
 
@@ -122,7 +128,6 @@ export default function Groups() {
     }
     return returnData;
   };
-
   // Groups static data
   let dataSource = [];
   groups?.map((item) => {
@@ -142,7 +147,7 @@ export default function Groups() {
       course: item?.course?.name,
       room: item?.room?.name,
       teachers: item?.tachers?.map((teacher) => (
-        <div key={teacher.id}>
+        <div key={teacher?.id}>
           <Link
             onClick={() => {
               dispatch(
@@ -343,37 +348,37 @@ export default function Groups() {
         </Select>
         <Select
           mode="multiple"
-          maxTagCount={2}
-          placeholder="По курсам"
-          allowClear
+          placeholder="Учителя"
+          maxTagCount={1}
           className="min-w-[200px]"
         >
-          {courses.map((course, index) => {
+          {teachers?.data?.map((item) => {
             return (
-              <Select.Option key={index} value={course}>
-                {course}
+              <Select.Option key={item?.id} value={item?.name}>
+                {item?.name}
               </Select.Option>
             );
           })}
         </Select>
-        {/* <Select
-          mode='multiple'
-          placeholder='Учителя'
-          maxTagCount={2}
-          className='min-w-[200px]'
+        <Select
+          mode="multiple"
+          maxTagCount={1}
+          placeholder="По курсам"
+          allowClear
+          className="min-w-[200px]"
         >
-          {teachers?.data.map((item, index) => {
+          {courses?.map((course) => {
             return (
-              <Select.Option key={index} value={item}>
-                {item}
+              <Select.Option key={course?.id} value={course?.name}>
+                {course?.name}
               </Select.Option>
-            )
+            );
           })}
-        </Select> */}
+        </Select>
         <Select
           mode="multiple"
           placeholder="Дни"
-          maxTagCount={2}
+          maxTagCount={1}
           allowClear
           className="min-w-[200px]"
         >

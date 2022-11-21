@@ -157,7 +157,7 @@ export default function AddStudentForm({
             setVisible();
           })
           .catch((err) => {
-            if (err.response.data.data.phone) {
+            if (err?.response?.data?.data?.phone) {
               message.error("Этот номер телефона уже зарегистрирован!");
             } else {
               message.error("Произошла ошибка! Попробуйте еще раз!");
@@ -214,7 +214,7 @@ export default function AddStudentForm({
           onChange={(e) => {
             setStudent({ ...student, phone: e.target.value });
           }}
-          value={student.phone}
+          value={student?.phone}
           maskChar={null}
         >
           {(props) => (

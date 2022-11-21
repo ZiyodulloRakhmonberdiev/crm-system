@@ -91,6 +91,8 @@ const GroupAttendance = () => {
         onCancel={() => setModalIsOpen(false)}
         onOk={() => handleSetAttendanceStudent()}
         title={"Описание..."}
+        okText="Добавить"
+        cancelText="Отмена"
       >
         <Input.TextArea
           onChange={(e) => setDescription(e.target.value)}
@@ -160,7 +162,7 @@ const GroupAttendance = () => {
                       <div
                         className={`
                         flex flex-row border rounded-full 
-                        border-gray-400 w-10 transition 
+                        border-gray-400 w-10 transition attendance__btn-group
                         ${
                           compareDate(day?.data)
                             ? "opacity-60 bg-gray-200"
@@ -179,9 +181,12 @@ const GroupAttendance = () => {
                             setModalIsOpen(true);
                           }}
                           className={`
-                              bg-blue-500 
-                              text-white 
-                              rounded-full 
+                              have
+                              text-blue-500 
+                              hover:bg-blue-500 
+                              hover:text-bg-500 
+                              hover:text-white 
+                              rounded-full
                               p-1 w-8 h-8 
                               opacity-0 
                               ${
@@ -195,22 +200,26 @@ const GroupAttendance = () => {
                               transition
                               `}
                         >
-                          <CheckCircle />
+                          <Tooltip title="Был">
+                            <CheckCircle />
+                          </Tooltip>
                         </button>
                         <button
-                          disabled={uploading || compareDate(day.data)}
+                          disabled={uploading || compareDate(day?.data)}
                           onClick={() => {
                             setAttendanceData({
                               attStatus: false,
                               date: day?.data,
-                              student_id: student.id,
-                              group_id: params.id,
+                              student_id: student?.id,
+                              group_id: params?.id,
                             });
                             setModalIsOpen(true);
                           }}
                           className={`
-                            bg-red-500 
-                            text-white 
+                            havenot
+                            hover:bg-red-400 
+                            text-red-400 
+                            hover:text-white 
                             rounded-full 
                             p-1 
                             w-8 
@@ -222,7 +231,9 @@ const GroupAttendance = () => {
                             flex items-center justify-center 
                             transition`}
                         >
-                          <XCircle />
+                          <Tooltip title="Нет">
+                            <XCircle />
+                          </Tooltip>
                         </button>
                       </div>
                     </td>

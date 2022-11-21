@@ -17,6 +17,7 @@ import {
   fetchedError,
   setUserData,
 } from "../../redux/studentsSlice";
+import { fetchedCourses, fetchingCourses } from "../../redux/coursesSlice";
 
 export default function Students() {
   // all states
@@ -30,20 +31,11 @@ export default function Students() {
   const [per_page, setPerPage] = useState(30);
   const [last_page, setLastPage] = useState(1);
   const dispatch = useDispatch();
+  const { courses } = useSelector((state) => state.courses);
   const { students, loading, error, refreshStudents } = useSelector(
     (state) => state.students
   );
 
-  // Multi Select inputs
-  const courses = [
-    "English",
-    "Russian",
-    "MobileDev",
-    "WebDev",
-    "SMM",
-    "Python",
-    "PHP",
-  ];
   const finance = [
     "Есть долг",
     "Есть скидки",
@@ -183,6 +175,15 @@ export default function Students() {
         dispatch(fetchedError());
       });
   }, [refreshStudents, currentPage]);
+
+  // fetching courses
+  useEffect(() => {
+    dispatch(fetchingCourses());
+    axios.get(`/api/courses`).then((res) => {
+      dispatch(fetchedCourses(res?.data?.data));
+    });
+  }, []);
+
   return (
     <div>
       <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
@@ -224,10 +225,10 @@ export default function Students() {
           placeholder="По курсам"
           allowClear
         >
-          {courses.map((course, index) => {
+          {courses?.map((course) => {
             return (
-              <Select.Option key={index} value={course}>
-                {course}
+              <Select.Option key={course?.id} value={course?.name}>
+                {course?.name}
               </Select.Option>
             );
           })}

@@ -49,6 +49,7 @@ export default function StudentProfile() {
   const [visiblePayment, setVisiblePayment] = useState(false);
   const [modalType, setModalType] = useState("add");
   const {
+    students,
     userData,
     userGroupData,
     refreshStudentsData,
@@ -97,7 +98,8 @@ export default function StudentProfile() {
 
   useEffect(() => {
     if (!userData.id) {
-      navigate("/", { replace: true });
+      dispatch(setUserData(students?.find((x) => x?.id === userData?.id)));
+      // navigate("/", { replace: true });
     }
     // axios.get(`/api/students/${params.id}`).then((res) => {
     //   dispatch(setUserData(res?.data));
@@ -359,7 +361,11 @@ export default function StudentProfile() {
                 >
                   <Link
                     to={`/groups/${group?.id}`}
-                    onClick={() => dispatch(setGroupData(group))}
+                    onClick={() =>
+                      dispatch(
+                        setGroupData(groups?.find((x) => x?.id === group?.id))
+                      )
+                    }
                     className="font-bold text-md"
                   >
                     {group?.name}

@@ -35,7 +35,6 @@ export default function GroupProfile() {
   };
   const params = useParams();
   const url = "/api/groups";
-  console.log(groupData);
   const handleActiveGroup = () => {
     setUploading(true);
     axios

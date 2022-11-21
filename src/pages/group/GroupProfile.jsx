@@ -35,7 +35,6 @@ export default function GroupProfile() {
   const [uploading, setUploading] = useState(false);
   const { groupData } = useSelector((state) => state.groups);
   const { teachers } = useSelector((state) => state.teachers);
-  const { students } = useSelector((state) => state.students);
   const { courses, coursesData } = useSelector((state) => state.courses);
 
   // hooks
@@ -52,22 +51,10 @@ export default function GroupProfile() {
     dispatch(changeUpdateGroupData(data));
   };
   const params = useParams();
-  const url = "/api/groups";
   const handleActiveGroup = () => {
     setUploading(true);
     axios
-      .patch(url + "/" + params.id, {
-        group_id: params?.id,
-        name: groupData?.name,
-        time_id: groupData?.time_id,
-        group_start_date: groupData?.group_start_date,
-        group_end_date: groupData?.group_end_date,
-        teacher_ids: groupData?.teacher_ids,
-        room_id: groupData?.room_id,
-        days: groupData?.days,
-        course_id: groupData?.course_id,
-        active: true,
-      })
+      .post(`/api/groups/active/${params?.id}`)
       .then((res) => {
         message.success("Группа активирована!");
         dispatch(refreshGroupsData());
@@ -78,6 +65,8 @@ export default function GroupProfile() {
       })
       .finally(() => setUploading(false));
   };
+
+
 
   // fetching courses
   useEffect(() => {
@@ -129,7 +118,7 @@ export default function GroupProfile() {
           </span>
           <Tooltip title="Активировать" placement="left">
             <Spin spinning={uploading}>
-              <MyButton color="warning" onClick={() => handleActiveGroup}>
+              <MyButton color="warning" onClick={() => handleActiveGroup()}>
                 Активировать группу
               </MyButton>
             </Spin>

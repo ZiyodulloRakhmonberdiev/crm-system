@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
 
-import { DashLg, PencilSquare, Trash } from "react-bootstrap-icons";
+import { DashLg, Dot, PencilSquare, Slash, Trash } from "react-bootstrap-icons";
 import { Drawer, message, Spin, Tabs, Tooltip } from "antd";
 
 import { IconButton } from "../../UI/IconButton.style";
@@ -15,16 +15,32 @@ import GroupAttendance from "./GroupAttendances";
 import axios from "../../axios/axios";
 import { MyMessage } from "../../UI/Message.style";
 import { MyButton } from "../../UI/Button.style";
-import { Link, useParams } from "react-router-dom";
+import {
+  fetchedTeachers,
+  fetchingTeachers,
+  setTeachersData,
+} from "../../redux/teachersSlice";
+import {
+  fetchedCourses,
+  fetchedError,
+  fetchingCourses,
+  setCoursesData,
+} from "../../redux/coursesSlice";
 
 export default function GroupProfile() {
-  const { groupData } = useSelector((state) => state.groups);
+  // states
   const [editingGroup, setEditingGroup] = useState(null);
   const [visible, setVisible] = useState(false);
   const [modalType, setModalType] = useState("add");
   const [uploading, setUploading] = useState(false);
+  const { groupData } = useSelector((state) => state.groups);
+  const { teachers } = useSelector((state) => state.teachers);
+  const { courses, coursesData } = useSelector((state) => state.courses);
+
+  // hooks
   const dispatch = useDispatch();
 
+  // functions
   const onEditGroup = (group) => {
     setModalType("update");
     setVisible(true);
@@ -35,23 +51,10 @@ export default function GroupProfile() {
     dispatch(changeUpdateGroupData(data));
   };
   const params = useParams();
-  const url = "/api/groups";
-  console.log(groupData);
   const handleActiveGroup = () => {
     setUploading(true);
     axios
-      .patch(url + "/" + params.id, {
-        group_id: params?.id,
-        name: groupData?.name,
-        time_id: groupData?.time_id,
-        group_start_date: groupData?.group_start_date,
-        group_end_date: groupData?.group_end_date,
-        teacher_ids: groupData?.teacher_ids,
-        room_id: groupData?.room_id,
-        days: groupData?.days,
-        course_id: groupData?.course_id,
-        active: true,
-      })
+      .post(`/api/groups/active/${params?.id}`)
       .then((res) => {
         message.success("Группа активирована!");
         dispatch(refreshGroupsData());
@@ -62,6 +65,29 @@ export default function GroupProfile() {
       })
       .finally(() => setUploading(false));
   };
+
+
+
+  // fetching courses
+  useEffect(() => {
+    dispatch(fetchingCourses());
+    axios
+      .get(`/api/courses`)
+      .then((res) => {
+        dispatch(fetchedCourses(res?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, []);
+
+  // fetching teachers
+  useEffect(() => {
+    dispatch(fetchingTeachers());
+    axios.get(`/api/teachers`).then((res) => {
+      dispatch(fetchedTeachers(res?.data?.data));
+    });
+  }, []);
 
   return (
     <>
@@ -92,15 +118,18 @@ export default function GroupProfile() {
           </span>
           <Tooltip title="Активировать" placement="left">
             <Spin spinning={uploading}>
-              <MyButton color="warning" onClick={() => handleActiveGroup}>
+              <MyButton color="warning" onClick={() => handleActiveGroup()}>
                 Активировать группу
               </MyButton>
             </Spin>
           </Tooltip>
         </MyMessage>
       )}
-      <div className="text-xl mb-8 bg-white p-4 rounded-lg">
-        {groupData?.name}
+      <div className="text-xl mb-8 bg-white p-4 rounded-lg flex flex-wrap gap-4 items-center">
+        {groupData?.name} <Dot /> {groupData?.course?.name} <Dot />{" "}
+        {groupData?.tachers?.map((teacher) => (
+          <span key={teacher?.id}>{teacher?.name}</span>
+        ))}
       </div>
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         <div className="flex flex-col drop-shadow-md hover:drop-shadow-2xl transition col-span-1">
@@ -124,26 +153,45 @@ export default function GroupProfile() {
               {groupData?.name}
             </span>
             <div className="grid mb-2 md:mb-4 mt-4">
-              <label className="text-slate-600">Цена:</label>
-              {groupData?.price == null ? (
-                "Не установлен"
-              ) : (
-                <p>{groupData?.price} UZS</p>
-              )}
+              <label className="text-slate-600">Курсы:</label>
+              <Link
+                to={`/courses/${groupData?.course?.id}`}
+                className="text-cyan-500"
+                onClick={() =>
+                  dispatch(
+                    setCoursesData(
+                      courses?.find((x) => x?.id === groupData?.course?.id)
+                    )
+                  )
+                }
+              >
+                {groupData?.course?.name}
+              </Link>
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Учителя:</label>
               <p>
                 {groupData?.tachers?.map((teacher) => (
                   <Link
-                    key={teacher.id}
+                    key={teacher?.id}
                     to={`/teachers/profile/${teacher?.id}`}
                     className="text-cyan-500"
+                    onClick={() =>
+                      dispatch(
+                        setTeachersData(
+                          teachers?.data?.find((x) => x?.id === teacher?.id)
+                        )
+                      )
+                    }
                   >
-                    {teacher.name}
+                    {teacher?.name}
                   </Link>
                 ))}
               </p>
+            </div>
+            <div className="grid mb-2 md:mb-4">
+              <label className="text-slate-600">Цена:</label>
+              <p>{coursesData?.price} сум</p>
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Время:</label>
@@ -155,10 +203,6 @@ export default function GroupProfile() {
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Кабинеты:</label>
               <p>{groupData?.room?.name}</p>
-            </div>
-            <div className="grid mb-2 md:mb-4">
-              <label className="text-slate-600">Курсы:</label>
-              <p>{groupData?.course?.name}</p>
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Даты обучения:</label>
@@ -202,7 +246,6 @@ export default function GroupProfile() {
                 <div className="shadow-md rounded-md bg-white p-4 ">
                   Группа не активна
                 </div>
-
               )}
             </div>
           </Tabs.TabPane>

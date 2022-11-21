@@ -40,7 +40,7 @@ export default function AllPayments() {
         </Link>
       ),
       group_id: item?.group_id,
-      amount: item?.amount,
+      amount: Number(item?.amount).toLocaleString(),
       payment_type: item?.payment_type,
       date: item?.date,
       description: item?.description,
@@ -132,7 +132,7 @@ export default function AllPayments() {
           <p className="text-blue-400 text-2xl">Все платежи</p>
           <p className="text-blue-400">
             Всего платежей:{" "}
-            <span className="text-xl">{allPaymentsAmount?.amount}</span> сум
+            <span className="text-xl">{Number(allPaymentsAmount?.amount)?.toLocaleString()}</span> сум
           </p>
         </div>
       </header>

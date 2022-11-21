@@ -110,6 +110,14 @@ input[type=number] {
   opacity: 100;
 }
 
+.attendance__cancel-btn-wrapper .attendance__cancel-btn {
+  display: none;
+}
+
+.attendance__cancel-btn-wrapper:hover .attendance__cancel-btn {
+  display: block;
+}
+
 .login-password {
   padding: 0 !important;
   padding-right: 5px !important;

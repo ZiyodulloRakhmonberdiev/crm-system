@@ -39,8 +39,8 @@ export default function Header() {
   useEffect(() => {
     dispatch(fetchingBranches());
     axios.get("/api/branches").then((res) => {
-      dispatch(fetchedBranches(res.data.data));
-      dispatch(setSelectedBranch(res.data.data[0]));
+      dispatch(fetchedBranches(res?.data?.data));
+      dispatch(setSelectedBranch(res?.data?.data[0]));
     });
   }, []);
 

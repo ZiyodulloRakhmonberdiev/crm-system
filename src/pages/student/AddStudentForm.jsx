@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import { Telephone, Trash, X } from "react-bootstrap-icons";
+import { Telephone, X } from "react-bootstrap-icons";
 import InputMask from "react-input-mask";
 import { Input, Form, Radio, message, Spin } from "antd";
 import { v4 as uuidv4 } from "uuid";
@@ -16,6 +16,7 @@ export default function AddStudentForm({
   editingStudent,
   visible,
   setVisible,
+  changeUpdateUserDataFunc = null,
 }) {
   const [uploading, setUploading] = useState(false);
   const [inputFields, setInputFields] = useState([]);
@@ -92,13 +93,13 @@ export default function AddStudentForm({
       if (modalType === "add") {
         axios
           .post(url, {
-            first_name: student.firstName,
-            last_name: student.lastName,
-            phone: "+998" + student.phone?.split(" ").join(""),
-            password: student.password,
-            address: student.address,
-            birthday: student.birthday,
-            gender: student.gender,
+            first_name: student?.firstName,
+            last_name: student?.lastName,
+            phone: "+998" + student?.phone?.split(" ").join(""),
+            password: student?.password,
+            address: student?.address,
+            birthday: student?.birthday,
+            gender: student?.gender,
             addition_phone: inputFields,
           })
           .then((res) => {
@@ -117,7 +118,7 @@ export default function AddStudentForm({
             setVisible();
           })
           .catch((err) => {
-            if (err.response.data.data.phone) {
+            if (err?.response?.data?.data?.phone) {
               message.error("Этот номер телефона уже зарегистрирован!");
             } else {
               message.error("Произошла ошибка! Попробуйте еще раз!");
@@ -128,16 +129,19 @@ export default function AddStudentForm({
         axios
           .patch(url + "/" + editingStudent?.id, {
             student_id: editingStudent?.id,
-            first_name: student.firstName,
-            last_name: student.lastName,
-            phone: "+998" + student.phone?.split(" ").join(""),
-            password: student.password,
-            address: student.address,
-            birthday: student.birthday,
-            gender: student.gender,
+            first_name: student?.firstName,
+            last_name: student?.lastName,
+            phone: "+998" + student?.phone?.split(" ").join(""),
+            password: student?.password,
+            address: student?.address,
+            birthday: student?.birthday,
+            gender: student?.gender,
             addition_phone: inputFields,
           })
           .then((res) => {
+            if (changeUpdateUserDataFunc) {
+              changeUpdateUserDataFunc(student);
+            }
             setStudent({
               firstName: "",
               lastName: "",
@@ -153,7 +157,7 @@ export default function AddStudentForm({
             setVisible();
           })
           .catch((err) => {
-            if (err.response.data.data.phone) {
+            if (err?.response?.data?.data?.phone) {
               message.error("Этот номер телефона уже зарегистрирован!");
             } else {
               message.error("Произошла ошибка! Попробуйте еще раз!");
@@ -210,7 +214,7 @@ export default function AddStudentForm({
           onChange={(e) => {
             setStudent({ ...student, phone: e.target.value });
           }}
-          value={student.phone}
+          value={student?.phone}
           maskChar={null}
         >
           {(props) => (

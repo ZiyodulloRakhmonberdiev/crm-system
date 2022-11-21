@@ -3,9 +3,9 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Input, Modal, Spin, Tooltip } from "antd";
-import { CheckCircle, XCircle } from "react-bootstrap-icons";
+import { CheckCircle, X, XCircle } from "react-bootstrap-icons";
 import moment from "moment";
-
+import "moment/locale/uz";
 import {
   fetchedAtt,
   fetchingAtt,
@@ -83,7 +83,7 @@ const GroupAttendance = () => {
     return date1 > date2;
   };
 
-  if (error) return <center>Посещаемость при загрузке произошла ошибка</center>;
+  if (error) return <center>При загрузке произошла ошибка</center>;
   return (
     <Spin spinning={loading}>
       <Modal
@@ -91,6 +91,8 @@ const GroupAttendance = () => {
         onCancel={() => setModalIsOpen(false)}
         onOk={() => handleSetAttendanceStudent()}
         title={"Описание..."}
+        okText="Добавить"
+        cancelText="Отмена"
       >
         <Input.TextArea
           onChange={(e) => setDescription(e.target.value)}
@@ -104,13 +106,18 @@ const GroupAttendance = () => {
               Имя
             </th>
             {attendances?.days?.map((day) => (
-              <th width="100">{moment(day?.data).format("DD MMM, YYYY")}</th>
+              <th key={day?.id} width="100">
+                {moment(day?.data).format("DD MMM, YYYY")}
+              </th>
             ))}
           </tr>
 
           <tbody>
             {attendances?.students?.map((student) => (
-              <tr className="flex p-2  border-b border-gray-100">
+              <tr
+                key={student?.id}
+                className="flex p-2  border-b border-gray-100"
+              >
                 <td width={200} className="bg-gray-100 rounded-md p-1">
                   {student?.first_name} {student?.last_name}
                 </td>
@@ -121,6 +128,7 @@ const GroupAttendance = () => {
 
                   return current ? (
                     <td
+                      key={day?.id}
                       width="100"
                       align="center"
                       className="flex items-center justify-center"
@@ -133,7 +141,10 @@ const GroupAttendance = () => {
                               : "Нет описания"
                           }
                         >
-                          <span className="cursor-pointer bg-red-400 px-2 py-1 text-xs text-white rounded-md">
+                          <span className="cursor-pointer bg-red-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper">
+                            <button className="absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn">
+                              <X />
+                            </button>
                             Нет
                           </span>
                         </Tooltip>
@@ -145,7 +156,10 @@ const GroupAttendance = () => {
                               : "Нет описания"
                           }
                         >
-                          <span className="cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md">
+                          <span className="cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper">
+                            <button className="absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn">
+                              <X />
+                            </button>
                             Был
                           </span>
                         </Tooltip>
@@ -160,28 +174,32 @@ const GroupAttendance = () => {
                       <div
                         className={`
                         flex flex-row border rounded-full 
-                        border-gray-400 w-10 transition 
+                        border-gray-400 w-10 transition attendance__btn-group
                         ${
                           compareDate(day?.data)
                             ? "opacity-60 bg-gray-200"
                             : "hover:w-auto"
                         }`}
                       >
-                        <button
-                          disabled={uploading || compareDate(day.data)}
-                          onClick={() => {
-                            setAttendanceData({
-                              attStatus: true,
-                              date: day?.data,
-                              student_id: student.id,
-                              group_id: params.id,
-                            });
-                            setModalIsOpen(true);
-                          }}
-                          className={`
-                              bg-blue-500 
-                              text-white 
-                              rounded-full 
+                        <Tooltip title="Был">
+                          <button
+                            disabled={uploading || compareDate(day?.data)}
+                            onClick={() => {
+                              setAttendanceData({
+                                attStatus: true,
+                                date: day?.data,
+                                student_id: student?.id,
+                                group_id: params?.id,
+                              });
+                              setModalIsOpen(true);
+                            }}
+                            className={`
+                              have
+                              text-blue-500 
+                              hover:bg-blue-500 
+                              hover:text-bg-500 
+                              hover:text-white 
+                              rounded-full
                               p-1 w-8 h-8 
                               opacity-0 
                               ${
@@ -194,23 +212,27 @@ const GroupAttendance = () => {
                               justify-center 
                               transition
                               `}
-                        >
-                          <CheckCircle />
-                        </button>
-                        <button
-                          disabled={uploading || compareDate(day.data)}
-                          onClick={() => {
-                            setAttendanceData({
-                              attStatus: false,
-                              date: day?.data,
-                              student_id: student.id,
-                              group_id: params.id,
-                            });
-                            setModalIsOpen(true);
-                          }}
-                          className={`
-                            bg-red-500 
-                            text-white 
+                          >
+                            <CheckCircle />
+                          </button>
+                        </Tooltip>
+                        <Tooltip title="Нет">
+                          <button
+                            disabled={uploading || compareDate(day?.data)}
+                            onClick={() => {
+                              setAttendanceData({
+                                attStatus: false,
+                                date: day?.data,
+                                student_id: student?.id,
+                                group_id: params?.id,
+                              });
+                              setModalIsOpen(true);
+                            }}
+                            className={`
+                            havenot
+                            hover:bg-red-400 
+                            text-red-400 
+                            hover:text-white 
                             rounded-full 
                             p-1 
                             w-8 
@@ -221,9 +243,10 @@ const GroupAttendance = () => {
                             } 
                             flex items-center justify-center 
                             transition`}
-                        >
-                          <XCircle />
-                        </button>
+                          >
+                            <XCircle />
+                          </button>
+                        </Tooltip>
                       </div>
                     </td>
                   );

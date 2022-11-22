@@ -1,5 +1,9 @@
-import { TeamOutlined } from "@ant-design/icons";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+import { TeamOutlined } from "@ant-design/icons";
+import axios from "../axios/axios";
 import {
   Arrow90degLeft,
   BoxArrowRight,
@@ -10,8 +14,45 @@ import {
 } from "react-bootstrap-icons";
 import student from "../assets/img/student.png";
 import { MyButton } from "../UI/Button.style";
+import {
+  fetchedError,
+  fetchedStudents,
+  fetchingStudents,
+} from "../redux/studentsSlice";
+import { fetchedGroups, fetchingGroups } from "../redux/groupsSlice";
 
 export default function HeaderLayout() {
+  // states
+  const { students, refreshStudents } = useSelector((state) => state.students);
+  const { groups, refreshGroups } = useSelector((state) => state.groups);
+  // hooks
+  const dispatch = useDispatch();
+
+  // fetching students
+  useEffect(() => {
+    dispatch(fetchingStudents());
+    axios
+      .get("/api/students")
+      .then((res) => {
+        dispatch(fetchedStudents(res?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, [refreshStudents]);
+
+  // fetching groups
+  useEffect(() => {
+    dispatch(fetchingGroups());
+    axios
+      .get("/api/groups")
+      .then((res) => {
+        dispatch(fetchedGroups(res?.data?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, [refreshGroups]);
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -25,9 +66,10 @@ export default function HeaderLayout() {
             </p>
             <p className="text-slate-400 mb-2">
               В этом месяце в учебном центре зарегистрировались{" "}
-              <span className="text-violet-400"> 45</span> студентов. На данный
-              момент нам доверяют более{" "}
-              <span className="text-violet-400"> 100</span> студентов
+              <span className="text-violet-400">{students?.data?.length}</span>{" "}
+              студентов. На данный момент нам доверяют более{" "}
+              <span className="text-violet-400">{students?.data?.length}</span>{" "}
+              студентов
             </p>
             <MyButton color="primary">Смотреть все</MyButton>
           </div>
@@ -53,7 +95,7 @@ export default function HeaderLayout() {
             <TeamOutlined />
           </div>
           <p className="text-slate-400 my-4">Группы</p>
-          <p className="text-slate-500 text-2xl">13</p>
+          <p className="text-slate-500 text-2xl">{groups?.length}</p>
         </Link>
         <Link
           to="/students"
@@ -63,7 +105,7 @@ export default function HeaderLayout() {
             <Mortarboard />
           </div>
           <p className="text-cyan-400 my-4">Студенты</p>
-          <p className="text-cyan-400 text-2xl">108</p>
+          <p className="text-cyan-400 text-2xl">{students?.data?.length}</p>
         </Link>
         <Link
           to="/"

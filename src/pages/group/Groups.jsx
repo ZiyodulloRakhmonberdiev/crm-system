@@ -69,6 +69,18 @@ export default function Groups() {
     });
   }, []);
 
+  // fetching groups
+  useEffect(() => {
+    dispatch(fetchingGroups());
+    axios
+      .get(`/api/groups?page=${currentPage}`)
+      .then((res) => {
+        dispatch(fetchedGroups(res?.data?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, [refreshGroups, currentPage]);
   const shortDays = [
     {
       id: 1,
@@ -299,18 +311,6 @@ export default function Groups() {
     setEditingGroup({ ...Group });
   };
 
-  // fetching groups
-  useEffect(() => {
-    dispatch(fetchingGroups());
-    axios
-      .get(`/api/groups?page=${currentPage}`)
-      .then((res) => {
-        dispatch(fetchedGroups(res?.data?.data?.data));
-      })
-      .catch((err) => {
-        dispatch(fetchedError());
-      });
-  }, [refreshGroups, currentPage]);
   return (
     <div>
       <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">

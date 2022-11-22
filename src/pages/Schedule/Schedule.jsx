@@ -1,4 +1,4 @@
-import { Skeleton } from "antd";
+import { Skeleton, Tooltip } from "antd";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,18 +15,20 @@ const Schedule = () => {
   const [times, setTimes] = useState([]);
   const [mustDeleteTd, setMustDeleteTd] = useState([]);
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     axios.get("/api/times").then((res) => {
       setTimes(res.data.data);
     });
 
-    axios.get("/api/schedule").then((res) => {
-      setSchedule(res.data.data);
-    })
-    .finally(() => setLoading(false))
+    axios
+      .get("/api/schedule")
+      .then((res) => {
+        setSchedule(res.data.data);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   // fetching rooms
@@ -75,88 +77,111 @@ const Schedule = () => {
 
   return (
     <div>
-      <center>
-        <h3>Расписание</h3>
+      <center className="border-b pb-2">
+        <h3 className="text-lg">Расписание</h3>
       </center>
-      {
-        loading ? (
-          <Skeleton active={true} />
-        ) : (
-          <div className="w-full overflow-auto" style={{ minHeight: "50vh" }}>
-        <table>
-          <tr>
-            <td width={150} className="px-4 py-2 bg-gray-100">
-              Кабинет
-            </td>
-            {times?.map((time) => {
+      {loading ? (
+        <Skeleton active={true} />
+      ) : (
+        <div className="overflow-auto schedule__table-wrapper">
+          <table className="relative">
+            <tr>
+              <td className="px-4 py-2 bg-gray-100 border-b">Кабинеты</td>
+              {times?.map((time) => {
+                return (
+                  <td className="px-4 py-2 border-r-2 border-gray-100">
+                    {time.time}
+                  </td>
+                );
+              })}
+            </tr>
+            {rooms?.map((room, indx) => {
               return (
-                <td className="px-4 py-2 border-r-2 border-gray-100">
-                  {time.time}
-                </td>
-              );
-            })}
-          </tr>
-          {rooms?.map((room, indx) => {
-            return (
-              <tr>
-                <td className=" bg-gray-100 px-4 py-2">{room?.name}</td>
-                {times?.map((time, index) => {
-                  let startedIndex = null;
-                  let endIndex = null;
-                  const curr = schedule?.find((group) => {
-                    if (
-                      time.time === group.start_time &&
-                      group.room.id === room.id
-                    ) {
-                      startedIndex = index;
-                    } else if (
-                      time.time === group.end_time &&
-                      group.room.id === room.id
-                    ) {
-                      endIndex = index;
-                    }
-                    return (
-                      time.time === group.start_time &&
-                      group.room.id === room.id
-                    );
-                  });
-
-                  if (curr) {
-                    return (
-                      <td
-                        colspan={curr?.lesson_duration / 30}
-                        className="relative p-1 border border-gray-100"
-                        role="cell"
-                      >
-                        <Link to={`/groups/`}>
-                          <div className="bg-green-400 p-2  shadow-md">
-                            <span>{curr?.name}</span>
-                          </div>
-                        </Link>
-                      </td>
-                    );
-                  } else {
-                    if (
-                      !mustDeleteTd.find(
-                        (x) => x?.roomIndex === indx && x?.currIndex === index
-                      )
-                    ) {
+                <tr className="relative">
+                  <td className=" bg-gray-100 border-b px-4 py-2">
+                    {room?.name}
+                  </td>
+                  {times?.map((time, index) => {
+                    let startedIndex = null;
+                    let endIndex = null;
+                    const curr = schedule?.find((group) => {
+                      if (
+                        time.time === group.start_time &&
+                        group.room.id === room.id
+                      ) {
+                        startedIndex = index;
+                      } else if (
+                        time.time === group.end_time &&
+                        group.room.id === room.id
+                      ) {
+                        endIndex = index;
+                      }
+                      return (
+                        time.time === group.start_time &&
+                        group.room.id === room.id
+                      );
+                    });
+                    if (curr) {
                       return (
                         <td
-                          style={{ width: "70px" }}
-                          className="border border-gray-100"
-                        ></td>
+                          colspan={curr?.lesson_duration / 30}
+                          className="relative p-1 border border-gray-100"
+                          role="cell"
+                        >
+                          <div className="bg-cyan-300 w-full rounded-md">
+                            <Link
+                              to={`/groups/${curr?.id}`}
+                              className="p-2 shadow-md text-xs flex flex-wrap gap-1"
+                            >
+                              <span className="bg-cyan-500 rounded-sm p-1 text-white w-full text-center">
+                                {curr?.name}
+                              </span>
+                              {curr?.teachers?.length !== 0 ? (
+                                <Tooltip title="Учителя">
+                                  <span className="bg-violet-400 rounded-sm px-1 py-0.5 text-white">
+                                    {curr?.teachers?.[0]?.name}
+                                  </span>
+                                </Tooltip>
+                              ) : (
+                                ""
+                              )}
+                              <Tooltip title="Кабинеты">
+                                <span className="bg-pink-400 text-white rounded-sm px-1 py-0.5">
+                                  {curr?.room?.name}
+                                </span>
+                              </Tooltip>
+                              <span
+                                className="bg-white rounded-sm px-1 py-0.5 text-xs"
+                                style={{ fontSize: 10 }}
+                              >
+                                {curr?.group_start_date} -{" "}
+                                {curr?.group_end_date}{" "}
+                              </span>
+                            </Link>
+                          </div>
+                        </td>
                       );
+                    } else {
+                      if (
+                        !mustDeleteTd.find(
+                          (x) => x?.roomIndex === indx && x?.currIndex === index
+                        )
+                      ) {
+                        return (
+                          <td
+                            style={{ width: "70px" }}
+                            className="border border-gray-100"
+                          ></td>
+                        );
+                      }
                     }
-                  }
-                })}
-              </tr>
-            );
-          })}
-        </table>
-      </div>
-        )
-      }
+                  })}
+                </tr>
+              );
+            })}
+          </table>
+        </div>
+      )}
     </div>
   );
 };

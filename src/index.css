@@ -129,6 +129,13 @@ input[type=number] {
   padding: 5px 8px !important;
 }
 
+.schedule__table-wrapper td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  padding: 0 40px;
+}
+
 @media (min-width: 992px) {
   .layout-content {
     margin-left: 12rem !important;

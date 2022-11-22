@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Input, message, Spin, Select } from "antd";
+import { v4 as uuidv4 } from "uuid";
 import axios from "../../axios/axios";
 import { MyButton } from "../../UI/Button.style";
 import { refreshGroupsData } from "../../redux/groupsSlice";
@@ -12,6 +13,7 @@ import {
 } from "../../redux/coursesSlice";
 import { fetchedTeachers, fetchingTeachers } from "../../redux/teachersSlice";
 import { fetchedRooms, fetchingRooms } from "../../redux/roomsSlice";
+import { X } from "react-bootstrap-icons";
 
 export default function AddGroupForm({
   modalType,
@@ -19,12 +21,13 @@ export default function AddGroupForm({
   visible,
   setVisible,
 }) {
+  // states
   const { teachers } = useSelector((state) => state.teachers);
   const { courses } = useSelector((state) => state.courses);
   const { rooms } = useSelector((state) => state.rooms);
-  const dispatch = useDispatch();
-  const url = "/api/groups";
   const [uploading, setUploading] = useState(false);
+  const url = "/api/groups";
+  const [times, setTimes] = useState([]);
   const [group, setGroup] = useState({
     name: "",
     time_id: "",
@@ -35,7 +38,12 @@ export default function AddGroupForm({
     days: [],
     course_id: "",
   });
-  const [times, setTimes] = useState([]);
+  const [inputFields, setInputFields] = useState([
+    { name: "", flex: "", id: Date.now() },
+  ]);
+
+  // hooks
+  const dispatch = useDispatch();
 
   // fetching courses
   useEffect(() => {
@@ -82,6 +90,7 @@ export default function AddGroupForm({
         days: "",
         course_id: "",
       });
+      setInputFields([]);
     } else {
       const {
         name,
@@ -106,6 +115,16 @@ export default function AddGroupForm({
         days: days?.join(","),
         course_id: course?.id,
       });
+      if (teachers_ids) {
+        setInputFields([]);
+        const newAddTeacher = [];
+        teachers_ids?.map((item) => {
+          newAddTeacher.push({ ...item, id: uuidv4() });
+        });
+        setInputFields(newAddTeacher);
+      } else {
+        setInputFields([]);
+      }
     }
   }, [modalType, visible]);
 
@@ -142,7 +161,7 @@ export default function AddGroupForm({
             time_id: group.time_id,
             group_start_date: group.group_start_date,
             group_end_date: group.group_end_date,
-            teacher_ids: group.teacher_ids,
+            teacher_ids: inputFields,
             room_id: group.room_id,
             days: group.days?.split(","),
             course_id: group.course_id,
@@ -178,7 +197,7 @@ export default function AddGroupForm({
             time_id: group.time_id,
             group_start_date: group_start_date,
             group_end_date: group.group_end_date,
-            teacher_ids: group.teacher_ids,
+            teacher_ids: inputFields,
             room_id: group.room_id,
             days: group.days?.split(","),
             course_id: group.course_id,
@@ -211,6 +230,39 @@ export default function AddGroupForm({
       message.error("Заполните все поля!");
     }
   }
+
+  // Addition teachers
+  const handleAddFields = () => {
+    setInputFields([...inputFields, { name: "", flex: "", id: Date.now() }]);
+  };
+
+  const handleChangeInput = (type, id, event) => {
+    setInputFields((prev) => {
+      return inputFields?.map((item) => {
+        if (id === item.id) {
+          return {
+            ...item,
+            phone:
+              type === "phone"
+                ? `+998${event.target.value.split(" ").join("")}`
+                : item.phone,
+            label: type === "label" ? event : item.label,
+          };
+        } else {
+          return item;
+        }
+      });
+    });
+  };
+
+  const handleRemoveFields = (id) => {
+    const values = [...inputFields];
+    values.splice(
+      values.findIndex((value) => value.id === id),
+      1
+    );
+    setInputFields(values);
+  };
   return (
     <div>
       <form onSubmit={(e) => submit(e)}>
@@ -243,26 +295,108 @@ export default function AddGroupForm({
             );
           })}
         </Select>
-        <p>Выберите учителя</p>
-        <Select
-          value={group?.teacher_ids}
-          onChange={(e) => {
-            setGroup({ ...group, teacher_ids: e });
-          }}
-          placeholder="Выбрать варианты"
-          className="w-full mb-4 mt-2"
-          showSearch={true}
-          mode="multiple"
-        >
-          {teachers?.data?.map((teacher, index) => {
-            return (
-              <Select.Option value={teacher?.id} key={index}>
-                {teacher.name}
-              </Select.Option>
-            );
-          })}
-        </Select>
-
+        <p>Выберите учителя и процент дохода (%)</p>
+        <div className="mt-2 mb-4">
+          <Select
+            value={group?.teacher_ids}
+            // onChange={(e) => {
+            //   setGroup({ ...group, teacher_ids: e });
+            // }}
+            onChange={(e) => {
+              handleChangeInput("label", inputFields?.[0]?.id, e);
+            }}
+            placeholder="Выбрать варианты"
+            className="w-3/4"
+            showSearch={true}
+          >
+            {teachers?.data?.map((teacher, index) => {
+              return (
+                <Select.Option value={teacher?.id} key={index}>
+                  {teacher?.name}
+                </Select.Option>
+              );
+            })}
+          </Select>
+          <Input
+            onChange={(event) => {
+              handleChangeInput("phone", inputFields?.[0]?.id, event);
+            }}
+            placeholder="%"
+            className="w-1/4 ml-auto"
+          ></Input>
+        </div>
+        {inputFields.map((inputField) => (
+          <div key={inputField.id} className="mb-2">
+            <div className="flex justify-between items-end mb-2">
+              <span>Другой учитель</span>
+              <button
+                onClick={() => {
+                  handleRemoveFields(inputField.id);
+                }}
+                className="border rounded-full text-slate-400 p-1"
+              >
+                <X className="text-xl" />
+              </button>
+            </div>
+            <Select
+              value={group?.teacher_ids?.name}
+              // onChange={(e) => {
+              //   setGroup({ ...group, teacher_ids: e });
+              // }}
+              onChange={(e) => {
+                handleChangeInput("label", inputField.id, e);
+              }}
+              placeholder="Выбрать варианты"
+              className="w-3/4"
+              showSearch={true}
+            >
+              {teachers?.data?.map((teacher, index) => {
+                return (
+                  <Select.Option value={teacher?.id} key={index}>
+                    {teacher?.name}
+                  </Select.Option>
+                );
+              })}
+            </Select>
+            <Input
+              onChange={(event) => {
+                handleChangeInput("phone", inputField.id, event);
+              }}
+              value={group?.teacher_ids?.felx}
+              placeholder="%"
+              className="w-1/4 ml-auto"
+            ></Input>
+            {/* <Input
+              placeholder="Пользователь телефона"
+              onChange={(e) => {
+                handleChangeInput("label", inputField.id, e);
+              }}
+              value={inputField.label}
+              required
+            />
+            <InputMask
+              mask="99 999 99 99"
+              onChange={(event) => {
+                handleChangeInput("phone", inputField.id, event);
+              }}
+              value={inputField?.phone?.slice(4, inputField?.length)} // +998
+              maskChar={null}
+              required
+            >
+              {(props) => (
+                <Input
+                  name="phone"
+                  {...props}
+                  addonBefore="+998"
+                  className="mb-4 mt-2"
+                />
+              )}
+            </InputMask> */}
+          </div>
+        ))}
+        <MyButton onClick={handleAddFields} type="button" className="mb-4">
+          Добавить еще одного учителя
+        </MyButton>
         <p>Дата старта группы</p>
         <div className="flex gap-x-2 mb-4 mt-2">
           <input

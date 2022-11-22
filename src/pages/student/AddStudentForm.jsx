@@ -18,10 +18,9 @@ export default function AddStudentForm({
   setVisible,
   changeUpdateUserDataFunc = null,
 }) {
+  // states
   const [uploading, setUploading] = useState(false);
   const [inputFields, setInputFields] = useState([]);
-
-  const url = "/api/students";
   const [student, setStudent] = useState({
     firstName: "",
     lastName: "",
@@ -32,7 +31,9 @@ export default function AddStudentForm({
     gender: "",
     additionPhone: [],
   });
+  // hooks
   const dispatch = useDispatch();
+  const url = "/api/students";
   useEffect(() => {
     if (modalType === "add") {
       setStudent({
@@ -295,8 +296,6 @@ export default function AddStudentForm({
             Женщина
           </Radio>
         </Radio.Group>
-        {/* <p>Коментарий</p>
-        <Input.TextArea rows={4} className='mb-4 mt-2' id='comment' /> */}
         <Form.Item>
           <p>Пароль</p>
           <Input.Password

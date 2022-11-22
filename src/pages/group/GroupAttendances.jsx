@@ -15,16 +15,15 @@ import axios from "../../axios/axios";
 moment.locale("ru");
 
 const GroupAttendance = () => {
-  const params = useParams();
-  const { attendances, loading, error } = useSelector(
-    (state) => state.attendances
-  );
+  // states
   const { groupData } = useSelector((state) => state.groups);
   const [refreshing, setRefreshing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [description, setDescription] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
+  const { attendances, loading, error } = useSelector(
+    (state) => state.attendances
+  );
   const [attendanceData, setAttendanceData] = useState({
     attStatus: null,
     date: null,
@@ -32,8 +31,10 @@ const GroupAttendance = () => {
     group_id: null,
     description,
   });
-
+  // hooks
+  const params = useParams();
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(fetchingAtt());
     axios
@@ -41,7 +42,8 @@ const GroupAttendance = () => {
         `/api/groups/${params?.id}/attendance?from=${groupData?.group_start_date}&to=${groupData?.group_end_date}`
       )
       .then((res) => {
-        dispatch(fetchedAtt(res.data));
+        dispatch(fetchedAtt(res?.data));
+        console.log(res?.data);
       })
       .catch((err) => {
         dispatch(fetchingErrorAtt());
@@ -101,24 +103,21 @@ const GroupAttendance = () => {
       </Modal>
       <div className="">
         <table className="overflow-auto">
-          <tr className=" overflow-auto flex bg-slate-100 px-2 py-1 rounded-md">
+          <tr className=" overflow-auto flex rounded-sm mb-3">
             <th width="200" align="left">
               Имя
             </th>
             {attendances?.days?.map((day) => (
               <th key={day?.id} width="100">
-                {moment(day?.data).format("DD MMM, YYYY")}
+                {moment(day?.data).format("DD MMM")}
               </th>
             ))}
           </tr>
 
           <tbody>
             {attendances?.students?.map((student) => (
-              <tr
-                key={student?.id}
-                className="flex p-2  border-b border-gray-100"
-              >
-                <td width={200} className="bg-gray-100 rounded-md p-1">
+              <tr key={student?.id} className="flex mb-2">
+                <td width={200} className="bg-gray-100 rounded-sm p-1">
                   {student?.first_name} {student?.last_name}
                 </td>
                 {attendances?.days?.map((day) => {
@@ -130,7 +129,6 @@ const GroupAttendance = () => {
                     <td
                       key={day?.id}
                       width="100"
-                      align="center"
                       className="flex items-center justify-center"
                     >
                       {!current.status ? (
@@ -168,7 +166,6 @@ const GroupAttendance = () => {
                   ) : (
                     <td
                       width="100"
-                      align="center"
                       className="flex items-center justify-center"
                     >
                       <div

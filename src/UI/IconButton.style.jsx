@@ -9,6 +9,7 @@ export const IconButton = styled.button`
   border-radius: 8px;
   font-size: 16px;
   transition: all 0.3s ease;
+  background-color: #fff;
   ${(props) => {
     switch (props.color) {
       case "danger":

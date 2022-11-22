@@ -124,7 +124,7 @@ const Schedule = () => {
                     if (curr) {
                       return (
                         <td
-                          colspan={curr?.lesson_duration / 30}
+                          colSpan={curr?.lesson_duration / 30}
                           className="relative p-1 border border-gray-100"
                           role="cell"
                         >

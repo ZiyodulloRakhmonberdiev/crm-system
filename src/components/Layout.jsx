@@ -9,6 +9,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import axios from "../axios/axios";
 import Schedule from "../pages/Schedule/Schedule";
+import { Calendar3 } from "react-bootstrap-icons";
 
 const Layout = () => {
   const [scheduleIsOpen, setScheduleIsOpen] = useState(false);
@@ -51,10 +52,10 @@ const Layout = () => {
         </Drawer>
         {location.pathname !== "/" ? (
           <Button
-            className="fixed top-1/2 right-0 bg-white shadow-md"
+            className="fixed top-1/2 right-0 bg-white shadow-md h-16"
             onClick={() => setScheduleIsOpen(!scheduleIsOpen)}
           >
-            <CalendarOutlined />
+            <Calendar3 className="text-xl text-cyan-500" />
           </Button>
         ) : null}
       </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 
-import { DashLg, Dot, PencilSquare, Slash, Trash } from "react-bootstrap-icons";
+import { DashLg, Dot, PencilSquare, Trash } from "react-bootstrap-icons";
 import { Drawer, message, Spin, Tabs, Tooltip } from "antd";
 
 import { IconButton } from "../../UI/IconButton.style";
@@ -26,19 +26,30 @@ import {
   fetchingCourses,
   setCoursesData,
 } from "../../redux/coursesSlice";
+import {
+  fetchedAtt,
+  fetchingAtt,
+  fetchingErrorAtt,
+} from "../../redux/attendancesSlice";
 
 export default function GroupProfile() {
   // states
   const [editingGroup, setEditingGroup] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [activeGroup, setActiveGroup] = useState(false);
   const [modalType, setModalType] = useState("add");
+  const [refreshing, setRefreshing] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const joinedStudents = {};
   const { groupData } = useSelector((state) => state.groups);
   const { teachers } = useSelector((state) => state.teachers);
   const { courses, coursesData } = useSelector((state) => state.courses);
-
+  const { attendances, loading, error } = useSelector(
+    (state) => state.attendances
+  );
   // hooks
   const dispatch = useDispatch();
+  const params = useParams();
 
   // functions
   const onEditGroup = (group) => {
@@ -50,7 +61,6 @@ export default function GroupProfile() {
   const changeUpdateGroupDataFunc = (data) => {
     dispatch(changeUpdateGroupData(data));
   };
-  const params = useParams();
   const handleActiveGroup = () => {
     setUploading(true);
     axios
@@ -58,15 +68,13 @@ export default function GroupProfile() {
       .then((res) => {
         message.success("Группа активирована!");
         dispatch(refreshGroupsData());
+        setActiveGroup(true);
       })
       .catch((err) => {
-        console.log(err);
         message.error("Произошла ошибка! Попробуйте еще раз!");
       })
       .finally(() => setUploading(false));
   };
-
-
 
   // fetching courses
   useEffect(() => {
@@ -75,6 +83,9 @@ export default function GroupProfile() {
       .get(`/api/courses`)
       .then((res) => {
         dispatch(fetchedCourses(res?.data?.data));
+        dispatch(
+          setCoursesData(courses?.find((x) => x?.id === groupData?.course?.id))
+        );
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -88,6 +99,21 @@ export default function GroupProfile() {
       dispatch(fetchedTeachers(res?.data?.data));
     });
   }, []);
+
+  // fetching students
+  useEffect(() => {
+    dispatch(fetchingAtt());
+    axios
+      .get(
+        `/api/groups/${params?.id}/attendance?from=${groupData?.group_start_date}&to=${groupData?.group_end_date}`
+      )
+      .then((res) => {
+        dispatch(fetchedAtt(res?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchingErrorAtt());
+      });
+  }, [refreshing]);
 
   return (
     <>
@@ -109,22 +135,22 @@ export default function GroupProfile() {
           setVisible={() => setVisible(false)}
         />
       </Drawer>
-      {groupData?.active ? (
-        ""
-      ) : (
-        <MyMessage color="warning">
-          <span>
-            Эта группа еще не активна. Нажмите кнопку, чтобы активировать её
-          </span>
-          <Tooltip title="Активировать" placement="left">
-            <Spin spinning={uploading}>
-              <MyButton color="warning" onClick={() => handleActiveGroup()}>
-                Активировать группу
-              </MyButton>
-            </Spin>
-          </Tooltip>
-        </MyMessage>
-      )}
+      {groupData?.active
+        ? ""
+        : !activeGroup && (
+            <MyMessage color="warning">
+              <span>
+                Эта группа еще не активна. Нажмите кнопку, чтобы активировать её
+              </span>
+              <Tooltip title="Активировать" placement="left">
+                <Spin spinning={uploading}>
+                  <MyButton color="warning" onClick={() => handleActiveGroup()}>
+                    Активировать группу
+                  </MyButton>
+                </Spin>
+              </Tooltip>
+            </MyMessage>
+          )}
       <div className="text-xl mb-8 bg-white p-4 rounded-lg flex flex-wrap gap-4 items-center">
         {groupData?.name} <Dot /> {groupData?.course?.name} <Dot />{" "}
         {groupData?.tachers?.map((teacher) => (
@@ -191,7 +217,7 @@ export default function GroupProfile() {
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Цена:</label>
-              <p>{coursesData?.price} сум</p>
+              <p> {Number(coursesData?.price).toLocaleString()} сум</p>
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Время:</label>
@@ -222,31 +248,34 @@ export default function GroupProfile() {
               Количество студентов: {groupData?.student_count}
             </p>
             <div className="grid text-xs py-4 gap-1">
-              <div className="flex justify-between flex-wrap">
-                <span className="bg-slate-100 rounded-md p-1">Ali Akbarov</span>
-                <span className="p-1">93 370 00 00</span>
-              </div>
-              <div className="flex justify-between flex-wrap">
-                <span className="bg-slate-100 rounded-md p-1">
-                  Umar Akbarov
-                </span>
-                <span className="p-1">93 370 77 77</span>
-              </div>
+              {attendances?.students?.map((student) => (
+                <div
+                  key={student?.id}
+                  className="flex justify-between flex-wrap"
+                >
+                  <span className="bg-slate-100 rounded-sm p-1">
+                    {student?.first_name} {student?.last_name}
+                  </span>
+                  <span className="p-1">{student?.phone}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
         <Tabs className="col-span-1 lg:col-span-2">
           <Tabs.TabPane tab="Посещаемость" key="item-1">
             <div className="grid gap-2">
-              {groupData?.active ? (
-                <div className="bg-white rounded-md px-6 py-4 overflow-x-auto ">
-                  <GroupAttendance />
-                </div>
-              ) : (
-                <div className="shadow-md rounded-md bg-white p-4 ">
-                  Группа не активна
-                </div>
-              )}
+              {groupData?.active
+                ? !activeGroup && (
+                    <div className="bg-white rounded-md px-6 py-4 overflow-x-auto ">
+                      <GroupAttendance />
+                    </div>
+                  )
+                : !activeGroup && (
+                    <div className="shadow-md rounded-md bg-white p-4 ">
+                      Группа не активна
+                    </div>
+                  )}
             </div>
           </Tabs.TabPane>
           <Tabs.TabPane tab="История" key="item-2">

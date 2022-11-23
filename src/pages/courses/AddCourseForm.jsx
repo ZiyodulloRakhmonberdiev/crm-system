@@ -1,6 +1,6 @@
 // import type { RadioChangeEvent } from 'antd'
 import { useState, useEffect } from "react";
-import { Input, message, Spin } from "antd";
+import { Input, message, Select, Spin } from "antd";
 import axios from "../../axios/axios";
 import { MyButton } from "../../UI/Button.style";
 import { useDispatch } from "react-redux";
@@ -13,7 +13,8 @@ export default function AddCourseForm({
   setVisible,
   changeUpdateCourseDataFunc = null,
 }) {
-  const url = "/api/courses";
+  // states
+  const [uploading, setUploading] = useState(false);
   const [course, setCourse] = useState({
     name: "",
     price: "",
@@ -22,8 +23,9 @@ export default function AddCourseForm({
     lessons_per_module: "",
     description: "",
   });
-  const [uploading, setUploading] = useState(false);
+  // hooks
   const dispatch = useDispatch();
+  const url = "/api/courses";
 
   useEffect(() => {
     if (modalType === "add") {
@@ -147,17 +149,23 @@ export default function AddCourseForm({
           name="name"
         />
         <p>Продолжительность урока (минут)</p>
-        <Input
-          type="number"
+        <Select
           required
-          id="lesson_duration"
+          className="w-full mb-4 mt-2"
           value={course?.lesson_duration}
           onChange={(e) => {
-            handle(e);
+            setCourse({ ...course, lesson_duration: e });
           }}
-          className="mb-4 mt-2"
-          name="lesson_duration"
-        />
+          placeholder="Выбрать варианты"
+        >
+          return (<Select.Option value={30}>30 минут</Select.Option>
+          <Select.Option value={60}>60 минут</Select.Option>
+          <Select.Option value={90}>90 минут</Select.Option>
+          <Select.Option value={120}>120 минут</Select.Option>
+          <Select.Option value={150}>150 минут</Select.Option>
+          <Select.Option value={180}>180 минут</Select.Option>
+          );
+        </Select>
         <p>Продолжительность курса (месяцев)</p>
         <Input
           type="number"

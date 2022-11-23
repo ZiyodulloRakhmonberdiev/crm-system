@@ -26,7 +26,6 @@ export default function AddGroupForm({
   const { courses } = useSelector((state) => state.courses);
   const { rooms } = useSelector((state) => state.rooms);
   const [uploading, setUploading] = useState(false);
-  const url = "/api/groups";
   const [times, setTimes] = useState([]);
   const [inputFields, setInputFields] = useState([]);
   const [group, setGroup] = useState({
@@ -39,6 +38,7 @@ export default function AddGroupForm({
     days: [],
     course_id: "",
   });
+  const url = "/api/groups";
 
   // hooks
   const dispatch = useDispatch();

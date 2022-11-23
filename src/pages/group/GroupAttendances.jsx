@@ -43,7 +43,6 @@ const GroupAttendance = () => {
       )
       .then((res) => {
         dispatch(fetchedAtt(res?.data));
-        console.log(res?.data);
       })
       .catch((err) => {
         dispatch(fetchingErrorAtt());

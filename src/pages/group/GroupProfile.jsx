@@ -114,7 +114,7 @@ export default function GroupProfile() {
         dispatch(fetchingErrorAtt());
       });
   }, [refreshing]);
-
+  console.log(groupData);
   return (
     <>
       <Drawer

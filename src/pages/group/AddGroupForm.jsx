@@ -28,6 +28,7 @@ export default function AddGroupForm({
   const [uploading, setUploading] = useState(false);
   const url = "/api/groups";
   const [times, setTimes] = useState([]);
+  const [inputFields, setInputFields] = useState([]);
   const [group, setGroup] = useState({
     name: "",
     time_id: "",
@@ -38,9 +39,6 @@ export default function AddGroupForm({
     days: [],
     course_id: "",
   });
-  const [inputFields, setInputFields] = useState([
-    { name: "", flex: "", id: Date.now() },
-  ]);
 
   // hooks
   const dispatch = useDispatch();
@@ -100,25 +98,26 @@ export default function AddGroupForm({
         room,
         days,
         course,
+        teacher_ids,
       } = editingGroup;
-      const teachers_ids = [];
-      editingGroup?.tachers?.map((item) => {
-        teachers_ids.push(item.id);
-      });
       setGroup({
         name: name,
         time_id: time?.id,
         group_start_date: group_start_date,
         group_end_date: group_end_date,
-        teacher_ids: teachers_ids,
+        teacher_ids: teacher_ids,
         room_id: room?.id,
         days: days?.join(","),
         course_id: course?.id,
       });
-      if (teachers_ids) {
+      const teachers_ids = [];
+      editingGroup?.tachers?.map((item) => {
+        teachers_ids.push(item.id);
+      });
+      if (teacher_ids) {
         setInputFields([]);
         const newAddTeacher = [];
-        teachers_ids?.map((item) => {
+        teacher_ids?.map((item) => {
           newAddTeacher.push({ ...item, id: uuidv4() });
         });
         setInputFields(newAddTeacher);
@@ -182,7 +181,8 @@ export default function AddGroupForm({
             setVisible();
           })
           .catch((err) => {
-            if (err.response.data.data.room_id) {
+            console.log(err);
+            if (err?.response?.data?.message === "Lesson chalk in the room") {
               message.error("Кабинет в это время занята!");
             } else {
               message.error("Произошла ошибка! Попробуйте еще раз!");
@@ -218,9 +218,10 @@ export default function AddGroupForm({
             setVisible();
           })
           .catch((err) => {
-            if (err.response.data.data.room_id) {
+            if (err?.response?.data?.data?.room_id) {
               message.error("Кабинет в это время занята!");
             } else {
+              console.log(err);
               message.error("Произошла ошибка! Попробуйте еще раз!");
             }
           })
@@ -233,7 +234,10 @@ export default function AddGroupForm({
 
   // Addition teachers
   const handleAddFields = () => {
-    setInputFields([...inputFields, { name: "", flex: "", id: Date.now() }]);
+    setInputFields([
+      ...inputFields,
+      { teacher_id: "", flex: "", id: Date.now() },
+    ]);
   };
 
   const handleChangeInput = (type, id, event) => {
@@ -242,11 +246,8 @@ export default function AddGroupForm({
         if (id === item.id) {
           return {
             ...item,
-            phone:
-              type === "phone"
-                ? `+998${event.target.value.split(" ").join("")}`
-                : item.phone,
-            label: type === "label" ? event : item.label,
+            teacher_id: type === "teacher_id" ? event : item.event,
+            flex: type === "flex" ? event.target.value : item.flex,
           };
         } else {
           return item;
@@ -297,106 +298,56 @@ export default function AddGroupForm({
         </Select>
         <p>Выберите учителя и процент дохода (%)</p>
         <div className="mt-2 mb-4">
-          <Select
-            value={group?.teacher_ids}
-            // onChange={(e) => {
-            //   setGroup({ ...group, teacher_ids: e });
-            // }}
-            onChange={(e) => {
-              handleChangeInput("label", inputFields?.[0]?.id, e);
-            }}
-            placeholder="Выбрать варианты"
-            className="w-3/4"
-            showSearch={true}
-          >
-            {teachers?.data?.map((teacher, index) => {
-              return (
-                <Select.Option value={teacher?.id} key={index}>
-                  {teacher?.name}
-                </Select.Option>
-              );
-            })}
-          </Select>
-          <Input
-            onChange={(event) => {
-              handleChangeInput("phone", inputFields?.[0]?.id, event);
-            }}
-            placeholder="%"
-            className="w-1/4 ml-auto"
-          ></Input>
-        </div>
-        {inputFields.map((inputField) => (
-          <div key={inputField.id} className="mb-2">
-            <div className="flex justify-between items-end mb-2">
-              <span>Другой учитель</span>
-              <button
-                onClick={() => {
-                  handleRemoveFields(inputField.id);
+          {inputFields.map((inputField) => (
+            <div key={inputField?.id} className="mb-2">
+              <div className="flex justify-between items-end mb-2">
+                <span>Другой учитель</span>
+                <button
+                  onClick={() => {
+                    handleRemoveFields(inputField?.id);
+                  }}
+                  className="border rounded-full text-slate-400 p-1"
+                >
+                  <X className="text-xl" />
+                </button>
+              </div>
+              <Select
+                value={inputField?.teacher_id}
+                onChange={(e) => {
+                  handleChangeInput("teacher_id", inputField.id, e);
                 }}
-                className="border rounded-full text-slate-400 p-1"
+                placeholder="Выбрать варианты"
+                className="w-3/4"
+                showSearch={true}
               >
-                <X className="text-xl" />
-              </button>
+                {teachers?.data?.map((teacher, index) => {
+                  return (
+                    <Select.Option value={teacher?.id} key={index}>
+                      {teacher?.name}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+              <Input
+                onChange={(event) => {
+                  handleChangeInput("flex", inputField.id, event);
+                }}
+                value={inputField?.flex}
+                placeholder="%"
+                className="w-1/4 ml-auto"
+              ></Input>
             </div>
-            <Select
-              value={group?.teacher_ids?.name}
-              // onChange={(e) => {
-              //   setGroup({ ...group, teacher_ids: e });
-              // }}
-              onChange={(e) => {
-                handleChangeInput("label", inputField.id, e);
-              }}
-              placeholder="Выбрать варианты"
-              className="w-3/4"
-              showSearch={true}
-            >
-              {teachers?.data?.map((teacher, index) => {
-                return (
-                  <Select.Option value={teacher?.id} key={index}>
-                    {teacher?.name}
-                  </Select.Option>
-                );
-              })}
-            </Select>
-            <Input
-              onChange={(event) => {
-                handleChangeInput("phone", inputField.id, event);
-              }}
-              value={group?.teacher_ids?.felx}
-              placeholder="%"
-              className="w-1/4 ml-auto"
-            ></Input>
-            {/* <Input
-              placeholder="Пользователь телефона"
-              onChange={(e) => {
-                handleChangeInput("label", inputField.id, e);
-              }}
-              value={inputField.label}
-              required
-            />
-            <InputMask
-              mask="99 999 99 99"
-              onChange={(event) => {
-                handleChangeInput("phone", inputField.id, event);
-              }}
-              value={inputField?.phone?.slice(4, inputField?.length)} // +998
-              maskChar={null}
-              required
-            >
-              {(props) => (
-                <Input
-                  name="phone"
-                  {...props}
-                  addonBefore="+998"
-                  className="mb-4 mt-2"
-                />
-              )}
-            </InputMask> */}
-          </div>
-        ))}
-        <MyButton onClick={handleAddFields} type="button" className="mb-4">
-          Добавить еще одного учителя
-        </MyButton>
+          ))}
+        </div>
+        {inputFields.length > 0 ? (
+          <MyButton onClick={handleAddFields} type="button" className="mb-4">
+            Добавить еще одного учителя
+          </MyButton>
+        ) : (
+          <MyButton onClick={handleAddFields} type="button" className="mb-4">
+            Добавить учителя
+          </MyButton>
+        )}
         <p>Дата старта группы</p>
         <div className="flex gap-x-2 mb-4 mt-2">
           <input

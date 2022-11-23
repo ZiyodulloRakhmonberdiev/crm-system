@@ -2,8 +2,23 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 
-import { DashLg, Dot, PencilSquare, Trash } from "react-bootstrap-icons";
-import { Drawer, message, Spin, Tabs, Tooltip } from "antd";
+import {
+  ArrowRight,
+  DashLg,
+  Dot,
+  PencilSquare,
+  Trash,
+} from "react-bootstrap-icons";
+import {
+  Avatar,
+  Drawer,
+  message,
+  Spin,
+  Tabs,
+  Tooltip,
+  Card,
+  Popover,
+} from "antd";
 
 import { IconButton } from "../../UI/IconButton.style";
 import {
@@ -31,6 +46,7 @@ import {
   fetchingAtt,
   fetchingErrorAtt,
 } from "../../redux/attendancesSlice";
+import { setUserData } from "../../redux/studentsSlice";
 
 export default function GroupProfile() {
   // states
@@ -47,6 +63,7 @@ export default function GroupProfile() {
   const { attendances, loading, error } = useSelector(
     (state) => state.attendances
   );
+  const { Meta } = Card;
   // hooks
   const dispatch = useDispatch();
   const params = useParams();
@@ -114,7 +131,6 @@ export default function GroupProfile() {
         dispatch(fetchingErrorAtt());
       });
   }, [refreshing]);
-  console.log(groupData);
   return (
     <>
       <Drawer
@@ -174,7 +190,7 @@ export default function GroupProfile() {
               </IconButton>
             </div>
           </div>
-          <div className="bg-white p-8">
+          <div className="bg-white p-4 lg:p-8">
             <span className="text-white bg-cyan-400 px-4 py-2 rounded-md">
               {groupData?.name}
             </span>
@@ -253,10 +269,54 @@ export default function GroupProfile() {
                   key={student?.id}
                   className="flex justify-between flex-wrap"
                 >
-                  <span className="bg-slate-100 rounded-sm p-1">
-                    {student?.first_name} {student?.last_name}
-                  </span>
-                  <span className="p-1">{student?.phone}</span>
+                  <Popover
+                    placement="right"
+                    content={
+                      <div className="bg-white rounded-md p-2">
+                        <div className="border-b mb-2 md:mb-4">
+                          <label className="text-xs text-slate-400">Имя</label>
+                          <p>
+                            {student?.first_name} {student?.last_name}
+                          </p>
+                        </div>
+                        <div className="border-b mb-2 md:mb-4">
+                          <label className="text-xs text-slate-400">
+                            Баланс
+                          </label>
+                          <p>{Number(student?.balance).toLocaleString()} сум</p>
+                        </div>
+                        <div className="border-b mb-2 md:mb-4">
+                          <label className="text-xs text-slate-400">
+                            Дата добавления
+                          </label>
+                          <p>{student?.start_date}</p>
+                        </div>
+                        <div className="border-b mb-2 md:mb-4">
+                          <label className="text-xs text-slate-400">
+                            Заметка
+                          </label>
+                          <p>Нет заметок</p>
+                        </div>
+                        <div className="text-right">
+                          <Link
+                            to={`/students/profile/${student?.id}`}
+                            className="flex items-center gap-2"
+                            onClick={() => dispatch(setUserData(student))}
+                          >
+                            Перейти в профиль
+                            <ArrowRight className="text-xs" />
+                          </Link>
+                        </div>
+                      </div>
+                    }
+                  >
+                    <span className="bg-slate-100 rounded-sm p-1">
+                      {student?.first_name} {student?.last_name}
+                    </span>
+                  </Popover>
+                  <a href={`tel:${student?.phone}`} className="p-1">
+                    {student?.phone}
+                  </a>
                 </div>
               ))}
             </div>

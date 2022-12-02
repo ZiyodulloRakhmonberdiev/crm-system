@@ -133,7 +133,7 @@ export default function Rooms() {
         </div>
         <div className="md:flex md:gap-4 items-center">
           <p className="text-sky-400 text-2xl">Кабинеты</p>
-          <p className="text-sky-400">Количество: {rooms?.data?.length} </p>
+          <p className="text-sky-400">Количество: {rooms?.length} </p>
         </div>
         <MyButton
           onClick={() => {

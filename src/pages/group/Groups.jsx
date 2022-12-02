@@ -425,11 +425,7 @@ export default function Groups() {
         className="overflow-auto"
         pagination={false}
         size="small"
-        rowClassName={(e) =>
-          e?.active
-            ? "bg-green-100 hover:bg-green-200"
-            : "bg-red-100 hover:bg-red-200"
-        }
+        rowClassName={(e) => (e?.active ? "" : "bg-orange-100")}
       ></Table>
       <br />
       <center>

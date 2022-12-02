@@ -328,7 +328,11 @@ export default function GroupProfile() {
               {groupData?.active
                 ? !activeGroup && (
                     <div className="bg-white rounded-md px-6 py-4 overflow-x-auto ">
-                      <GroupAttendance />
+                      {groupData?.student_count == 0 ? (
+                        "В этой группе нет студентов"
+                      ) : (
+                        <GroupAttendance />
+                      )}
                     </div>
                   )
                 : !activeGroup && (

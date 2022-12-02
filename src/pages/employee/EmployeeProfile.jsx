@@ -24,15 +24,15 @@ export default function EmployeeProfile() {
               </div>
 
               <div className="grid md:grid-cols-2 mb-2 md:mb-4">
-                <label className="text-slate-600">Telefon raqam:</label>
+                <label className="text-slate-600">Телефон:</label>
                 <p>{employeesData?.phone}</p>
               </div>
               <div className="grid mb-2 md:mb-4">
-                <label className="text-slate-600 mb-1">Rollar:</label>
+                <label className="text-slate-600 mb-1">Роли:</label>
                 <div className="flex flex-wrap gap-2">
                   {employeesData?.role?.map((item) => (
                     <span
-                      key={item.id}
+                      key={item?.id}
                       className="px-2 py-0.5 rounded-md text-violet-500 border border-violet-500 text-sm"
                     >
                       {item}
@@ -40,9 +40,10 @@ export default function EmployeeProfile() {
                   ))}
                 </div>
               </div>
-              <div className="grid mb-2 md:mb-4">
-                <label className="text-slate-600 mb-1">Qaysi filial:</label>
-                <div className="flex flex-wrap gap-2">
+              <div>
+                <label className="text-slate-600">Филиалы:</label>
+                <br />
+                <div className="mt-2">
                   <span className="px-2 py-0.5 rounded-md text-cyan-500 border border-cyan-500 text-sm">
                     Saodat
                   </span>

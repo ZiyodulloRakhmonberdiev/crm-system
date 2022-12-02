@@ -24,7 +24,6 @@ import { IconButton } from "../../UI/IconButton.style";
 import {
   fetchedGroups,
   fetchingGroups,
-  refreshGroupsData,
   setGroupData,
 } from "../../redux/groupsSlice";
 import axios from "../../axios/axios";
@@ -66,7 +65,6 @@ export default function StudentProfile() {
   // hooks
   const params = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const url = "/api/groups/add-student";
   const columns = [
@@ -96,14 +94,7 @@ export default function StudentProfile() {
     },
   ];
 
-  useEffect(() => {
-    if (userData?.id == undefined) {
-      dispatch(setUserData(students?.find((x) => x?.id === params?.id)));
-      // navigate("/", { replace: true });
-    }
-  });
-
-  // fetching groups for join
+  // fetching groups for join function
   useEffect(() => {
     dispatch(fetchingGroups());
     axios.get(`/api/groups`).then((res) => {
@@ -119,7 +110,6 @@ export default function StudentProfile() {
         dispatch(fetchedStudentJoinedGroups(res?.data));
       });
   }, [userData?.id]);
-
 
   // main function for send datas to DB
   function submit(e) {

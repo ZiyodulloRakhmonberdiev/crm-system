@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Input, message, Spin, Select } from "antd";
+import { v4 as uuidv4 } from "uuid";
 import axios from "../../axios/axios";
 import { MyButton } from "../../UI/Button.style";
 import { refreshGroupsData } from "../../redux/groupsSlice";
@@ -12,6 +13,7 @@ import {
 } from "../../redux/coursesSlice";
 import { fetchedTeachers, fetchingTeachers } from "../../redux/teachersSlice";
 import { fetchedRooms, fetchingRooms } from "../../redux/roomsSlice";
+import { X } from "react-bootstrap-icons";
 
 export default function AddGroupForm({
   modalType,
@@ -19,12 +21,13 @@ export default function AddGroupForm({
   visible,
   setVisible,
 }) {
+  // states
   const { teachers } = useSelector((state) => state.teachers);
   const { courses } = useSelector((state) => state.courses);
   const { rooms } = useSelector((state) => state.rooms);
-  const dispatch = useDispatch();
-  const url = "/api/groups";
   const [uploading, setUploading] = useState(false);
+  const [times, setTimes] = useState([]);
+  const [inputFields, setInputFields] = useState([]);
   const [group, setGroup] = useState({
     name: "",
     time_id: "",
@@ -35,7 +38,10 @@ export default function AddGroupForm({
     days: [],
     course_id: "",
   });
-  const [times, setTimes] = useState([]);
+  const url = "/api/groups";
+
+  // hooks
+  const dispatch = useDispatch();
 
   // fetching courses
   useEffect(() => {
@@ -82,6 +88,7 @@ export default function AddGroupForm({
         days: "",
         course_id: "",
       });
+      setInputFields([]);
     } else {
       const {
         name,
@@ -91,21 +98,32 @@ export default function AddGroupForm({
         room,
         days,
         course,
+        teacher_ids,
       } = editingGroup;
-      const teachers_ids = [];
-      editingGroup?.tachers?.map((item) => {
-        teachers_ids.push(item.id);
-      });
       setGroup({
         name: name,
         time_id: time?.id,
         group_start_date: group_start_date,
         group_end_date: group_end_date,
-        teacher_ids: teachers_ids,
+        teacher_ids: teacher_ids,
         room_id: room?.id,
         days: days?.join(","),
         course_id: course?.id,
       });
+      const teachers_ids = [];
+      editingGroup?.tachers?.map((item) => {
+        teachers_ids.push(item.id);
+      });
+      if (teacher_ids) {
+        setInputFields([]);
+        const newAddTeacher = [];
+        teacher_ids?.map((item) => {
+          newAddTeacher.push({ ...item, id: uuidv4() });
+        });
+        setInputFields(newAddTeacher);
+      } else {
+        setInputFields([]);
+      }
     }
   }, [modalType, visible]);
 
@@ -142,7 +160,7 @@ export default function AddGroupForm({
             time_id: group.time_id,
             group_start_date: group.group_start_date,
             group_end_date: group.group_end_date,
-            teacher_ids: group.teacher_ids,
+            teacher_ids: inputFields,
             room_id: group.room_id,
             days: group.days?.split(","),
             course_id: group.course_id,
@@ -163,7 +181,8 @@ export default function AddGroupForm({
             setVisible();
           })
           .catch((err) => {
-            if (err.response.data.data.room_id) {
+            console.log(err);
+            if (err?.response?.data?.message === "Lesson chalk in the room") {
               message.error("Кабинет в это время занята!");
             } else {
               message.error("Произошла ошибка! Попробуйте еще раз!");
@@ -178,7 +197,7 @@ export default function AddGroupForm({
             time_id: group.time_id,
             group_start_date: group_start_date,
             group_end_date: group.group_end_date,
-            teacher_ids: group.teacher_ids,
+            teacher_ids: inputFields,
             room_id: group.room_id,
             days: group.days?.split(","),
             course_id: group.course_id,
@@ -199,9 +218,10 @@ export default function AddGroupForm({
             setVisible();
           })
           .catch((err) => {
-            if (err.response.data.data.room_id) {
+            if (err?.response?.data?.data?.room_id) {
               message.error("Кабинет в это время занята!");
             } else {
+              console.log(err);
               message.error("Произошла ошибка! Попробуйте еще раз!");
             }
           })
@@ -211,6 +231,39 @@ export default function AddGroupForm({
       message.error("Заполните все поля!");
     }
   }
+
+  // Addition teachers
+  const handleAddFields = () => {
+    setInputFields([
+      ...inputFields,
+      { teacher_id: "", flex: "", id: Date.now() },
+    ]);
+  };
+
+  const handleChangeInput = (type, id, event) => {
+    setInputFields((prev) => {
+      return inputFields?.map((item) => {
+        if (id === item.id) {
+          return {
+            ...item,
+            teacher_id: type === "teacher_id" ? event : item.event,
+            flex: type === "flex" ? event.target.value : item.flex,
+          };
+        } else {
+          return item;
+        }
+      });
+    });
+  };
+
+  const handleRemoveFields = (id) => {
+    const values = [...inputFields];
+    values.splice(
+      values.findIndex((value) => value.id === id),
+      1
+    );
+    setInputFields(values);
+  };
   return (
     <div>
       <form onSubmit={(e) => submit(e)}>
@@ -243,26 +296,58 @@ export default function AddGroupForm({
             );
           })}
         </Select>
-        <p>Выберите учителя</p>
-        <Select
-          value={group?.teacher_ids}
-          onChange={(e) => {
-            setGroup({ ...group, teacher_ids: e });
-          }}
-          placeholder="Выбрать варианты"
-          className="w-full mb-4 mt-2"
-          showSearch={true}
-          mode="multiple"
-        >
-          {teachers?.data?.map((teacher, index) => {
-            return (
-              <Select.Option value={teacher?.id} key={index}>
-                {teacher.name}
-              </Select.Option>
-            );
-          })}
-        </Select>
-
+        <p>Выберите учителя и процент дохода (%)</p>
+        <div className="mt-2 mb-4">
+          {inputFields.map((inputField) => (
+            <div key={inputField?.id} className="mb-2">
+              <div className="flex justify-between items-end mb-2">
+                <span>Другой учитель</span>
+                <button
+                  onClick={() => {
+                    handleRemoveFields(inputField?.id);
+                  }}
+                  className="border rounded-full text-slate-400 p-1"
+                >
+                  <X className="text-xl" />
+                </button>
+              </div>
+              <Select
+                value={inputField?.teacher_id}
+                onChange={(e) => {
+                  handleChangeInput("teacher_id", inputField.id, e);
+                }}
+                placeholder="Выбрать варианты"
+                className="w-3/4"
+                showSearch={true}
+              >
+                {teachers?.data?.map((teacher, index) => {
+                  return (
+                    <Select.Option value={teacher?.id} key={index}>
+                      {teacher?.name}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+              <Input
+                onChange={(event) => {
+                  handleChangeInput("flex", inputField.id, event);
+                }}
+                value={inputField?.flex}
+                placeholder="%"
+                className="w-1/4 ml-auto"
+              ></Input>
+            </div>
+          ))}
+        </div>
+        {inputFields.length > 0 ? (
+          <MyButton onClick={handleAddFields} type="button" className="mb-4">
+            Добавить еще одного учителя
+          </MyButton>
+        ) : (
+          <MyButton onClick={handleAddFields} type="button" className="mb-4">
+            Добавить учителя
+          </MyButton>
+        )}
         <p>Дата старта группы</p>
         <div className="flex gap-x-2 mb-4 mt-2">
           <input

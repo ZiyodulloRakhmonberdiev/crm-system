@@ -6,7 +6,11 @@ import { v4 as uuidv4 } from "uuid";
 import { Table } from "antd";
 import { Coin } from "react-bootstrap-icons";
 
-import { setUserData } from "../../redux/studentsSlice";
+import {
+  fetchedStudents,
+  fetchingStudents,
+  setUserData,
+} from "../../redux/studentsSlice";
 import {
   fetchedAllPayments,
   fetchedAllPaymentsAmount,
@@ -15,12 +19,19 @@ import {
   fetchingAllPaymentsAmount,
 } from "../../redux/financesSlice";
 import axios from "../../axios/axios";
+import {
+  fetchedEmployees,
+  fetchingEmployees,
+  setEmployeesData,
+} from "../../redux/employeesSlice";
 
 export default function AllPayments() {
   // states
-  const { allPayments, allPaymentsAmount, loading, error } = useSelector(
+  const { allPayments, allPaymentsAmount, loading } = useSelector(
     (state) => state.finances
   );
+  const { students } = useSelector((state) => state.students);
+  const { employees } = useSelector((state) => state.employees);
 
   // hooks
   const dispatch = useDispatch();
@@ -32,19 +43,45 @@ export default function AllPayments() {
       id: item?.id,
       uid: uuidv4(),
       student_id: (
-        <Link
-          to={`/employees/profile/${item?.id}`}
-          onClick={() => dispatch(setUserData(item))}
-        >
-          {item?.student_id}
-        </Link>
+        <div>
+          {students?.data?.map((student) => {
+            if (student?.id === item?.student_id) {
+              return (
+                <Link
+                  className="text-cyan-500"
+                  to={`/students/profile/${student?.id}`}
+                  onClick={() => dispatch(setUserData(student))}
+                >
+                  {student?.first_name + " " + student?.last_name}
+                </Link>
+              );
+            }
+          })}
+        </div>
       ),
       group_id: item?.group_id,
       amount: Number(item?.amount).toLocaleString(),
       payment_type: item?.payment_type,
       date: item?.date,
       description: item?.description,
-      employee_id: item?.employee_id,
+      employee_id: (
+        <div>
+          {employees?.map((employee) => {
+            console.log(employee);
+            if (employee?.id === item?.employee_id) {
+              return (
+                <Link
+                  className="text-cyan-500"
+                  to={`/employees/profile/${employee?.id}`}
+                  onClick={() => dispatch(setEmployeesData(employee))}
+                >
+                  {employee?.name}
+                </Link>
+              );
+            }
+          })}
+        </div>
+      ),
     });
   });
 
@@ -115,8 +152,33 @@ export default function AllPayments() {
     axios
       .get(`/api/payments/amount?from=2022-11-01&to=2022-11-30`)
       .then((res) => {
-        console.log(res);
         dispatch(fetchedAllPaymentsAmount(res?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, []);
+
+  // fetching students
+  useEffect(() => {
+    dispatch(fetchingStudents());
+    axios
+      .get(`/api/students`)
+      .then((res) => {
+        dispatch(fetchedStudents(res?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, []);
+
+  // fetching employees
+  useEffect(() => {
+    dispatch(fetchingEmployees());
+    axios
+      .get(`/api/employees`)
+      .then((res) => {
+        dispatch(fetchedEmployees(res?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -132,14 +194,16 @@ export default function AllPayments() {
           <p className="text-blue-400 text-2xl">Все платежи</p>
           <p className="text-blue-400">
             Всего платежей:{" "}
-            <span className="text-xl">{Number(allPaymentsAmount?.amount)?.toLocaleString()}</span> сум
+            <span className="text-xl">
+              {Number(allPaymentsAmount?.amount)?.toLocaleString()}
+            </span>{" "}
+            сум
           </p>
         </div>
       </header>
       <div className="flex gap-2"></div>
       <Table
         loading={loading}
-        className="mt-6"
         columns={columns}
         dataSource={paymentDataSource}
         scroll={{

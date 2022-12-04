@@ -52,7 +52,7 @@ const Layout = () => {
         </Drawer>
         {location.pathname !== "/" ? (
           <Button
-            className="fixed top-1/2 right-0 bg-white shadow-md h-16 z-10"
+            className="fixed top-1/2 right-0 bg-white shadow-md h-16 z-10 hidden"
             onClick={() => setScheduleIsOpen(!scheduleIsOpen)}
           >
             <Calendar3 className="text-xl text-cyan-500" />

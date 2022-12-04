@@ -5,7 +5,7 @@ export default function Dashboard() {
     <div className="container">
       <HeaderLayout />
       <div className="mt-6 bg-white p-4 rounded-md shadow-sm">
-        {/* <Schedule /> */}
+        <Schedule />
       </div>
     </div>
   );

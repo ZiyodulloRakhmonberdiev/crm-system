@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Input, Modal, Spin, Tooltip } from "antd";
 import { CheckCircle, X, XCircle } from "react-bootstrap-icons";
 import moment from "moment";
-import "moment/locale/uz";
+import "moment/locale/ru";
 import {
   fetchedAtt,
   fetchingAtt,
@@ -33,7 +33,36 @@ const GroupAttendance = () => {
   });
   // hooks
   const params = useParams();
+  console.log(
+    "🚀 ~ file: GroupAttendances.jsx:36 ~ GroupAttendance ~ params",
+    params
+  );
   const dispatch = useDispatch();
+  console.log(
+    "🚀 ~ file: GroupAttendances.jsx:37 ~ GroupAttendance ~ dispatch",
+    dispatch
+  );
+
+  const handleSetAttendanceStudent = () => {
+    const { student_id, group_id, attStatus: status, date } = attendanceData;
+    setUploading(true);
+    axios
+      .post("/api/groups/attendance", {
+        student_id,
+        group_id,
+        status,
+        date,
+        description,
+      })
+      .then(() => {
+        setRefreshing(!refreshing);
+      })
+      .finally(() => {
+        setUploading(false);
+        setModalIsOpen(false);
+        setDescription(null);
+      });
+  };
 
   useEffect(() => {
     dispatch(fetchingAtt());
@@ -48,28 +77,6 @@ const GroupAttendance = () => {
         dispatch(fetchingErrorAtt());
       });
   }, [refreshing]);
-
-  const handleSetAttendanceStudent = () => {
-    const { student_id, group_id, attStatus: status, date } = attendanceData;
-    setUploading(true);
-    axios
-      .post("/api/groups/attendance", {
-        student_id,
-        group_id,
-        status,
-        date,
-        description,
-      })
-      .then((res) => {
-        setRefreshing(!refreshing);
-      })
-      .finally(() => {
-        setUploading(false);
-        setModalIsOpen(false);
-        setDescription(null);
-      });
-  };
-
   const compareDate = (d1) => {
     let now = new Date();
     let month = now.getMonth() + 1;
@@ -85,6 +92,7 @@ const GroupAttendance = () => {
   };
 
   if (error) return <center>При загрузке произошла ошибка</center>;
+
   return (
     <Spin spinning={loading}>
       <Modal
@@ -100,9 +108,9 @@ const GroupAttendance = () => {
           value={description}
         ></Input.TextArea>
       </Modal>
-      <div className="">
+      <div>
         <table className="overflow-auto">
-          <tr className=" overflow-auto flex rounded-sm mb-3">
+          <tr className="flex rounded-sm mb-3">
             <th width="200" align="left">
               Имя
             </th>
@@ -146,20 +154,12 @@ const GroupAttendance = () => {
                           </span>
                         </Tooltip>
                       ) : (
-                        <Tooltip
-                          title={
-                            current?.description
-                              ? current?.description
-                              : "Нет описания"
-                          }
-                        >
-                          <span className="cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper">
-                            <button className="absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn">
-                              <X />
-                            </button>
-                            Был
-                          </span>
-                        </Tooltip>
+                        <span className="cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper">
+                          <button className="absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn">
+                            <X />
+                          </button>
+                          Был
+                        </span>
                       )}
                     </td>
                   ) : (
@@ -186,8 +186,9 @@ const GroupAttendance = () => {
                                 date: day?.data,
                                 student_id: student?.id,
                                 group_id: params?.id,
+                                description: null,
                               });
-                              setModalIsOpen(true);
+                              handleSetAttendanceStudent();
                             }}
                             className={`
                               have

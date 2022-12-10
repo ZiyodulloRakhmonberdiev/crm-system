@@ -120,7 +120,6 @@ const GroupAttendance = () => {
               </th>
             ))}
           </tr>
-
           <tbody>
             {attendances?.students?.map((student) => (
               <tr key={student?.id} className="flex mb-2">

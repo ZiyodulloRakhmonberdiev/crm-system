@@ -38,14 +38,15 @@ export default function AllPayments() {
 
   // payments static data
   let paymentDataSource = [];
-  allPayments?.data?.map((item) => {
+  allPayments?.map((item) => {
+    console.log(item);
     paymentDataSource?.push({
       id: item?.id,
       uid: uuidv4(),
       student_id: (
         <div>
           {students?.data?.map((student) => {
-            if (student?.id === item?.student_id) {
+            if (student?.id === item?.student?.id) {
               return (
                 <Link
                   className="text-cyan-500"
@@ -67,8 +68,7 @@ export default function AllPayments() {
       employee_id: (
         <div>
           {employees?.map((employee) => {
-            console.log(employee);
-            if (employee?.id === item?.employee_id) {
+            if (employee?.id === item?.employee?.id) {
               return (
                 <Link
                   className="text-cyan-500"
@@ -137,9 +137,9 @@ export default function AllPayments() {
   useEffect(() => {
     dispatch(fetchingAllPayments());
     axios
-      .get(`/api/payments?from=2022-11-01&to=2022-11-30`)
+      .get(`/api/payments?from=2022-12-01&to=2022-12-30`)
       .then((res) => {
-        dispatch(fetchedAllPayments(res?.data));
+        dispatch(fetchedAllPayments(res?.data?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -150,7 +150,7 @@ export default function AllPayments() {
   useEffect(() => {
     dispatch(fetchingAllPaymentsAmount());
     axios
-      .get(`/api/payments/amount?from=2022-11-01&to=2022-11-30`)
+      .get(`/api/payments/amount?from=2022-12-01&to=2022-12-30`)
       .then((res) => {
         dispatch(fetchedAllPaymentsAmount(res?.data?.data));
       })
@@ -210,9 +210,7 @@ export default function AllPayments() {
           x: 1000,
         }}
         rowKey={(record) => record.uid}
-        pagination={{
-          position: ["bottomCenter"],
-        }}
+        pagination={false}
       ></Table>
     </div>
   );

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { v4 as uuidv4 } from "uuid";
-import { Table } from "antd";
+import { Input, Pagination, Select, Table } from "antd";
 import { Coin } from "react-bootstrap-icons";
 
 import {
@@ -24,22 +24,35 @@ import {
   fetchingEmployees,
   setEmployeesData,
 } from "../../redux/employeesSlice";
+import { fetchedGroups, fetchingGroups } from "../../redux/groupsSlice";
+import { fetchedTeachers, fetchingTeachers } from "../../redux/teachersSlice";
+import { MyButton } from "../../UI/Button.style";
 
 export default function AllPayments() {
   // states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [per_page, setPerPage] = useState(30);
+  const [last_page, setLastPage] = useState(1);
   const { allPayments, allPaymentsAmount, loading } = useSelector(
     (state) => state.finances
   );
   const { students } = useSelector((state) => state.students);
   const { employees } = useSelector((state) => state.employees);
-
+  const { groups } = useSelector((state) => state.groups);
+  const { teachers } = useSelector((state) => state.teachers);
+  const paymentMethods = [
+    "Наличные",
+    "Картой",
+    "Click",
+    "Payme",
+    "Банк. перевод",
+  ];
   // hooks
   const dispatch = useDispatch();
 
   // payments static data
   let paymentDataSource = [];
   allPayments?.map((item) => {
-    console.log(item);
     paymentDataSource?.push({
       id: item?.id,
       uid: uuidv4(),
@@ -137,14 +150,14 @@ export default function AllPayments() {
   useEffect(() => {
     dispatch(fetchingAllPayments());
     axios
-      .get(`/api/payments?from=2022-12-01&to=2022-12-30`)
+      .get(`/api/payments?from=2022-12-01&to=2022-12-30?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedAllPayments(res?.data?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, []);
+  }, [currentPage, dispatch]);
 
   // fetching all payments amount
   useEffect(() => {
@@ -157,7 +170,7 @@ export default function AllPayments() {
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, []);
+  }, [currentPage, dispatch]);
 
   // fetching students
   useEffect(() => {
@@ -170,7 +183,7 @@ export default function AllPayments() {
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, []);
+  }, [currentPage, dispatch]);
 
   // fetching employees
   useEffect(() => {
@@ -183,7 +196,30 @@ export default function AllPayments() {
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, []);
+  }, [currentPage, dispatch]);
+
+  // fetching groups
+  useEffect(() => {
+    dispatch(fetchingGroups());
+    axios
+      .get(`/api/groups?page=${currentPage}`)
+      .then((res) => {
+        dispatch(fetchedGroups(res?.data?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, [currentPage, dispatch]);
+
+  // fetching teachers
+  useEffect(() => {
+    dispatch(fetchingTeachers());
+    axios.get(`/api/teachers`).then((res) => {
+      dispatch(fetchedTeachers(res?.data?.data?.data));
+      console.log(res?.data?.data?.data);
+    });
+  }, [currentPage, dispatch]);
+
   return (
     <div>
       <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
@@ -201,7 +237,93 @@ export default function AllPayments() {
           </p>
         </div>
       </header>
-      <div className="flex gap-2"></div>
+      <div className="sm:flex flex-wrap gap-4 mb-4">
+        <div className="flex flex-col gap-1 justify-center">
+          <label htmlFor="">Дата от</label>
+          <input
+            type="date"
+            name=""
+            id=""
+            className="rounded-md p-1 border border-slate-300 py-2"
+          />
+        </div>
+        <div className="flex flex-col gap-1 justify-center">
+          <label htmlFor="">Дата до</label>
+          <input
+            type="date"
+            name=""
+            id=""
+            className="rounded-md p-1 border border-slate-300 py-2"
+          />
+        </div>
+        <div className="flex flex-col gap-1 justify-center">
+          <label htmlFor="">Имя или телефон</label>
+          <Input
+            placeholder="Имя или телефон"
+            className="max-w-[130px]"
+            allowClear
+          />
+        </div>
+        <div className="flex flex-col gap-1 justify-center">
+          <label htmlFor="">Выбрать группу</label>
+          <Select
+            mode="multiple"
+            maxTagCount={1}
+            placeholder="Выбрать"
+            allowClear
+            className="min-w-[130px]"
+          >
+            {groups?.map((group) => (
+              <Select.Option key={group?.id}>
+                <button>{group?.name}</button>
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1 justify-center">
+          <label htmlFor="">Учитель</label>
+          <Select
+            mode="multiple"
+            maxTagCount={1}
+            placeholder="Выбрать"
+            allowClear
+            className="min-w-[130px]"
+          >
+            {teachers?.map((teacher) => {
+              return (
+                <Select.Option key={teacher?.id}>
+                  <button>{teacher?.name}</button>
+                </Select.Option>
+              );
+            })}
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1 justify-center">
+          <label htmlFor="">Метод оплаты</label>
+          <Select
+            mode="multiple"
+            maxTagCount={1}
+            placeholder="Выбрать"
+            allowClear
+            className="min-w-[130px]"
+          >
+            {paymentMethods?.map((paymentMethod, index) => {
+              return (
+                <Select.Option key={index} value={paymentMethod}>
+                  <button>{paymentMethod}</button>
+                </Select.Option>
+              );
+            })}
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1 justify-center">
+          <label htmlFor="">Сумма</label>
+          <Input placeholder="Сумма" className="max-w-[130px]" allowClear />
+        </div>
+        <div className="mt-auto">
+          <MyButton>Фильтровать</MyButton>
+        </div>
+      </div>
       <Table
         loading={loading}
         columns={columns}
@@ -212,6 +334,18 @@ export default function AllPayments() {
         rowKey={(record) => record.uid}
         pagination={false}
       ></Table>
+      <br />
+      <center>
+        <Pagination
+          pageSize={per_page ? per_page : 30}
+          total={last_page * per_page}
+          current={currentPage}
+          onChange={(page, x) => {
+            setCurrentPage(page);
+            setPerPage(x);
+          }}
+        />
+      </center>
     </div>
   );
 }

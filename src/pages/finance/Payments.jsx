@@ -12,12 +12,12 @@ import {
   setUserData,
 } from "../../redux/studentsSlice";
 import {
-  fetchedAllPayments,
-  fetchedAllPaymentsAmount,
+  fetchingPayments,
+  fetchedPayments,
+  fetchingPaymentsAmount,
+  fetchedPaymentsAmount,
   fetchedError,
-  fetchingAllPayments,
-  fetchingAllPaymentsAmount,
-} from "../../redux/financesSlice";
+} from "../../redux/paymentsSlice";
 import axios from "../../axios/axios";
 import {
   fetchedEmployees,
@@ -28,13 +28,13 @@ import { fetchedGroups, fetchingGroups } from "../../redux/groupsSlice";
 import { fetchedTeachers, fetchingTeachers } from "../../redux/teachersSlice";
 import { MyButton } from "../../UI/Button.style";
 
-export default function AllPayments() {
+export default function Payments() {
   // states
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
   const [last_page, setLastPage] = useState(1);
-  const { allPayments, allPaymentsAmount, loading } = useSelector(
-    (state) => state.finances
+  const { payments, paymentsAmount, loading } = useSelector(
+    (state) => state.payments
   );
   const { students } = useSelector((state) => state.students);
   const { employees } = useSelector((state) => state.employees);
@@ -52,7 +52,7 @@ export default function AllPayments() {
 
   // payments static data
   let paymentDataSource = [];
-  allPayments?.map((item) => {
+  payments?.map((item) => {
     paymentDataSource?.push({
       id: item?.id,
       uid: uuidv4(),
@@ -148,11 +148,11 @@ export default function AllPayments() {
 
   // fetching all payments
   useEffect(() => {
-    dispatch(fetchingAllPayments());
+    dispatch(fetchingPayments());
     axios
       .get(`/api/payments?from=2022-12-01&to=2022-12-30?page=${currentPage}`)
       .then((res) => {
-        dispatch(fetchedAllPayments(res?.data?.data?.data));
+        dispatch(fetchedPayments(res?.data?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -161,11 +161,11 @@ export default function AllPayments() {
 
   // fetching all payments amount
   useEffect(() => {
-    dispatch(fetchingAllPaymentsAmount());
+    dispatch(fetchingPaymentsAmount());
     axios
       .get(`/api/payments/amount?from=2022-12-01&to=2022-12-30`)
       .then((res) => {
-        dispatch(fetchedAllPaymentsAmount(res?.data?.data));
+        dispatch(fetchedPaymentsAmount(res?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -216,7 +216,6 @@ export default function AllPayments() {
     dispatch(fetchingTeachers());
     axios.get(`/api/teachers`).then((res) => {
       dispatch(fetchedTeachers(res?.data?.data?.data));
-      console.log(res?.data?.data?.data);
     });
   }, [currentPage, dispatch]);
 
@@ -231,7 +230,7 @@ export default function AllPayments() {
           <p className="text-blue-400">
             Всего платежей:{" "}
             <span className="text-xl">
-              {Number(allPaymentsAmount?.amount)?.toLocaleString()}
+              {Number(paymentsAmount?.amount)?.toLocaleString()}
             </span>{" "}
             сум
           </p>
@@ -289,7 +288,7 @@ export default function AllPayments() {
             allowClear
             className="min-w-[130px]"
           >
-            {teachers?.map((teacher) => {
+            {teachers?.data?.map((teacher) => {
               return (
                 <Select.Option key={teacher?.id}>
                   <button>{teacher?.name}</button>
@@ -309,7 +308,7 @@ export default function AllPayments() {
           >
             {paymentMethods?.map((paymentMethod, index) => {
               return (
-                <Select.Option key={index} value={paymentMethod}>
+                <Select.Option key={index}>
                   <button>{paymentMethod}</button>
                 </Select.Option>
               );

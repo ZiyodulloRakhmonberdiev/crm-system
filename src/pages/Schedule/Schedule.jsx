@@ -60,7 +60,6 @@ const Schedule = () => {
           }
           return time.time === group.start_time && group.room.id === room.id;
         });
-        console.log(curr);
         if (curr && curr?.lesson_duration !== 50) {
           Array.from(Array(curr?.lesson_duration / 30).keys()).map((x, i) => {
             setMustDeleteTd((prev) => [

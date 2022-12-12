@@ -14,11 +14,7 @@ import {
 } from "../../redux/studentsSlice";
 import { useNavigate } from "react-router-dom";
 
-export default function AddPaymentForm({
-  visible,
-  setVisiblePayment,
-  editingStudent,
-}) {
+export default function AddPaymentForm({ visible, setVisiblePayment }) {
   const [uploading, setUploading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();

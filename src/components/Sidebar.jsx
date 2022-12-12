@@ -12,6 +12,7 @@ import {
   Palette2,
   Git,
   Coin,
+  CurrencyExchange,
 } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
@@ -39,11 +40,20 @@ export default function Sidebar() {
       getItem(
         <Link
           className="flex items-center justify-start gap-3"
-          to="/finance/allpayments"
+          to="/finance/payments"
         >
           <Coin /> Все платежи
         </Link>,
-        "allpayments"
+        "payments"
+      ),
+      getItem(
+        <Link
+          className="flex items-center justify-start gap-3"
+          to="/finance/expenses"
+        >
+          <CurrencyExchange /> Учет расходов
+        </Link>,
+        "expenses"
       ),
     ]),
     getItem(<Link to="/report">Отчеты</Link>, "report", <PieChartOutlined />),

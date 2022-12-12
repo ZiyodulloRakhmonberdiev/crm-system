@@ -20,17 +20,16 @@ const Schedule = () => {
   useEffect(() => {
     setLoading(true);
     axios.get("/api/times").then((res) => {
-      setTimes(res.data.data);
+      setTimes(res?.data?.data);
     });
 
     axios
       .get("/api/schedule")
       .then((res) => {
-        setSchedule(res.data.data);
+        setSchedule(res?.data?.data);
       })
       .finally(() => setLoading(false));
   }, []);
-
   // fetching rooms
   useEffect(() => {
     dispatch(fetchingRooms());
@@ -39,7 +38,7 @@ const Schedule = () => {
       .then((res) => {
         dispatch(fetchedRooms(res?.data?.data?.data));
       })
-      .catch((err) => {
+      .catch(() => {
         dispatch(fetchedError());
       });
   }, []);
@@ -60,7 +59,7 @@ const Schedule = () => {
           }
           return time.time === group.start_time && group.room.id === room.id;
         });
-        if (curr && curr?.lesson_duration !== 50) {
+        if (curr) {
           Array.from(Array(curr?.lesson_duration / 30).keys()).map((x, i) => {
             setMustDeleteTd((prev) => [
               ...prev,
@@ -74,7 +73,6 @@ const Schedule = () => {
       });
     });
   }, [rooms, times, schedule]);
-
   return (
     <div>
       <center className="border-b pb-2">
@@ -83,10 +81,10 @@ const Schedule = () => {
       {loading ? (
         <Skeleton active={true} />
       ) : (
-        <div className="overflow-auto schedule__table-wrapper">
+        <div className="overflow-auto schedule__table-wrapper pb-8">
           <table className="relative">
             <tr>
-              <td className="px-4 py-2 bg-gray-100 border-b">Кабинеты</td>
+              <td className="bg-gray-100 border-b">Кабинеты</td>
               {times?.map((time) => {
                 return (
                   <td className="px-4 py-2 border-r-2 border-gray-100">
@@ -98,9 +96,7 @@ const Schedule = () => {
             {rooms?.map((room, indx) => {
               return (
                 <tr className="relative">
-                  <td className=" bg-gray-100 border-b px-4 py-2">
-                    {room?.name}
-                  </td>
+                  <td className=" bg-gray-100 border-b">{room?.name}</td>
                   {times?.map((time, index) => {
                     let startedIndex = null;
                     let endIndex = null;
@@ -128,28 +124,23 @@ const Schedule = () => {
                           className="relative p-1 border border-gray-100"
                           role="cell"
                         >
-                          <div className="bg-cyan-300 w-full rounded-md">
+                          <div className="bg-cyan-300 w-full">
                             <Link
                               to={`/groups/${curr?.id}`}
                               className="p-2 shadow-md text-xs flex flex-wrap gap-1"
                             >
-                              <span className="bg-cyan-500 rounded-sm p-1 text-white w-full text-center">
+                              <span className="bg-cyan-500 rounded-sm p-1 text-white px-1 w-full">
                                 {curr?.name}
                               </span>
                               {curr?.teachers?.length !== 0 ? (
                                 <Tooltip title="Учителя">
-                                  <span className="bg-violet-400 rounded-sm px-1 py-0.5 text-white">
+                                  <span className="bg-pink-400 rounded-sm px-1 py-0.5 text-white">
                                     {curr?.teachers?.[0]?.name}
                                   </span>
                                 </Tooltip>
                               ) : (
                                 ""
                               )}
-                              <Tooltip title="Кабинеты">
-                                <span className="bg-pink-400 text-white rounded-sm px-1 py-0.5">
-                                  {curr?.room?.name}
-                                </span>
-                              </Tooltip>
                               <span
                                 className="bg-white rounded-sm px-1 py-0.5 text-xs"
                                 style={{ fontSize: 10 }}

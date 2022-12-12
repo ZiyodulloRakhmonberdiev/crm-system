@@ -47,8 +47,8 @@ export default function StudentProfile() {
   const [visible, setVisible] = useState(false);
   const [visiblePayment, setVisiblePayment] = useState(false);
   const [modalType, setModalType] = useState("add");
+  const [studentGroups, setStudentGroups] = useState([]);
   const {
-    students,
     userData,
     userGroupData,
     refreshStudentsData,
@@ -104,14 +104,11 @@ export default function StudentProfile() {
 
   // fetching students joined groups
   useEffect(() => {
-    userData?.id && dispatch(fetchingStudentJoinedGroups());
-    userData?.id &&
-      axios.get(`/api/students/${userData?.id}/groups`).then((res) => {
-        dispatch(fetchedStudentJoinedGroups(res?.data));
-      });
-  }, [userData?.id]);
+    axios.get(`/api/students/${params?.id}/groups`).then((res) => {
+      setStudentGroups(res?.data);
+    });
+  }, []);
 
-  // main function for send datas to DB
   function submit(e) {
     e.preventDefault();
     const { group_id, start_date } = group;
@@ -340,37 +337,35 @@ export default function StudentProfile() {
       <Tabs className="col-span-6 md:col-span-3 lg:col-span-4">
         <Tabs.TabPane tab="Профиль" key="item-1">
           <label className="text-lg block w-full mb-2">Группы</label>
-          <Spin spinning={loadingJoinedGroups}>
-            <div className="grid lg:grid-cols-2 gap-2 mb-4">
-              {studentJoinedGroups?.data?.map((group) => (
-                <div
-                  className="flex justify-between flex-col sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
-                  key={group?.id}
+          <div className="grid lg:grid-cols-2 gap-2 mb-4">
+            {studentGroups?.data?.map((group) => (
+              <div
+                className="flex justify-between flex-col sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
+                key={group?.id}
+              >
+                <Link
+                  to={`/groups/${group?.id}`}
+                  onClick={() =>
+                    dispatch(
+                      setGroupData(groups?.find((x) => x?.id === group?.id))
+                    )
+                  }
+                  className="font-bold text-md text-cyan-500"
                 >
-                  <Link
-                    to={`/groups/${group?.id}`}
-                    onClick={() =>
-                      dispatch(
-                        setGroupData(groups?.find((x) => x?.id === group?.id))
-                      )
-                    }
-                    className="font-bold text-md text-cyan-500"
-                  >
-                    {group?.name}
-                  </Link>
-                  {group?.active ? (
-                    <span className="font-bold text-green-400">
-                      Группа активна
-                    </span>
-                  ) : (
-                    <span className="font-bold text-red-400">
-                      Группа неактивна
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </Spin>
+                  {group?.name}
+                </Link>
+                {group?.active ? (
+                  <span className="font-bold text-green-400">
+                    Группа активна
+                  </span>
+                ) : (
+                  <span className="font-bold text-red-400">
+                    Группа неактивна
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
           <label className="text-lg block w-full">Платежи</label>
           <Table columns={columns} className="overflow-auto mt-2"></Table>
         </Tabs.TabPane>

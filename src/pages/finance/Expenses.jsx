@@ -31,16 +31,46 @@ export default function Expenses() {
     (state) => state.expenses
   );
   const expenseCategories = [
-    "Другое",
-    "Административные расходы",
-    "Аренда",
-    "Зарплаты",
-    "Маркетинг",
-    "Канцелярия",
-    "Хозяйственные расходы",
-    "Налоги",
-    "Инвестиции",
-    "Возврат средств",
+    {
+      id: 1,
+      name: "Другое",
+    },
+    {
+      id: 2,
+      name: "Административные расходы",
+    },
+    {
+      id: 3,
+      name: "Аренда",
+    },
+    {
+      id: 4,
+      name: "Зарплаты",
+    },
+    {
+      id: 5,
+      name: "Маркетинг",
+    },
+    {
+      id: 6,
+      name: "Канцелярия",
+    },
+    {
+      id: 7,
+      name: "Хозяйственные расходы",
+    },
+    {
+      id: 8,
+      name: "Налоги",
+    },
+    {
+      id: 9,
+      name: "Инвестиции",
+    },
+    {
+      id: 10,
+      name: "Возврат средств",
+    },
   ];
   // hooks
   const dispatch = useDispatch();
@@ -234,7 +264,7 @@ export default function Expenses() {
                 {expenseCategories?.map((expenseCategory, index) => {
                   return (
                     <Select.Option key={index}>
-                      <button>{expenseCategory}</button>
+                      <button>{expenseCategory?.name}</button>
                     </Select.Option>
                   );
                 })}
@@ -271,7 +301,7 @@ export default function Expenses() {
             />
           </center>
         </div>
-        <div className="lg:w-1/4 bg-white p-4 rounded-md">
+        <div className="lg:w-1/4 bg-white p-4 rounded-md h-full pb-12">
           <AddExpensesForm />
         </div>
       </div>

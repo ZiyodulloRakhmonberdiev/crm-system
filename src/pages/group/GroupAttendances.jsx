@@ -33,15 +33,7 @@ const GroupAttendance = () => {
   });
   // hooks
   const params = useParams();
-  console.log(
-    "🚀 ~ file: GroupAttendances.jsx:36 ~ GroupAttendance ~ params",
-    params
-  );
   const dispatch = useDispatch();
-  console.log(
-    "🚀 ~ file: GroupAttendances.jsx:37 ~ GroupAttendance ~ dispatch",
-    dispatch
-  );
 
   const handleSetAttendanceStudent = () => {
     const { student_id, group_id, attStatus: status, date } = attendanceData;

@@ -30,9 +30,6 @@ import axios from "../../axios/axios";
 import { MyButton } from "../../UI/Button.style";
 import {
   changeUpdateUserData,
-  fetchedStudentJoinedGroups,
-  fetchingStudentJoinedGroups,
-  setUserData,
   setUserGroupData,
 } from "../../redux/studentsSlice";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -48,13 +45,9 @@ export default function StudentProfile() {
   const [visiblePayment, setVisiblePayment] = useState(false);
   const [modalType, setModalType] = useState("add");
   const [studentGroups, setStudentGroups] = useState([]);
-  const {
-    userData,
-    userGroupData,
-    refreshStudentsData,
-    studentJoinedGroups,
-    loadingJoinedGroups,
-  } = useSelector((state) => state.students);
+  const { userData, userGroupData, refreshStudentsData } = useSelector(
+    (state) => state.students
+  );
   const { groups } = useSelector((state) => state.groups);
   const [group, setGroup] = useState({
     group_id: "",
@@ -205,10 +198,11 @@ export default function StudentProfile() {
           <div className="grid mb-2 md:mb-4 ">
             <label className="mb-2">Дополнительные:</label>
             {userData?.addition_phone?.map((item) => (
-              <div key={item?.id} className="flex flex-col justify-start">
+              <div key={item?.id} className="grid grid-cols-2">
                 <p className="text-slate-400">{item?.label}</p>
                 <span className="text-xs flex items-center justify-start gap-1 text-slate-400">
-                  <TelephoneFill className="text-green-400" /> {item?.phone}
+                  <TelephoneFill className="text-green-400" />{" "}
+                  <span>{item?.phone}</span>
                 </span>
               </div>
             ))}

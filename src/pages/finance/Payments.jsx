@@ -236,8 +236,8 @@ export default function Payments() {
 
   return (
     <div>
-      <div className="flex gap-4 w-full">
-        <div className="w-full bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
+      <header className="flex flex-wrap gap-4 w-full mb-8">
+        <div className="w-full bg-white flex flex-wrap p-4 rounded-lg items-center justify-center md:justify-start gap-4">
           <div className="text-2xl text-blue-400 bg-blue-50 p-2 rounded-md">
             <Coin />
           </div>
@@ -252,7 +252,7 @@ export default function Payments() {
             </p>
           </div>
         </div>
-        <div className="w-full bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
+        <div className="w-full bg-white flex flex-wrap p-4 rounded-lg items-center justify-center md:justify-start gap-4">
           <div
             className={`${
               profitAmount?.amount > 0
@@ -275,6 +275,7 @@ export default function Payments() {
                 profitAmount?.amount > 0 ? "text-green-400" : "text-red-400"
               }`}
             >
+              Чистая прибыль:
               <span className="text-xl">
                 {Number(profitAmount?.amount)?.toLocaleString()}
               </span>{" "}
@@ -282,15 +283,15 @@ export default function Payments() {
             </p>
           </div>
         </div>
-      </div>
-      <div className="sm:flex flex-wrap gap-4 mb-4">
+      </header>
+      <div className="flex gap-2 flex-col sm:flex-row flex-wrap mb-4">
         <div className="flex flex-col gap-1 justify-center">
           <label htmlFor="">Дата от</label>
           <input
             type="date"
             name=""
             id=""
-            className="rounded-md p-1 border border-slate-300 py-2"
+            className="rounded-md p-1 border border-slate-300 py-2 w-full"
           />
         </div>
         <div className="flex flex-col gap-1 justify-center">
@@ -306,7 +307,7 @@ export default function Payments() {
           <label htmlFor="">Имя или телефон</label>
           <Input
             placeholder="Имя или телефон"
-            className="max-w-[130px]"
+            className="sm:max-w-[130px]"
             allowClear
           />
         </div>
@@ -364,9 +365,9 @@ export default function Payments() {
         </div>
         <div className="flex flex-col gap-1 justify-center">
           <label htmlFor="">Сумма</label>
-          <Input placeholder="Сумма" className="max-w-[130px]" allowClear />
+          <Input placeholder="Сумма" className="sm:max-w-[130px]" allowClear />
         </div>
-        <div className="mt-auto">
+        <div className="mt-4 sm:mt-auto">
           <MyButton>Фильтровать</MyButton>
         </div>
       </div>

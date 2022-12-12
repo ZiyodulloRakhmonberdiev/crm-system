@@ -212,7 +212,7 @@ export default function Expenses() {
   };
   return (
     <div>
-      <div className="lg:flex lg:gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         <div className="lg:w-3/4">
           <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
             <div className="text-2xl text-blue-400 bg-blue-50 p-2 rounded-md">
@@ -229,7 +229,7 @@ export default function Expenses() {
               </p>
             </div>
           </header>
-          <div className="sm:flex flex-wrap gap-4 mb-4">
+          <div className="flex gap-2 flex-col sm:flex-row flex-wrap mb-4">
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Дата от</label>
               <input
@@ -250,7 +250,7 @@ export default function Expenses() {
             </div>
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Описание</label>
-              <Input className="max-w-[130px]" allowClear />
+              <Input className="sm:max-w-[130px]" allowClear />
             </div>
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Выбрать категорию</label>
@@ -272,9 +272,9 @@ export default function Expenses() {
             </div>
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Сумма</label>
-              <Input className="max-w-[130px]" allowClear />
+              <Input className="sm:max-w-[130px]" allowClear />
             </div>
-            <div className="mt-auto">
+            <div className="mt-4 sm:mt-auto">
               <MyButton>Фильтровать</MyButton>
             </div>
           </div>

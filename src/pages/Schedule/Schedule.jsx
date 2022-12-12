@@ -125,8 +125,8 @@ const Schedule = () => {
                           role="cell"
                         >
                           <div className="bg-cyan-300 w-full">
-                            <Link
-                              to={`/groups/${curr?.id}`}
+                            <div
+                              // to={`/groups/${curr?.id}`}
                               className="p-2 shadow-md text-xs flex flex-wrap gap-1"
                             >
                               <span className="bg-cyan-500 rounded-sm p-1 text-white px-1 w-full">
@@ -148,7 +148,7 @@ const Schedule = () => {
                                 {curr?.group_start_date} -{" "}
                                 {curr?.group_end_date}{" "}
                               </span>
-                            </Link>
+                            </div>
                           </div>
                         </td>
                       );

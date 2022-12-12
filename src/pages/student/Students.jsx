@@ -29,10 +29,10 @@ export default function Students() {
   const [modalType, setModalType] = useState("add");
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
-  const [last_page, setLastPage] = useState(1);
+  const [last_page] = useState(1);
   const dispatch = useDispatch();
   const { courses } = useSelector((state) => state.courses);
-  const { students, loading, error, refreshStudents } = useSelector(
+  const { students, loading, refreshStudents } = useSelector(
     (state) => state.students
   );
 

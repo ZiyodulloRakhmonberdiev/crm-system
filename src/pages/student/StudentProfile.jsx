@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
 
 import {
   Tabs,
@@ -10,6 +11,7 @@ import {
   message,
   Spin,
   Drawer,
+  Pagination,
 } from "antd";
 import {
   CashStack,
@@ -30,6 +32,8 @@ import axios from "../../axios/axios";
 import { MyButton } from "../../UI/Button.style";
 import {
   changeUpdateUserData,
+  fetchedStudentPayments,
+  fetchingStudentPayments,
   setUserGroupData,
 } from "../../redux/studentsSlice";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -40,14 +44,22 @@ export default function StudentProfile() {
   // states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [refreshPayments, setRefreshPayments] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
   const [visible, setVisible] = useState(false);
   const [visiblePayment, setVisiblePayment] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [per_page, setPerPage] = useState(30);
+  const [last_page] = useState(1);
   const [modalType, setModalType] = useState("add");
   const [studentGroups, setStudentGroups] = useState([]);
-  const { userData, userGroupData, refreshStudentsData } = useSelector(
-    (state) => state.students
-  );
+  const {
+    userData,
+    userGroupData,
+    refreshStudentsData,
+    studentPayments,
+    loadingPayments,
+  } = useSelector((state) => state.students);
   const { groups } = useSelector((state) => state.groups);
   const [group, setGroup] = useState({
     group_id: "",
@@ -58,31 +70,80 @@ export default function StudentProfile() {
   // hooks
   const params = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const url = "/api/groups/add-student";
+  const formatter = new Intl.DateTimeFormat("ru", {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+  });
+  // students static data
+  let dataSource = [];
+  studentPayments?.map((item) => {
+    dataSource?.push({
+      id: item?.id,
+      uid: uuidv4(),
+      amount: Number(item?.amount).toLocaleString(),
+      payment_type: item?.payment_type,
+      date: item?.date,
+      description: item?.description,
+      created_at: formatter.format(Date.parse(item?.created_at)),
+      employee: item?.employee?.name,
+      group: item?.group?.name,
+      actions: (
+        <div className="flex gap-2">
+          <IconButton color="danger">
+            <Trash />
+          </IconButton>
+        </div>
+      ),
+    });
+  });
   const columns = [
     {
       key: "1",
       title: "Дата",
-      dataIndex: "id",
+      dataIndex: "date",
       fixed: "top",
     },
     {
       key: "2",
       title: "Сумма",
-      dataIndex: "name",
+      dataIndex: "amount",
       fixed: "top",
     },
     {
       key: "3",
       title: "Комментарий",
-      dataIndex: "comment",
+      dataIndex: "description",
       fixed: "top",
     },
     {
       key: "4",
       title: "Сотрудник",
       dataIndex: "employee",
+      fixed: "top",
+    },
+    {
+      key: "5",
+      title: "Метод оплаты",
+      dataIndex: "payment_type",
+      fixed: "top",
+    },
+    {
+      key: "6",
+      title: "Группа",
+      dataIndex: "group",
+      fixed: "top",
+    },
+    {
+      key: "7",
+      title: "Создано",
+      dataIndex: "created_at",
       fixed: "top",
     },
   ];
@@ -94,6 +155,20 @@ export default function StudentProfile() {
       dispatch(fetchedGroups(res?.data?.data?.data));
     });
   }, []);
+
+  // fetching student payments
+  useEffect(() => {
+    dispatch(fetchingStudentPayments());
+    axios
+      .get(`/api/students/${params?.id}/payments?page=${currentPage}`)
+      .then((res) => {
+        dispatch(fetchedStudentPayments(res?.data?.data?.data));
+      })
+      .finally(setRefreshPayments(false));
+    if (!userData?.id) {
+      navigate("/", { replace: true });
+    }
+  }, [refreshPayments, currentPage]);
 
   // fetching students joined groups
   useEffect(() => {
@@ -113,7 +188,7 @@ export default function StudentProfile() {
           student_id: params.id,
           start_date: group.start_date,
         })
-        .then((res) => {
+        .then(() => {
           setGroup({
             group_id: "",
             start_date: "",
@@ -122,7 +197,6 @@ export default function StudentProfile() {
           dispatch(refreshStudentsData());
         })
         .catch((err) => {
-          console.log(err);
           if (err?.response?.data?.message === "student id already exists") {
             message.error("Этот пользователь уже есть в этой группе!");
           } else {
@@ -361,7 +435,29 @@ export default function StudentProfile() {
             ))}
           </div>
           <label className="text-lg block w-full">Платежи</label>
-          <Table columns={columns} className="overflow-auto mt-2"></Table>
+          <Table
+            loading={loadingPayments}
+            columns={columns}
+            dataSource={dataSource}
+            className="overflow-auto mt-2"
+            pagination={false}
+            scroll={{
+              x: 800,
+            }}
+            rowKey={(record) => record.uid}
+          ></Table>
+          <br />
+          <center>
+            <Pagination
+              pageSize={per_page ? per_page : 30}
+              total={last_page * per_page}
+              current={currentPage}
+              onChange={(page, x) => {
+                setCurrentPage(page);
+                setPerPage(x);
+              }}
+            />
+          </center>
         </Tabs.TabPane>
         <Tabs.TabPane tab="История" key="item-2">
           <div className="bg-orange-50 p-4">Ничего не найдено</div>

@@ -331,7 +331,7 @@ export default function Groups() {
           Добавить
         </MyButton>
       </header>
-      <div className="flex gap-4 mb-8">
+      <div className="flex flex-wrap gap-4 mb-8">
         <Select
           mode="multiple"
           maxTagCount={1}

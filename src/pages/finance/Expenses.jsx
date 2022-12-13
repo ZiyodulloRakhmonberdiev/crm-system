@@ -31,16 +31,46 @@ export default function Expenses() {
     (state) => state.expenses
   );
   const expenseCategories = [
-    "Другое",
-    "Административные расходы",
-    "Аренда",
-    "Зарплаты",
-    "Маркетинг",
-    "Канцелярия",
-    "Хозяйственные расходы",
-    "Налоги",
-    "Инвестиции",
-    "Возврат средств",
+    {
+      id: 1,
+      name: "Другое",
+    },
+    {
+      id: 2,
+      name: "Административные расходы",
+    },
+    {
+      id: 3,
+      name: "Аренда",
+    },
+    {
+      id: 4,
+      name: "Зарплаты",
+    },
+    {
+      id: 5,
+      name: "Маркетинг",
+    },
+    {
+      id: 6,
+      name: "Канцелярия",
+    },
+    {
+      id: 7,
+      name: "Хозяйственные расходы",
+    },
+    {
+      id: 8,
+      name: "Налоги",
+    },
+    {
+      id: 9,
+      name: "Инвестиции",
+    },
+    {
+      id: 10,
+      name: "Возврат средств",
+    },
   ];
   // hooks
   const dispatch = useDispatch();
@@ -182,7 +212,7 @@ export default function Expenses() {
   };
   return (
     <div>
-      <div className="lg:flex lg:gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         <div className="lg:w-3/4">
           <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
             <div className="text-2xl text-blue-400 bg-blue-50 p-2 rounded-md">
@@ -199,7 +229,7 @@ export default function Expenses() {
               </p>
             </div>
           </header>
-          <div className="sm:flex flex-wrap gap-4 mb-4">
+          <div className="flex gap-2 flex-col sm:flex-row flex-wrap mb-4">
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Дата от</label>
               <input
@@ -220,7 +250,7 @@ export default function Expenses() {
             </div>
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Описание</label>
-              <Input className="max-w-[130px]" allowClear />
+              <Input className="sm:max-w-[130px]" allowClear />
             </div>
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Выбрать категорию</label>
@@ -234,7 +264,7 @@ export default function Expenses() {
                 {expenseCategories?.map((expenseCategory, index) => {
                   return (
                     <Select.Option key={index}>
-                      <button>{expenseCategory}</button>
+                      <button>{expenseCategory?.name}</button>
                     </Select.Option>
                   );
                 })}
@@ -242,9 +272,9 @@ export default function Expenses() {
             </div>
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Сумма</label>
-              <Input className="max-w-[130px]" allowClear />
+              <Input className="sm:max-w-[130px]" allowClear />
             </div>
-            <div className="mt-auto">
+            <div className="mt-4 sm:mt-auto">
               <MyButton>Фильтровать</MyButton>
             </div>
           </div>
@@ -271,7 +301,7 @@ export default function Expenses() {
             />
           </center>
         </div>
-        <div className="lg:w-1/4 bg-white p-4 rounded-md">
+        <div className="lg:w-1/4 bg-white p-4 rounded-md h-full pb-12">
           <AddExpensesForm />
         </div>
       </div>

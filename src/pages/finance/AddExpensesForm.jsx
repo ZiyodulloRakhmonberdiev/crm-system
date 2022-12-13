@@ -104,7 +104,7 @@ export default function AddexpenseForm() {
 
   return (
     <div>
-      <center className="text-xl mb-3 font-bold border-b">Новый расход</center>
+      <center className="text-xl mb-4 py-3 font-bold">Новый расход</center>
       <form onSubmit={(e) => submit(e)}>
         <p>Описание </p>
         <Input

@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   payments: [],
   paymentsAmount: "",
+  profitAmount: "",
   loading: false,
   error: false,
 };
@@ -14,6 +15,9 @@ const paymentsSlice = createSlice({
     fetchingPayments: (state) => {
       state.loading = true;
     },
+    // fetchingProfitAmount: (state) => {
+    //   state.loading = true;
+    // },
     fetchedPayments: (state, action) => {
       state.loading = false;
       state.payments = action.payload;
@@ -24,6 +28,10 @@ const paymentsSlice = createSlice({
     fetchedPaymentsAmount: (state, action) => {
       state.loading = false;
       state.paymentsAmount = action.payload;
+    },
+    fetchedProfitAmount: (state, action) => {
+      // state.loading = false;
+      state.profitAmount = action.payload;
     },
     fetchedError: (state) => {
       state.loading = false;
@@ -37,6 +45,7 @@ export const {
   fetchedPayments,
   fetchingPaymentsAmount,
   fetchedPaymentsAmount,
+  fetchedProfitAmount,
   fetchedError,
 } = paymentsSlice.actions;
 const paymentsReducer = paymentsSlice.reducer;

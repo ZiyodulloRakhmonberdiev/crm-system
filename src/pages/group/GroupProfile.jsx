@@ -54,16 +54,12 @@ export default function GroupProfile() {
   const [visible, setVisible] = useState(false);
   const [activeGroup, setActiveGroup] = useState(false);
   const [modalType, setModalType] = useState("add");
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const joinedStudents = {};
   const { groupData } = useSelector((state) => state.groups);
   const { teachers } = useSelector((state) => state.teachers);
   const { courses, coursesData } = useSelector((state) => state.courses);
-  const { attendances, loading, error } = useSelector(
-    (state) => state.attendances
-  );
-  const { Meta } = Card;
+  const { attendances } = useSelector((state) => state.attendances);
   // hooks
   const dispatch = useDispatch();
   const params = useParams();
@@ -127,7 +123,7 @@ export default function GroupProfile() {
       .then((res) => {
         dispatch(fetchedAtt(res?.data));
       })
-      .catch((err) => {
+      .catch(() => {
         dispatch(fetchingErrorAtt());
       });
   }, [refreshing]);
@@ -256,7 +252,7 @@ export default function GroupProfile() {
             </div>
             <div className="grid mb-2 md:mb-4 p-4 border drop-shadow-md">
               <label className="text-slate-600">
-                Дата ближайшего списания оплаты: 11.11.2022
+                Дата ближайшего списания оплаты: {groupData?.next_payment_date}
               </label>
             </div>
             <hr />

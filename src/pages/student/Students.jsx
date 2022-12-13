@@ -29,10 +29,10 @@ export default function Students() {
   const [modalType, setModalType] = useState("add");
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
-  const [last_page, setLastPage] = useState(1);
+  const [last_page] = useState(1);
   const dispatch = useDispatch();
   const { courses } = useSelector((state) => state.courses);
-  const { students, loading, error, refreshStudents } = useSelector(
+  const { students, loading, refreshStudents } = useSelector(
     (state) => state.students
   );
 
@@ -74,6 +74,7 @@ export default function Students() {
       address: item?.address,
       birthday: item?.birthday,
       gender: item?.gender,
+      balance: Number(item?.balance).toLocaleString(),
       additionPhone: item?.addition_phone?.map((phone) => phone?.name),
       actions: (
         <div className="flex gap-2">
@@ -137,6 +138,12 @@ export default function Students() {
     },
     {
       key: "5",
+      title: "Баланс",
+      dataIndex: "balance",
+      fixed: "top",
+    },
+    {
+      key: "6",
       title: "Действие",
       fixed: "top",
       width: 120,
@@ -215,7 +222,7 @@ export default function Students() {
               setSearchText(e.target.value);
             }}
             allowClear
-            className="min-w-[200px] md:min-w-[250px] sm:pr-8"
+            className="min-w-[200px] md:min-w-[250px] pr-8"
           />
         </div>
         <Select

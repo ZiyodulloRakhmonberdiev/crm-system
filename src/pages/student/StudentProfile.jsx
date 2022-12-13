@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
 
 import {
   Tabs,
@@ -10,6 +11,7 @@ import {
   message,
   Spin,
   Drawer,
+  Pagination,
 } from "antd";
 import {
   CashStack,
@@ -30,9 +32,8 @@ import axios from "../../axios/axios";
 import { MyButton } from "../../UI/Button.style";
 import {
   changeUpdateUserData,
-  fetchedStudentJoinedGroups,
-  fetchingStudentJoinedGroups,
-  setUserData,
+  fetchedStudentPayments,
+  fetchingStudentPayments,
   setUserGroupData,
 } from "../../redux/studentsSlice";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -43,18 +44,17 @@ export default function StudentProfile() {
   // states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [refreshPayments, setRefreshPayments] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
   const [visible, setVisible] = useState(false);
   const [visiblePayment, setVisiblePayment] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [per_page, setPerPage] = useState(30);
+  const [last_page] = useState(1);
   const [modalType, setModalType] = useState("add");
-  const {
-    students,
-    userData,
-    userGroupData,
-    refreshStudentsData,
-    studentJoinedGroups,
-    loadingJoinedGroups,
-  } = useSelector((state) => state.students);
+  const [studentGroups, setStudentGroups] = useState([]);
+  const { userData, userGroupData, studentPayments, loadingPayments } =
+    useSelector((state) => state.students);
   const { groups } = useSelector((state) => state.groups);
   const [group, setGroup] = useState({
     group_id: "",
@@ -65,31 +65,80 @@ export default function StudentProfile() {
   // hooks
   const params = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const url = "/api/groups/add-student";
+  const formatter = new Intl.DateTimeFormat("ru", {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+  });
+  // students static data
+  let dataSource = [];
+  studentPayments?.map((item) => {
+    dataSource?.push({
+      id: item?.id,
+      uid: uuidv4(),
+      amount: Number(item?.amount).toLocaleString(),
+      payment_type: item?.payment_type,
+      date: item?.date,
+      description: item?.description,
+      created_at: formatter.format(Date.parse(item?.created_at)),
+      employee: item?.employee?.name,
+      group: item?.group?.name,
+      actions: (
+        <div className="flex gap-2">
+          <IconButton color="danger">
+            <Trash />
+          </IconButton>
+        </div>
+      ),
+    });
+  });
   const columns = [
     {
       key: "1",
       title: "Дата",
-      dataIndex: "id",
+      dataIndex: "date",
       fixed: "top",
     },
     {
       key: "2",
       title: "Сумма",
-      dataIndex: "name",
+      dataIndex: "amount",
       fixed: "top",
     },
     {
       key: "3",
       title: "Комментарий",
-      dataIndex: "comment",
+      dataIndex: "description",
       fixed: "top",
     },
     {
       key: "4",
       title: "Сотрудник",
       dataIndex: "employee",
+      fixed: "top",
+    },
+    {
+      key: "5",
+      title: "Метод оплаты",
+      dataIndex: "payment_type",
+      fixed: "top",
+    },
+    {
+      key: "6",
+      title: "Группа",
+      dataIndex: "group",
+      fixed: "top",
+    },
+    {
+      key: "7",
+      title: "Создано",
+      dataIndex: "created_at",
       fixed: "top",
     },
   ];
@@ -102,16 +151,26 @@ export default function StudentProfile() {
     });
   }, []);
 
+  // fetching student payments
+  useEffect(() => {
+    dispatch(fetchingStudentPayments());
+    axios
+      .get(`/api/students/${params?.id}/payments?page=${currentPage}`)
+      .then((res) => {
+        dispatch(fetchedStudentPayments(res?.data?.data?.data));
+      })
+      .finally(setRefreshPayments(false));
+    if (!userData?.id) {
+      navigate("/", { replace: true });
+    }
+  }, [refreshPayments, currentPage]);
+
   // fetching students joined groups
   useEffect(() => {
-    userData?.id && dispatch(fetchingStudentJoinedGroups());
-    userData?.id &&
-      axios.get(`/api/students/${userData?.id}/groups`).then((res) => {
-        dispatch(fetchedStudentJoinedGroups(res?.data));
-      });
-  }, [userData?.id]);
-
-  // main function for send datas to DB
+    axios.get(`/api/students/${params?.id}/groups`).then((res) => {
+      setStudentGroups(res?.data);
+    });
+  }, []);
   function submit(e) {
     e.preventDefault();
     const { group_id, start_date } = group;
@@ -123,18 +182,19 @@ export default function StudentProfile() {
           student_id: params.id,
           start_date: group.start_date,
         })
-        .then((res) => {
+        .then(() => {
           setGroup({
             group_id: "",
             start_date: "",
           });
           message.success("Пользователь успешно добавлен!");
-          dispatch(refreshStudentsData());
+          // dispatch(refreshStudentsData());
         })
         .catch((err) => {
-          console.log(err);
           if (err?.response?.data?.message === "student id already exists") {
             message.error("Этот пользователь уже есть в этой группе!");
+          } else if (err?.message === "Network Error") {
+            message.error("У вас нет подключения к интернету!");
           } else {
             message.error("Произошла ошибка! Попробуйте еще раз!");
           }
@@ -208,10 +268,11 @@ export default function StudentProfile() {
           <div className="grid mb-2 md:mb-4 ">
             <label className="mb-2">Дополнительные:</label>
             {userData?.addition_phone?.map((item) => (
-              <div key={item?.id} className="flex flex-col justify-start">
+              <div key={item?.id} className="grid grid-cols-2">
                 <p className="text-slate-400">{item?.label}</p>
                 <span className="text-xs flex items-center justify-start gap-1 text-slate-400">
-                  <TelephoneFill className="text-green-400" /> {item?.phone}
+                  <TelephoneFill className="text-green-400" />{" "}
+                  <span>{item?.phone}</span>
                 </span>
               </div>
             ))}
@@ -340,39 +401,59 @@ export default function StudentProfile() {
       <Tabs className="col-span-6 md:col-span-3 lg:col-span-4">
         <Tabs.TabPane tab="Профиль" key="item-1">
           <label className="text-lg block w-full mb-2">Группы</label>
-          <Spin spinning={loadingJoinedGroups}>
-            <div className="grid lg:grid-cols-2 gap-2 mb-4">
-              {studentJoinedGroups?.data?.map((group) => (
-                <div
-                  className="flex justify-between flex-col sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
-                  key={group?.id}
+          <div className="grid lg:grid-cols-2 gap-2 mb-4">
+            {studentGroups?.data?.map((group) => (
+              <div
+                className="flex justify-between flex-col sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
+                key={group?.id}
+              >
+                <Link
+                  to={`/groups/${group?.id}`}
+                  onClick={() =>
+                    dispatch(
+                      setGroupData(groups?.find((x) => x?.id === group?.id))
+                    )
+                  }
+                  className="font-bold text-md text-cyan-500"
                 >
-                  <Link
-                    to={`/groups/${group?.id}`}
-                    onClick={() =>
-                      dispatch(
-                        setGroupData(groups?.find((x) => x?.id === group?.id))
-                      )
-                    }
-                    className="font-bold text-md text-cyan-500"
-                  >
-                    {group?.name}
-                  </Link>
-                  {group?.active ? (
-                    <span className="font-bold text-green-400">
-                      Группа активна
-                    </span>
-                  ) : (
-                    <span className="font-bold text-red-400">
-                      Группа неактивна
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </Spin>
+                  {group?.name}
+                </Link>
+                {group?.active ? (
+                  <span className="font-bold text-green-400">
+                    Группа активна
+                  </span>
+                ) : (
+                  <span className="font-bold text-red-400">
+                    Группа неактивна
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
           <label className="text-lg block w-full">Платежи</label>
-          <Table columns={columns} className="overflow-auto mt-2"></Table>
+          <Table
+            loading={loadingPayments}
+            columns={columns}
+            dataSource={dataSource}
+            className="overflow-auto mt-2"
+            pagination={false}
+            scroll={{
+              x: 800,
+            }}
+            rowKey={(record) => record.uid}
+          ></Table>
+          <br />
+          <center>
+            <Pagination
+              pageSize={per_page ? per_page : 30}
+              total={last_page * per_page}
+              current={currentPage}
+              onChange={(page, x) => {
+                setCurrentPage(page);
+                setPerPage(x);
+              }}
+            />
+          </center>
         </Tabs.TabPane>
         <Tabs.TabPane tab="История" key="item-2">
           <div className="bg-orange-50 p-4">Ничего не найдено</div>

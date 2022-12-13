@@ -16,6 +16,7 @@ import {
   fetchedPayments,
   fetchingPaymentsAmount,
   fetchedPaymentsAmount,
+  fetchedProfitAmount,
   fetchedError,
 } from "../../redux/paymentsSlice";
 import axios from "../../axios/axios";
@@ -33,13 +34,14 @@ export default function Payments() {
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
   const [last_page, setLastPage] = useState(1);
-  const { payments, paymentsAmount, loading } = useSelector(
+  const { payments, paymentsAmount, profitAmount, loading } = useSelector(
     (state) => state.payments
   );
   const { students } = useSelector((state) => state.students);
   const { employees } = useSelector((state) => state.employees);
   const { groups } = useSelector((state) => state.groups);
   const { teachers } = useSelector((state) => state.teachers);
+  const { refreshExpenses } = useSelector((state) => state.expenses);
   const paymentMethods = [
     "Наличные",
     "Картой",
@@ -152,6 +154,7 @@ export default function Payments() {
     axios
       .get(`/api/payments?from=2022-12-01&to=2022-12-30?page=${currentPage}`)
       .then((res) => {
+        console.log(res?.data?.data?.data);
         dispatch(fetchedPayments(res?.data?.data?.data));
       })
       .catch((err) => {
@@ -171,6 +174,18 @@ export default function Payments() {
         dispatch(fetchedError());
       });
   }, [currentPage, dispatch]);
+
+  // fetching profit amount
+  useEffect(() => {
+    axios
+      .get(`/api/payments/profit?from=2022-12-01&to=2022-12-30`)
+      .then((res) => {
+        dispatch(fetchedProfitAmount(res?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, [refreshExpenses, currentPage, dispatch]);
 
   // fetching students
   useEffect(() => {
@@ -221,29 +236,62 @@ export default function Payments() {
 
   return (
     <div>
-      <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
-        <div className="text-2xl text-blue-400 bg-blue-50 p-2 rounded-md">
-          <Coin />
+      <header className="flex flex-wrap gap-4 w-full mb-8">
+        <div className="w-full bg-white flex flex-wrap p-4 rounded-lg items-center justify-center md:justify-start gap-4">
+          <div className="text-2xl text-blue-400 bg-blue-50 p-2 rounded-md">
+            <Coin />
+          </div>
+          <div className="md:flex md:gap-4 items-center">
+            <p className="text-blue-400 text-2xl">Все платежи</p>
+            <p className="text-blue-400">
+              Всего платежей:{" "}
+              <span className="text-xl">
+                {Number(paymentsAmount?.amount)?.toLocaleString()}
+              </span>{" "}
+              сум
+            </p>
+          </div>
         </div>
-        <div className="md:flex md:gap-4 items-center">
-          <p className="text-blue-400 text-2xl">Все платежи</p>
-          <p className="text-blue-400">
-            Всего платежей:{" "}
-            <span className="text-xl">
-              {Number(paymentsAmount?.amount)?.toLocaleString()}
-            </span>{" "}
-            сум
-          </p>
+        <div className="w-full bg-white flex flex-wrap p-4 rounded-lg items-center justify-center md:justify-start gap-4">
+          <div
+            className={`${
+              profitAmount?.amount > 0
+                ? "text-green-400 bg-green-50"
+                : "text-red-400 bg-red-50"
+            } text-2xl p-2 rounded-md`}
+          >
+            <Coin />
+          </div>
+          <div className="md:flex md:gap-4 items-center">
+            <p
+              className={`${
+                profitAmount?.amount > 0 ? "text-green-400" : "text-red-400"
+              } text-2xl`}
+            >
+              Чистая прибыль:
+            </p>
+            <p
+              className={`${
+                profitAmount?.amount > 0 ? "text-green-400" : "text-red-400"
+              }`}
+            >
+              Чистая прибыль:
+              <span className="text-xl">
+                {Number(profitAmount?.amount)?.toLocaleString()}
+              </span>{" "}
+              сум
+            </p>
+          </div>
         </div>
       </header>
-      <div className="sm:flex flex-wrap gap-4 mb-4">
+      <div className="flex gap-2 flex-col sm:flex-row flex-wrap mb-4">
         <div className="flex flex-col gap-1 justify-center">
           <label htmlFor="">Дата от</label>
           <input
             type="date"
             name=""
             id=""
-            className="rounded-md p-1 border border-slate-300 py-2"
+            className="rounded-md p-1 border border-slate-300 py-2 w-full"
           />
         </div>
         <div className="flex flex-col gap-1 justify-center">
@@ -259,7 +307,7 @@ export default function Payments() {
           <label htmlFor="">Имя или телефон</label>
           <Input
             placeholder="Имя или телефон"
-            className="max-w-[130px]"
+            className="sm:max-w-[130px]"
             allowClear
           />
         </div>
@@ -317,9 +365,9 @@ export default function Payments() {
         </div>
         <div className="flex flex-col gap-1 justify-center">
           <label htmlFor="">Сумма</label>
-          <Input placeholder="Сумма" className="max-w-[130px]" allowClear />
+          <Input placeholder="Сумма" className="sm:max-w-[130px]" allowClear />
         </div>
-        <div className="mt-auto">
+        <div className="mt-4 sm:mt-auto">
           <MyButton>Фильтровать</MyButton>
         </div>
       </div>

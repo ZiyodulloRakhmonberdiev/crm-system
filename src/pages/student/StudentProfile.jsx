@@ -53,13 +53,8 @@ export default function StudentProfile() {
   const [last_page] = useState(1);
   const [modalType, setModalType] = useState("add");
   const [studentGroups, setStudentGroups] = useState([]);
-  const {
-    userData,
-    userGroupData,
-    refreshStudentsData,
-    studentPayments,
-    loadingPayments,
-  } = useSelector((state) => state.students);
+  const { userData, userGroupData, studentPayments, loadingPayments } =
+    useSelector((state) => state.students);
   const { groups } = useSelector((state) => state.groups);
   const [group, setGroup] = useState({
     group_id: "",
@@ -176,7 +171,6 @@ export default function StudentProfile() {
       setStudentGroups(res?.data);
     });
   }, []);
-
   function submit(e) {
     e.preventDefault();
     const { group_id, start_date } = group;
@@ -194,11 +188,13 @@ export default function StudentProfile() {
             start_date: "",
           });
           message.success("Пользователь успешно добавлен!");
-          dispatch(refreshStudentsData());
+          // dispatch(refreshStudentsData());
         })
         .catch((err) => {
           if (err?.response?.data?.message === "student id already exists") {
             message.error("Этот пользователь уже есть в этой группе!");
+          } else if (err?.message === "Network Error") {
+            message.error("У вас нет подключения к интернету!");
           } else {
             message.error("Произошла ошибка! Попробуйте еще раз!");
           }

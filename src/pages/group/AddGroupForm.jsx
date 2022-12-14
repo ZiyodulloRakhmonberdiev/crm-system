@@ -160,7 +160,7 @@ export default function AddGroupForm({
             time_id: group.time_id,
             group_start_date: group.group_start_date,
             group_end_date: group.group_end_date,
-            teacher_ids: inputFields,
+            teachers: inputFields,
             room_id: group.room_id,
             days: group.days?.split(","),
             course_id: group.course_id,
@@ -197,7 +197,7 @@ export default function AddGroupForm({
             time_id: group.time_id,
             group_start_date: group_start_date,
             group_end_date: group.group_end_date,
-            teacher_ids: inputFields,
+            teachers: inputFields,
             room_id: group.room_id,
             days: group.days?.split(","),
             course_id: group.course_id,
@@ -234,10 +234,18 @@ export default function AddGroupForm({
 
   // Addition teachers
   const handleAddFields = () => {
-    setInputFields([
-      ...inputFields,
-      { teacher_id: "", flex: "", id: Date.now() },
-    ]);
+    const currItems = teachers?.data?.filter(item => !inputFields?.find(x => x.teacher_id === item.id))
+    if (currItems?.length === 1) {
+      setInputFields([
+        ...inputFields,
+        { teacher_id: currItems[0]?.id, flex: "", id: Date.now() },
+      ]);
+    } else {
+      setInputFields([
+        ...inputFields,
+        { teacher_id: "", flex: "", id: Date.now() },
+      ]);
+    }
   };
 
   const handleChangeInput = (type, id, event) => {
@@ -246,14 +254,15 @@ export default function AddGroupForm({
         if (id === item.id) {
           return {
             ...item,
-            teacher_id: type === "teacher_id" ? event : item.event,
-            flex: type === "flex" ? event.target.value : item.flex,
+            teacher_id: type === "teacher_id" ? event : item?.teacher_id,
+            flex: type === "flex" ? event.target.value : item?.flex,
           };
         } else {
           return item;
         }
       });
     });
+
   };
 
   const handleRemoveFields = (id) => {
@@ -321,14 +330,18 @@ export default function AddGroupForm({
                 showSearch={true}
               >
                 {teachers?.data?.map((teacher, index) => {
-                  return (
-                    <Select.Option value={teacher?.id} key={index}>
-                      {teacher?.name}
-                    </Select.Option>
-                  );
+                  const curr = inputFields.find(item => item?.teacher_id == teacher?.id)
+                  if (!curr || curr.id === inputField.id) {
+                    return (
+                      <Select.Option value={teacher?.id} key={index}>
+                        {teacher?.name}
+                      </Select.Option>
+                    );
+                  }
                 })}
               </Select>
               <Input
+                required
                 onChange={(event) => {
                   handleChangeInput("flex", inputField.id, event);
                 }}
@@ -339,15 +352,21 @@ export default function AddGroupForm({
             </div>
           ))}
         </div>
-        {inputFields.length > 0 ? (
-          <MyButton onClick={handleAddFields} type="button" className="mb-4">
-            Добавить еще одного учителя
-          </MyButton>
-        ) : (
-          <MyButton onClick={handleAddFields} type="button" className="mb-4">
-            Добавить учителя
-          </MyButton>
-        )}
+        {
+          teachers?.data?.filter(item => !inputFields?.find(x => x.teacher_id === item.id))?.length === 0 ? (
+            null
+          ) : (
+            inputFields.length > 0 ? (
+              <MyButton onClick={handleAddFields} type="button" className="mb-4">
+                Добавить еще одного учителя
+              </MyButton>
+            ) : (
+              <MyButton onClick={handleAddFields} type="button" className="mb-4">
+                Добавить учителя
+              </MyButton>
+            )
+          )
+        }
         <p>Дата старта группы</p>
         <div className="flex gap-x-2 mb-4 mt-2">
           <input

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import { Telephone, X } from "react-bootstrap-icons";
+import { GeoAlt, Telephone, X } from "react-bootstrap-icons";
 import InputMask from "react-input-mask";
 import { Input, Form, Radio, message, Spin } from "antd";
 import { v4 as uuidv4 } from "uuid";
@@ -21,6 +21,7 @@ export default function AddStudentForm({
   // states
   const [uploading, setUploading] = useState(false);
   const [inputFields, setInputFields] = useState([]);
+  const [showAddressField, setShowAddressField] = useState(false);
   const [student, setStudent] = useState({
     firstName: "",
     lastName: "",
@@ -48,7 +49,9 @@ export default function AddStudentForm({
         additionPhone: "",
       });
       setInputFields([]);
+      setShowAddressField(false);
     } else {
+      setShowAddressField(true);
       const {
         first_name,
         last_name,
@@ -89,8 +92,8 @@ export default function AddStudentForm({
 
   function submit(e) {
     e.preventDefault();
-    const { firstName, lastName, phone, address, birthday, gender } = student;
-    if (firstName && lastName && phone && address && birthday && gender) {
+    const { firstName, lastName, phone, birthday, gender } = student;
+    if (firstName && lastName && phone && birthday && gender) {
       setUploading(true);
       if (modalType === "add") {
         axios
@@ -250,17 +253,6 @@ export default function AddStudentForm({
           type="text"
           className="mb-4 mt-2"
         />
-        <p>Адрес</p>
-        <Input
-          required
-          id="address"
-          onChange={(e) => {
-            handle(e);
-          }}
-          type="text"
-          value={student?.address}
-          className="mb-4 mt-2"
-        />
         <p>Дата рождения</p>
         <input
           id="birthday"
@@ -311,7 +303,7 @@ export default function AddStudentForm({
           />
         </Form.Item>
         <p>Дополнительные контакты</p>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <IconButton
             onClick={handleAddFields}
             color="success"
@@ -319,6 +311,14 @@ export default function AddStudentForm({
             type="button"
           >
             <Telephone />
+          </IconButton>
+          <IconButton
+            onClick={() => setShowAddressField(!showAddressField)}
+            color="primary"
+            className="mb-4 mt-2"
+            type="button"
+          >
+            <GeoAlt />
           </IconButton>
         </div>
         {inputFields.map((inputField) => (
@@ -363,6 +363,30 @@ export default function AddStudentForm({
             </InputMask>
           </div>
         ))}
+        {showAddressField && (
+          <div>
+            <div className="flex justify-between items-end">
+              <p>Адрес</p>
+              <button
+                onClick={() => setShowAddressField(!showAddressField)}
+                color="dangerOutlined"
+                className="border rounded-full text-slate-400 p-1"
+              >
+                <X className="text-xl" />
+              </button>
+            </div>
+            <Input
+              id="address"
+              placeholder="Не обязательно"
+              onChange={(e) => {
+                handle(e);
+              }}
+              type="text"
+              value={student?.address}
+              className="mb-4 mt-2"
+            />
+          </div>
+        )}
         <Spin spinning={uploading}>
           <MyButton htmlType="submit" color="primary">
             Отправить

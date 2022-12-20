@@ -2,13 +2,13 @@ import { Skeleton, Tooltip } from "antd";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import axios from "../../axios/axios";
 import {
   fetchedError,
   fetchedRooms,
   fetchingRooms,
 } from "../../redux/roomsSlice";
+
 const Schedule = () => {
   const { rooms } = useSelector((state) => state.rooms);
   const [schedule, setSchedule] = useState([]);
@@ -78,6 +78,16 @@ const Schedule = () => {
       <center className="border-b pb-2">
         <h3 className="text-lg">Расписание</h3>
       </center>
+
+      {schedule?.length < 1 && (
+        <center className="p-8 rounded-md">
+          <h3 className="text-lg text-red-400">
+            Группы должны быть активированы для просмотра расписания уроков. В
+            настоящее время у вас нет активированных групп. Пожалуйста,
+            активируйте их или создайте новый.
+          </h3>
+        </center>
+      )}
       {loading ? (
         <Skeleton active={true} />
       ) : (

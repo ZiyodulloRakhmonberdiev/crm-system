@@ -234,7 +234,9 @@ export default function AddGroupForm({
 
   // Addition teachers
   const handleAddFields = () => {
-    const currItems = teachers?.data?.filter(item => !inputFields?.find(x => x.teacher_id === item.id))
+    const currItems = teachers?.data?.filter(
+      (item) => !inputFields?.find((x) => x.teacher_id === item.id)
+    );
     if (currItems?.length === 1) {
       setInputFields([
         ...inputFields,
@@ -262,7 +264,6 @@ export default function AddGroupForm({
         }
       });
     });
-
   };
 
   const handleRemoveFields = (id) => {
@@ -330,7 +331,9 @@ export default function AddGroupForm({
                 showSearch={true}
               >
                 {teachers?.data?.map((teacher, index) => {
-                  const curr = inputFields.find(item => item?.teacher_id == teacher?.id)
+                  const curr = inputFields.find(
+                    (item) => item?.teacher_id == teacher?.id
+                  );
                   if (!curr || curr.id === inputField.id) {
                     return (
                       <Select.Option value={teacher?.id} key={index}>
@@ -352,21 +355,17 @@ export default function AddGroupForm({
             </div>
           ))}
         </div>
-        {
-          teachers?.data?.filter(item => !inputFields?.find(x => x.teacher_id === item.id))?.length === 0 ? (
-            null
-          ) : (
-            inputFields.length > 0 ? (
-              <MyButton onClick={handleAddFields} type="button" className="mb-4">
-                Добавить еще одного учителя
-              </MyButton>
-            ) : (
-              <MyButton onClick={handleAddFields} type="button" className="mb-4">
-                Добавить учителя
-              </MyButton>
-            )
-          )
-        }
+        {teachers?.data?.filter(
+          (item) => !inputFields?.find((x) => x.teacher_id === item.id)
+        )?.length === 0 ? null : inputFields.length > 0 ? (
+          <MyButton onClick={handleAddFields} type="button" className="mb-4">
+            Добавить еще одного учителя
+          </MyButton>
+        ) : (
+          <MyButton onClick={handleAddFields} type="button" className="mb-4">
+            Добавить учителя
+          </MyButton>
+        )}
         <p>Дата старта группы</p>
         <div className="flex gap-x-2 mb-4 mt-2">
           <input

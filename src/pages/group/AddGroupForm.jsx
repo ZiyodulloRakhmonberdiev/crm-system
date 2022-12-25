@@ -28,6 +28,8 @@ export default function AddGroupForm({
   const [uploading, setUploading] = useState(false);
   const [times, setTimes] = useState([]);
   const [inputFields, setInputFields] = useState([]);
+  const [manualMarking, setManualMarking] = useState(false);
+
   const [group, setGroup] = useState({
     name: "",
     time_id: "",
@@ -39,7 +41,6 @@ export default function AddGroupForm({
     course_id: "",
   });
   const url = "/api/groups";
-
   // hooks
   const dispatch = useDispatch();
 
@@ -162,7 +163,7 @@ export default function AddGroupForm({
             group_end_date: group.group_end_date,
             teachers: inputFields,
             room_id: group.room_id,
-            days: group.days?.split(","),
+            days: manualMarking ? group.days : group.days?.split(","),
             course_id: group.course_id,
           })
           .then((res) => {
@@ -199,7 +200,7 @@ export default function AddGroupForm({
             group_end_date: group.group_end_date,
             teachers: inputFields,
             room_id: group.room_id,
-            days: group.days?.split(","),
+            days: manualMarking ? group.days : group.days?.split(","),
             course_id: group.course_id,
           })
           .then((res) => {
@@ -210,7 +211,7 @@ export default function AddGroupForm({
               group_end_date: "",
               teacher_ids: [],
               room_id: "",
-              days: "",
+              days: [],
               course_id: "",
             });
             message.success("Группа успешно обновлен!");
@@ -234,7 +235,9 @@ export default function AddGroupForm({
 
   // Addition teachers
   const handleAddFields = () => {
-    const currItems = teachers?.data?.filter(item => !inputFields?.find(x => x.teacher_id === item.id))
+    const currItems = teachers?.data?.filter(
+      (item) => !inputFields?.find((x) => x.teacher_id === item.id)
+    );
     if (currItems?.length === 1) {
       setInputFields([
         ...inputFields,
@@ -262,7 +265,6 @@ export default function AddGroupForm({
         }
       });
     });
-
   };
 
   const handleRemoveFields = (id) => {
@@ -273,6 +275,37 @@ export default function AddGroupForm({
     );
     setInputFields(values);
   };
+
+  const options = [
+    {
+      label: "Понедельник",
+      value: 1,
+    },
+    {
+      label: "Вторник",
+      value: 2,
+    },
+    {
+      label: "Среда",
+      value: 3,
+    },
+    {
+      label: "Четверг",
+      value: 4,
+    },
+    {
+      label: "Пятница",
+      value: 5,
+    },
+    {
+      label: "Суббота",
+      value: 6,
+    },
+    {
+      label: "Воскресенье",
+      value: 7,
+    },
+  ];
   return (
     <div>
       <form onSubmit={(e) => submit(e)}>
@@ -330,7 +363,9 @@ export default function AddGroupForm({
                 showSearch={true}
               >
                 {teachers?.data?.map((teacher, index) => {
-                  const curr = inputFields.find(item => item?.teacher_id == teacher?.id)
+                  const curr = inputFields.find(
+                    (item) => item?.teacher_id == teacher?.id
+                  );
                   if (!curr || curr.id === inputField.id) {
                     return (
                       <Select.Option value={teacher?.id} key={index}>
@@ -352,21 +387,17 @@ export default function AddGroupForm({
             </div>
           ))}
         </div>
-        {
-          teachers?.data?.filter(item => !inputFields?.find(x => x.teacher_id === item.id))?.length === 0 ? (
-            null
-          ) : (
-            inputFields.length > 0 ? (
-              <MyButton onClick={handleAddFields} type="button" className="mb-4">
-                Добавить еще одного учителя
-              </MyButton>
-            ) : (
-              <MyButton onClick={handleAddFields} type="button" className="mb-4">
-                Добавить учителя
-              </MyButton>
-            )
-          )
-        }
+        {teachers?.data?.filter(
+          (item) => !inputFields?.find((x) => x.teacher_id === item.id)
+        )?.length === 0 ? null : inputFields.length > 0 ? (
+          <MyButton onClick={handleAddFields} type="button" className="mb-4">
+            Добавить еще одного учителя
+          </MyButton>
+        ) : (
+          <MyButton onClick={handleAddFields} type="button" className="mb-4">
+            Добавить учителя
+          </MyButton>
+        )}
         <p>Дата старта группы</p>
         <div className="flex gap-x-2 mb-4 mt-2">
           <input
@@ -384,21 +415,41 @@ export default function AddGroupForm({
             className="rounded-sm p-1 border border-slate-300"
           />
         </div>
-        <p>Дни</p>
+        <p className="flex flex-wrap gap-2 justify-between align-bottom">
+          <span className="mt-auto">Дни</span>
+          <button
+            type="button"
+            className="font-bold border rounded-md py-1 px-2"
+            onClick={() => setManualMarking(!manualMarking)}
+          >
+            {!manualMarking
+              ? "Набрать дни вручную"
+              : "Набрать дни автоматически"}
+          </button>
+        </p>
         <Select
           value={group?.days}
           onChange={(e) => {
             setGroup({ ...group, days: e });
           }}
           placeholder="Выбрать варианты"
-          className="w-full mb-4 mt-2"
-          showSearch={true}
+          className={`${manualMarking ? "hidden" : ""} w-full mb-4 mt-2`}
         >
           <Select.Option value={"1,3,5"}>Нечетные дни</Select.Option>
           <Select.Option value={"2,4,6"}>Четные дни</Select.Option>
           <Select.Option value={"1,2,3,4,5,6"}>Каждый день</Select.Option>
-          <Select.Option value={"6,7"}>Другое</Select.Option>
+          <Select.Option value={"6,7"}>Выходные</Select.Option>
         </Select>
+        <Select
+          mode="multiple"
+          className={`${manualMarking ? "" : "hidden"} w-full mb-4 mt-2`}
+          options={options}
+          value={group?.days}
+          onChange={(e) => {
+            setGroup({ ...group, days: e });
+          }}
+          placeholder="Выбрать варианты"
+        />
         <p>Выберите аудиторию</p>
         <Select
           value={group?.room_id}

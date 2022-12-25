@@ -7,6 +7,7 @@ import axios from "../axios/axios";
 import {
   Arrow90degLeft,
   BoxArrowRight,
+  Cash,
   Download,
   ExclamationCircle,
   Hourglass,
@@ -55,7 +56,7 @@ export default function HeaderLayout() {
   }, [refreshGroups]);
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4">
         <Link
           to="/students"
           className="bg-white flex flex-col md:flex-row justify-between col-span-6 md:col-span-2 lg:col-span-4 p-4 rounded-lg gap-4 text-center md:text-left"
@@ -79,27 +80,27 @@ export default function HeaderLayout() {
         </Link>
         <Link
           to="/leads"
-          className="bg-white flex flex-col col-span-6 md:col-span-1 p-4 rounded-lg items-start justify-between"
+          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
         >
           <div className="text-2xl text-violet-400 bg-violet-50 p-2 rounded-md">
             <Download />
           </div>
-          <p className="text-slate-400 my-4">Заявки</p>
-          <p className="text-slate-500 text-2xl">123</p>
+          <p className="text-violet-400 my-4">Заявки</p>
+          <p className="text-violet-500 text-2xl">123</p>
         </Link>
         <Link
           to="/groups"
-          className="bg-white flex flex-col col-span-6 md:col-span-1 p-4 rounded-lg items-start"
+          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start"
         >
           <div className="text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md">
             <TeamOutlined />
           </div>
-          <p className="text-slate-400 my-4">Группы</p>
-          <p className="text-slate-500 text-2xl">{groups?.length}</p>
+          <p className="text-cyan-400 my-4">Группы</p>
+          <p className="text-cyan-500 text-2xl">{groups?.length}</p>
         </Link>
         <Link
           to="/students"
-          className="bg-white flex flex-col col-span-6 md:col-span-1 p-4 rounded-lg items-start justify-between"
+          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
         >
           <div className="text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md">
             <Mortarboard />
@@ -109,7 +110,7 @@ export default function HeaderLayout() {
         </Link>
         <Link
           to="/"
-          className="bg-white flex flex-col col-span-6 md:col-span-1 p-4 w-full rounded-lg items-start justify-between"
+          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 w-full rounded-lg items-start justify-between"
         >
           <div className="text-2xl text-violet-400 bg-violet-50 p-2 rounded-md">
             <BoxArrowRight />
@@ -120,7 +121,7 @@ export default function HeaderLayout() {
         </Link>
         <Link
           to="/finance/debtors"
-          className="bg-white flex flex-col col-span-6 md:col-span-1 p-4 rounded-lg items-start justify-between"
+          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
         >
           <div className="text-2xl text-red-400 bg-red-50 p-2 rounded-md">
             <ExclamationCircle />
@@ -130,17 +131,27 @@ export default function HeaderLayout() {
         </Link>
         <Link
           to="/"
-          className="bg-white flex flex-col col-span-6 md:col-span-1 p-4 rounded-lg items-start justify-between"
+          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
         >
           <div className="text-2xl text-green-400 bg-green-50 p-2 rounded-md">
             <Hourglass />
           </div>
-          <p className="text-green-400 my-4">На пробном уроке</p>
+          <p className="text-green-400 my-4">В пробном уроке</p>
           <p className="text-green-500 text-2xl">5</p>
         </Link>
         <Link
           to="/"
-          className="bg-white flex flex-col col-span-6 md:col-span-1 lg:col-span-2 p-4 rounded-lg items-start justify-between"
+          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
+        >
+          <div className="text-2xl text-sky-400 bg-sky-50 p-2 rounded-md">
+            <Cash />
+          </div>
+          <p className="text-sky-400 my-4">Оплатил в текущем месяце</p>
+          <p className="text-sky-500 text-2xl">5</p>
+        </Link>
+        <Link
+          to="/"
+          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
         >
           <div className="text-2xl text-slate-400 bg-slate-50 p-2 rounded-md">
             <Arrow90degLeft />

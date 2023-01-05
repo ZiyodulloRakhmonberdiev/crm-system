@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Input, message, Spin, Select } from "antd";
+import { Input, message, Spin, Select, DatePicker } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import axios from "../../axios/axios";
 import { MyButton } from "../../UI/Button.style";
@@ -14,6 +14,8 @@ import {
 import { fetchedTeachers, fetchingTeachers } from "../../redux/teachersSlice";
 import { fetchedRooms, fetchingRooms } from "../../redux/roomsSlice";
 import { X } from "react-bootstrap-icons";
+import moment from "moment";
+const { RangePicker } = DatePicker;
 
 export default function AddGroupForm({
   modalType,
@@ -67,6 +69,7 @@ export default function AddGroupForm({
     axios.get(`/api/teachers`).then((res) => {
       dispatch(fetchedTeachers(res?.data?.data));
     });
+    setManualMarking(false)
   }, []);
 
   // fetching rooms
@@ -76,7 +79,6 @@ export default function AddGroupForm({
       dispatch(fetchedRooms(res?.data?.data?.data));
     });
   }, []);
-
   useEffect(() => {
     if (modalType === "add") {
       setGroup({
@@ -86,7 +88,7 @@ export default function AddGroupForm({
         group_end_date: "",
         teacher_ids: [],
         room_id: "",
-        days: "",
+        days: [],
         course_id: "",
       });
       setInputFields([]);
@@ -99,14 +101,14 @@ export default function AddGroupForm({
         room,
         days,
         course,
-        teacher_ids,
+        tachers,
       } = editingGroup;
       setGroup({
         name: name,
         time_id: time?.id,
         group_start_date: group_start_date,
         group_end_date: group_end_date,
-        teacher_ids: teacher_ids,
+        teacher_ids: tachers,
         room_id: room?.id,
         days: days?.join(","),
         course_id: course?.id,
@@ -115,13 +117,14 @@ export default function AddGroupForm({
       editingGroup?.tachers?.map((item) => {
         teachers_ids.push(item.id);
       });
-      if (teacher_ids) {
+      if (tachers) {
         setInputFields([]);
         const newAddTeacher = [];
-        teacher_ids?.map((item) => {
-          newAddTeacher.push({ ...item, id: uuidv4() });
+        tachers?.map((item) => {
+          newAddTeacher.push({ ...item, id: uuidv4(), teacher_id: item?.id });
         });
         setInputFields(newAddTeacher);
+        console.log(inputFields);
       } else {
         setInputFields([]);
       }
@@ -174,7 +177,7 @@ export default function AddGroupForm({
               group_end_date: "",
               teacher_ids: [],
               room_id: "",
-              days: "",
+              days: [],
               course_id: "",
             });
             message.success("Группа успешно добавлен!");
@@ -191,6 +194,14 @@ export default function AddGroupForm({
           })
           .finally(() => setUploading(false));
       } else if (modalType === "update") {
+        const teacherIds = []
+        inputFields.map((item) => teacherIds.push({teacher_id: item?.teacher_id, flex: +item?.flex}))
+        const dayArr = []
+        if (!manualMarking) {
+          group?.days?.split(",")?.map(item => dayArr.push(+item))
+        }
+        console.log(group?.days);
+        console.log(dayArr);
         axios
           .patch(url + "/" + editingGroup?.id, {
             group_id: editingGroup?.id,
@@ -198,9 +209,9 @@ export default function AddGroupForm({
             time_id: group.time_id,
             group_start_date: group_start_date,
             group_end_date: group.group_end_date,
-            teachers: inputFields,
+            teachers: teacherIds,
             room_id: group.room_id,
-            days: manualMarking ? group.days : group.days?.split(","),
+            days: manualMarking ? group.days : dayArr,
             course_id: group.course_id,
           })
           .then((res) => {
@@ -306,6 +317,9 @@ export default function AddGroupForm({
       value: 7,
     },
   ];
+
+  console.log(group);
+
   return (
     <div>
       <form onSubmit={(e) => submit(e)}>
@@ -330,7 +344,7 @@ export default function AddGroupForm({
           className="w-full mb-4 mt-2"
           showSearch={true}
         >
-          {courses.map((course, index) => {
+          {courses?.map((course, index) => {
             return (
               <Select.Option value={course?.id} key={index}>
                 {course.name}
@@ -340,7 +354,7 @@ export default function AddGroupForm({
         </Select>
         <p>Выберите учителя и процент дохода (%)</p>
         <div className="mt-2 mb-4">
-          {inputFields.map((inputField) => (
+          {inputFields?.map((inputField) => (
             <div key={inputField?.id} className="mb-2">
               <div className="flex justify-between items-end mb-2">
                 <span>Другой учитель</span>
@@ -399,18 +413,26 @@ export default function AddGroupForm({
           </MyButton>
         )}
         <p>Дата старта группы</p>
-        <div className="flex gap-x-2 mb-4 mt-2">
+        <div className="flex gap-x-2 mb-4 mt-2"> 
           <input
             value={group?.group_start_date}
             id="group_start_date"
-            onChange={(e) => handle(e)}
+            onChange={(e) => {
+              if (group?.group_end_date !== e.target.value) {
+                handle(e)
+              } 
+            }}
             type="date"
             className="rounded-sm p-1 border border-slate-300"
           />
           <input
-            onChange={(e) => handle(e)}
+            onChange={(e) => {
+              if (group?.group_start_date !== e.target.value) {
+                handle(e)
+              } }}
             id="group_end_date"
             value={group?.group_end_date}
+            min={group?.group_start_date}
             type="date"
             className="rounded-sm p-1 border border-slate-300"
           />
@@ -420,36 +442,47 @@ export default function AddGroupForm({
           <button
             type="button"
             className="font-bold border rounded-md py-1 px-2"
-            onClick={() => setManualMarking(!manualMarking)}
+            onClick={() => {
+              setManualMarking(!manualMarking)
+              setGroup({ ...group, days: [] });
+            }}
           >
             {!manualMarking
               ? "Набрать дни вручную"
               : "Набрать дни автоматически"}
           </button>
         </p>
-        <Select
-          value={group?.days}
-          onChange={(e) => {
-            setGroup({ ...group, days: e });
-          }}
-          placeholder="Выбрать варианты"
-          className={`${manualMarking ? "hidden" : ""} w-full mb-4 mt-2`}
-        >
-          <Select.Option value={"1,3,5"}>Нечетные дни</Select.Option>
-          <Select.Option value={"2,4,6"}>Четные дни</Select.Option>
-          <Select.Option value={"1,2,3,4,5,6"}>Каждый день</Select.Option>
-          <Select.Option value={"6,7"}>Выходные</Select.Option>
-        </Select>
-        <Select
-          mode="multiple"
-          className={`${manualMarking ? "" : "hidden"} w-full mb-4 mt-2`}
-          options={options}
-          value={group?.days}
-          onChange={(e) => {
-            setGroup({ ...group, days: e });
-          }}
-          placeholder="Выбрать варианты"
-        />
+        
+        {
+          manualMarking ? (
+            <Select
+              mode="multiple"
+              className={`${manualMarking ? "" : "hidden"} w-full mb-4 mt-2`}
+              options={options}
+              value={group?.days?.length === 0 ? null : group?.days}
+              onChange={(e) => {
+                setGroup({ ...group, days: e?.filter(e => e !== undefined) });
+                console.log(e);
+              }}
+              placeholder="Выбрать варианты"
+            />
+          ) : (
+            <Select
+              value={group?.days}
+              onChange={(e) => {
+                setGroup({ ...group, days: e });
+              }}
+              placeholder="Выбрать варианты"
+              className={`${manualMarking ? "hidden" : ""} w-full mb-4 mt-2`}
+            >
+              <Select.Option value={"1,3,5"}>Нечетные дни</Select.Option>
+              <Select.Option value={"2,4,6"}>Четные дни</Select.Option>
+              <Select.Option value={"1,2,3,4,5,6"}>Каждый день</Select.Option>
+              <Select.Option value={"6,7"}>Выходные</Select.Option>
+            </Select>
+          )
+        }
+        
         <p>Выберите аудиторию</p>
         <Select
           value={group?.room_id}

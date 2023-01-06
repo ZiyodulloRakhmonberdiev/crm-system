@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 import {
   ArrowRight,
   DashLg,
   Dot,
+  Flag,
+  FlagFill,
   PencilSquare,
   Trash,
 } from "react-bootstrap-icons";
@@ -62,6 +64,7 @@ export default function GroupProfile() {
   const { attendances } = useSelector((state) => state.attendances);
   // hooks
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const params = useParams();
 
   // functions
@@ -103,6 +106,9 @@ export default function GroupProfile() {
       .catch((err) => {
         dispatch(fetchedError());
       });
+    if (!groupData?.id) {
+      navigate("/groups", { replace: true });
+    }
   }, []);
 
   // fetching teachers
@@ -127,6 +133,14 @@ export default function GroupProfile() {
         dispatch(fetchingErrorAtt());
       });
   }, [refreshing]);
+
+  //  active students in group
+  function activeStudent(studentId) {
+    axios
+      .post(`/api/groups/active/${params?.id}/${studentId}`)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  }
   return (
     <>
       <Drawer
@@ -186,7 +200,7 @@ export default function GroupProfile() {
               </IconButton>
             </div>
           </div>
-          <div className="bg-white p-4 lg:p-8">
+          <div className="bg-white p-2 lg:p-4 pt-8">
             <span className="text-white bg-cyan-400 px-4 py-2 rounded-md">
               {groupData?.name}
             </span>
@@ -263,12 +277,34 @@ export default function GroupProfile() {
               {attendances?.students?.map((student) => (
                 <div
                   key={student?.id}
-                  className="flex justify-between flex-wrap"
+                  className="flex justify-between flex-wrap items-start"
                 >
                   <Popover
                     placement="right"
                     content={
                       <div className="bg-white rounded-md p-2">
+                        {student?.active !== true && (
+                          <Tooltip title="Активировать">
+                            <button
+                              onClick={() => activeStudent(student?.id)}
+                              className="text-green-400 border-green-400 border p-1 rounded-sm w-full mb-2"
+                            >
+                              Активировать
+                            </button>
+                          </Tooltip>
+                        )}{" "}
+                        <div className="border-b mb-2 md:mb-4">
+                          <label className="text-xs text-slate-400">
+                            Статус
+                          </label>
+                          <p
+                            className={`${
+                              !student?.active ? "text-red-400" : ""
+                            }`}
+                          >
+                            {student?.active ? "Активный" : "Не активный"}
+                          </p>
+                        </div>
                         <div className="border-b mb-2 md:mb-4">
                           <label className="text-xs text-slate-400">Имя</label>
                           <p>
@@ -310,9 +346,9 @@ export default function GroupProfile() {
                       {student?.first_name} {student?.last_name}
                     </span>
                   </Popover>
-                  <a href={`tel:${student?.phone}`} className="p-1">
-                    {student?.phone}
-                  </a>
+                  <div className="flex flex-col items-center">
+                    <a href={`tel:${student?.phone}`}>{student?.phone}</a>
+                  </div>
                 </div>
               ))}
             </div>

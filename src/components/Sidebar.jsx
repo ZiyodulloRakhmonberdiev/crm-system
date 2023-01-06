@@ -28,7 +28,7 @@ export default function Sidebar() {
   const { Sider } = Layout;
   const items = [
     getItem(<Link to="/">Главная страница</Link>, "home", <House />),
-    getItem(<Link to="/leads">Заявки</Link>, "application", <Download />),
+    // getItem(<Link to="/leads">Заявки</Link>, "application", <Download />),
     getItem(<Link to="/students">Студенты</Link>, "pupils", <Mortarboard />),
     getItem(
       <Link to="/teachers">Учителя</Link>,
@@ -56,7 +56,7 @@ export default function Sidebar() {
         "expenses"
       ),
     ]),
-    getItem(<Link to="/report">Отчеты</Link>, "report", <PieChartOutlined />),
+    // getItem(<Link to="/report">Отчеты</Link>, "report", <PieChartOutlined />),
     getItem("Дополнительные", "addition", <Wallet2 />, [
       getItem(
         <Link className="flex items-center justify-start gap-3" to="/employees">

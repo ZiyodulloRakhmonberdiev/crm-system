@@ -18,6 +18,8 @@ import {
   setUserData,
 } from "../../redux/studentsSlice";
 import { fetchedCourses, fetchingCourses } from "../../redux/coursesSlice";
+import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
+import MyHeaderButton from "../../UI/MyHeaderButton.style";
 
 export default function Students() {
   // all states
@@ -193,24 +195,22 @@ export default function Students() {
 
   return (
     <div>
-      <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
-        <div className="text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md">
-          <Mortarboard />
-        </div>
-        <div className="md:flex md:gap-4 items-center">
-          <p className="text-cyan-400 text-2xl">Студенты</p>
-          <p className="text-cyan-400">Количество: {students?.data?.length} </p>
-        </div>
-        <MyButton
-          onClick={() => {
-            setVisible(!visible);
-            setModalType("add");
-          }}
-          className="md:ml-auto sm:w-1/3 md:w-auto"
-        >
-          Добавить
-        </MyButton>
-      </header>
+      <HeaderWrapper>
+        <HeaderItem type="secondary">
+          <div className="header__icon">
+            <Mortarboard />
+          </div>
+          <div className="header__content">
+            <p className="header__title">Студенты</p>
+            <p>Количество: </p>
+            <p className="header__result"> {students?.data?.length}</p>
+          </div>
+          <MyHeaderButton
+            setModalType={() => setModalType("add")}
+            setVisible={() => setVisible(!visible)}
+          />
+        </HeaderItem>
+      </HeaderWrapper>
       <div className="flex flex-wrap gap-2 mb-8">
         <div className="w-42">
           <Input.Search

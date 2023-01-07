@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 import {
   ArrowRight,
   DashLg,
   Dot,
+  Flag,
+  FlagFill,
   PencilSquare,
   Trash,
 } from "react-bootstrap-icons";
@@ -47,6 +49,7 @@ import {
   fetchingErrorAtt,
 } from "../../redux/attendancesSlice";
 import { setUserData } from "../../redux/studentsSlice";
+import InProcess from "../../UI/InProcess.style";
 
 export default function GroupProfile() {
   // states
@@ -54,14 +57,16 @@ export default function GroupProfile() {
   const [visible, setVisible] = useState(false);
   const [activeGroup, setActiveGroup] = useState(false);
   const [modalType, setModalType] = useState("add");
-  const [refreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [studentActivating, setStudentActivating] = useState(false)
   const { groupData } = useSelector((state) => state.groups);
   const { teachers } = useSelector((state) => state.teachers);
   const { courses, coursesData } = useSelector((state) => state.courses);
   const { attendances } = useSelector((state) => state.attendances);
   // hooks
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const params = useParams();
 
   // functions
@@ -103,7 +108,10 @@ export default function GroupProfile() {
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, []);
+    if (!groupData?.id) {
+      navigate("/groups", { replace: true });
+    }
+  }, [refreshing]);
 
   // fetching teachers
   useEffect(() => {
@@ -111,7 +119,7 @@ export default function GroupProfile() {
     axios.get(`/api/teachers`).then((res) => {
       dispatch(fetchedTeachers(res?.data?.data));
     });
-  }, []);
+  }, [refreshing]);
 
   // fetching students
   useEffect(() => {
@@ -127,6 +135,20 @@ export default function GroupProfile() {
         dispatch(fetchingErrorAtt());
       });
   }, [refreshing]);
+
+  //  active students in group
+  function activeStudent(studentId) {
+    setStudentActivating(true)
+    axios
+      .post(`/api/groups/active/${params?.id}/${studentId}`)
+      .then((res) => {
+        setRefreshing(!refreshing)
+      })
+      .catch((err) => {
+        message.error("Произошла ошибка! Попробуйте еще раз!")
+      })
+      .finally(() => setStudentActivating(false))
+  }
   return (
     <>
       <Drawer
@@ -170,7 +192,7 @@ export default function GroupProfile() {
         ))}
       </div>
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="flex flex-col drop-shadow-md hover:drop-shadow-2xl transition col-span-1">
+        <div className="flex flex-col drop-shadow-md hover:drop-shadow-lg transition col-span-1">
           <div className="absolute top-4 right-4">
             <div className="flex flex-col gap-2">
               <IconButton
@@ -186,8 +208,8 @@ export default function GroupProfile() {
               </IconButton>
             </div>
           </div>
-          <div className="bg-white p-4 lg:p-8">
-            <span className="text-white bg-cyan-400 px-4 py-2 rounded-md">
+          <div className="bg-white p-2 lg:p-4 lg:pt-6">
+            <span className="text-white bg-cyan-400 px-4 py-2 rounded-md text-lg">
               {groupData?.name}
             </span>
             <div className="grid mb-2 md:mb-4 mt-4">
@@ -263,12 +285,35 @@ export default function GroupProfile() {
               {attendances?.students?.map((student) => (
                 <div
                   key={student?.id}
-                  className="flex justify-between flex-wrap"
+                  className={` ${
+                    student?.active === true
+                      ? "hover:bg-green-100"
+                      : "hover:bg-red-100"
+                  } flex justify-between flex-wrap items-center transition p-1`}
                 >
                   <Popover
                     placement="right"
                     content={
                       <div className="bg-white rounded-md p-2">
+                        {student?.active !== true && (
+                            <Spin spinning={studentActivating}>
+                              <MyButton onClick={() => activeStudent(student?.id)}>
+                                Активировать
+                              </MyButton>
+                            </Spin>
+                        )}
+                        <div className="border-b mt-2 mb-2 md:mb-4">
+                          <label className="text-xs text-slate-400">
+                            Статус
+                          </label>
+                          <p
+                            className={`${
+                              !student?.active ? "text-red-400" : ""
+                            }`}
+                          >
+                            {student?.active ? "Активный" : "Не активный"}
+                          </p>
+                        </div>
                         <div className="border-b mb-2 md:mb-4">
                           <label className="text-xs text-slate-400">Имя</label>
                           <p>
@@ -306,13 +351,19 @@ export default function GroupProfile() {
                       </div>
                     }
                   >
-                    <span className="bg-slate-100 rounded-sm p-1">
+                    <span
+                      className={`${
+                        student?.active === true
+                          ? "text-green-400"
+                          : "text-red-400"
+                      } `}
+                    >
                       {student?.first_name} {student?.last_name}
                     </span>
                   </Popover>
-                  <a href={`tel:${student?.phone}`} className="p-1">
-                    {student?.phone}
-                  </a>
+                  <div className="flex flex-col items-center">
+                    <a href={`tel:${student?.phone}`}>{student?.phone}</a>
+                  </div>
                 </div>
               ))}
             </div>
@@ -339,9 +390,7 @@ export default function GroupProfile() {
             </div>
           </Tabs.TabPane>
           <Tabs.TabPane tab="История" key="item-2">
-            <div className="rounded-sm flex flex-wrap gap-4 bg-pink-200 p-4 justify-between items-center">
-              Ничего не найдено
-            </div>
+            <InProcess />
           </Tabs.TabPane>
         </Tabs>
       </div>

@@ -43,6 +43,7 @@ export default function Login() {
         JSON.stringify({
           phone: "+998" + phone?.split(" ").join(""),
           password,
+          role: "Limited Administrator"
         }),
         {
           headers: { "Content-Type": "application/json" },

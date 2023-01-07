@@ -1,0 +1,20 @@
+.attendance__btn-group .have,
+.attendance__btn-group .havenot {
+  opacity: 0;
+}
+
+.attendance__btn-group:hover .have {
+  opacity: 100;
+}
+
+.attendance__btn-group:hover .havenot {
+  opacity: 100;
+}
+
+.attendance__cancel-btn-wrapper .attendance__cancel-btn {
+  display: none;
+}
+
+.attendance__cancel-btn-wrapper:hover .attendance__cancel-btn {
+  display: block;
+}

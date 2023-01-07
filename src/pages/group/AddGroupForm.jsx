@@ -318,7 +318,7 @@ export default function AddGroupForm({
     },
   ];
 
-  console.log(group);
+  
 
   return (
     <div>

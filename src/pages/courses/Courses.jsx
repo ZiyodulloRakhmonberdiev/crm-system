@@ -15,6 +15,8 @@ import {
   fetchedError,
   setCoursesData,
 } from "../../redux/coursesSlice";
+import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
+import MyHeaderButton from "../../UI/MyHeaderButton.style";
 
 export default function Courses() {
   const [editingCourse, setEditingCourse] = useState(null);
@@ -90,31 +92,29 @@ export default function Courses() {
       .then((res) => {
         dispatch(fetchedCourses(res?.data?.data));
       })
-      .catch((err) => {
+      .catch(() => {
         dispatch(fetchedError());
       })
       .finally(() => setFetchLoading(false));
   }, [refreshCourses]);
   return (
     <div>
-      <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
-        <div className="text-2xl text-pink-400 bg-pink-50 p-2 rounded-md">
-          <Palette2 />
-        </div>
-        <div className="md:flex md:gap-4 items-center">
-          <p className="text-pink-400 text-2xl">Курсы</p>
-          <p className="text-pink-400">Количество: {courses.length}</p>
-        </div>
-        <MyButton
-          onClick={() => {
-            setVisible(!visible);
-            setModalType("add");
-          }}
-          className="md:ml-auto"
-        >
-          Добавить
-        </MyButton>
-      </header>
+      <HeaderWrapper>
+        <HeaderItem type="secondary">
+          <div className="header__icon">
+            <Palette2 />
+          </div>
+          <div className="header__content">
+            <p className="header__title">Курсы</p>
+            <p>Количество: </p>
+            <p className="header__result">{courses?.length}</p>
+          </div>
+          <MyHeaderButton
+            setModalType={() => setModalType("add")}
+            setVisible={() => setVisible(!visible)}
+          />
+        </HeaderItem>
+      </HeaderWrapper>
       <Drawer
         open={visible}
         title={modalType === "add" ? "Добавить курс" : "Редактировать"}

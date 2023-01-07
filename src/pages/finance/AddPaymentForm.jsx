@@ -12,7 +12,7 @@ import {
   fetchingStudentJoinedGroups,
   fetchingStudents,
 } from "../../redux/studentsSlice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export default function AddPaymentForm({ visible, setVisiblePayment }) {
   const [uploading, setUploading] = useState(false);
@@ -22,6 +22,8 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
   const { students, studentJoinedGroups, loadingJoinedGroups } = useSelector(
     (state) => state.students
   );
+  const location = useLocation()
+  const params = useParams()
   const [payment, setPayment] = useState({
     student_id: "",
     group_id: "",
@@ -32,7 +34,7 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
   });
   useEffect(() => {
     setPayment({
-      student_id: "",
+      student_id: location?.pathname?.includes("/students/profile") ? +params?.id : "",
       group_id: "",
       amount: "",
       payment_type: "",

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { v4 as uuidv4 } from "uuid";
@@ -10,7 +9,6 @@ import {
   fetchingExpenses,
   fetchedExpenses,
   fetchedError,
-  fetchedExpensesAmount,
 } from "../../redux/expensesSlice";
 import axios from "../../axios/axios";
 import {
@@ -20,6 +18,7 @@ import {
 import { MyButton } from "../../UI/Button.style";
 import AddExpensesForm from "./AddExpensesForm";
 import { IconButton } from "../../UI/IconButton.style";
+import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
 
 export default function Expenses() {
   // states
@@ -171,19 +170,6 @@ export default function Expenses() {
       });
   }, [refreshExpenses, currentPage, dispatch]);
 
-  // fetching all expenses amount
-  // useEffect(() => {
-  //   dispatch(fetchingExpensesAmount());
-  //   axios
-  //     .get(`/api/expenses/amount?from=2022-12-01&to=2022-12-30`)
-  //     .then((res) => {
-  //       dispatch(fetchedExpensesAmount(res?.data?.data));
-  //     })
-  //     .catch((err) => {
-  //       dispatch(fetchedError());
-  //     });
-  // }, [currentPage, dispatch]);
-
   // fetching employees
   useEffect(() => {
     dispatch(fetchingEmployees());
@@ -212,23 +198,22 @@ export default function Expenses() {
   };
   return (
     <div>
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="lg:w-3/4">
-          <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
-            <div className="text-2xl text-blue-400 bg-blue-50 p-2 rounded-md">
-              <Coin />
-            </div>
-            <div className="md:flex md:gap-4 items-center">
-              <p className="text-blue-400 text-2xl">Учет расходов</p>
-              <p className="text-blue-400">
-                Суммарные расходы:{"  "}
-                <span className="text-xl">
-                  {Number(expensesAmount)?.toLocaleString()}
-                </span>{" "}
-                сум
-              </p>
-            </div>
-          </header>
+      <div className="flex flex-col xl:flex-row gap-6">
+        <div className="xl:w-3/4">
+          <HeaderWrapper>
+            <HeaderItem type="danger">
+              <div className="header__icon">
+                <Coin />
+              </div>
+              <div className="header__content">
+                <p className="header__title">Учет расходов</p>
+                <p>Общая сумма: </p>
+                <p className="header__result">
+                  {Number(expensesAmount)?.toLocaleString()} сум
+                </p>
+              </div>
+            </HeaderItem>
+          </HeaderWrapper>
           <div className="flex gap-2 flex-col sm:flex-row flex-wrap mb-4">
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Дата от</label>
@@ -301,7 +286,7 @@ export default function Expenses() {
             />
           </center>
         </div>
-        <div className="lg:w-1/4 bg-white p-4 rounded-md h-full pb-12">
+        <div className="xl:w-1/4 bg-white p-4 rounded-md h-full pb-12">
           <AddExpensesForm />
         </div>
       </div>

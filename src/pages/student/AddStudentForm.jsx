@@ -264,6 +264,17 @@ export default function AddStudentForm({
           value={student?.birthday}
           className="p-1 mb-4 mt-2 rounded-sm border border-slate-300"
         />
+        <p>Адрес</p>
+        <Input
+          required
+          id="address"
+          onChange={(e) => {
+            handle(e);
+          }}
+          type="text"
+          value={student?.address}
+          className="mb-4 mt-2"
+        />
         <p>Пол</p>
         <Radio.Group value={student?.gender} className="mb-4 mt-2">
           <Radio
@@ -312,14 +323,14 @@ export default function AddStudentForm({
           >
             <Telephone />
           </IconButton>
-          <IconButton
+          {/* <IconButton
             onClick={() => setShowAddressField(!showAddressField)}
             color="primary"
             className="mb-4 mt-2"
             type="button"
           >
             <GeoAlt />
-          </IconButton>
+          </IconButton> */}
         </div>
         {inputFields.map((inputField) => (
           <div key={inputField.id}>
@@ -363,7 +374,7 @@ export default function AddStudentForm({
             </InputMask>
           </div>
         ))}
-        {showAddressField && (
+        {/* {showAddressField && (
           <div>
             <div className="flex justify-between items-end">
               <p>Адрес</p>
@@ -386,7 +397,7 @@ export default function AddStudentForm({
               className="mb-4 mt-2"
             />
           </div>
-        )}
+        )} */}
         <Spin spinning={uploading}>
           <MyButton htmlType="submit" color="primary">
             Отправить

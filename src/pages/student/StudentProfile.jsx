@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 import {
@@ -36,9 +37,9 @@ import {
   fetchingStudentPayments,
   setUserGroupData,
 } from "../../redux/studentsSlice";
-import { Link, useNavigate, useParams } from "react-router-dom";
 import AddStudentForm from "./AddStudentForm";
 import AddPaymentForm from "../finance/AddPaymentForm";
+import InProcess from "../../UI/InProcess.style";
 
 export default function StudentProfile() {
   // states
@@ -47,6 +48,7 @@ export default function StudentProfile() {
   const [refreshPayments, setRefreshPayments] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
   const [visible, setVisible] = useState(false);
+  // const [showGroupDetails, setShowGroupDetails] = useState(false);
   const [visiblePayment, setVisiblePayment] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
@@ -61,7 +63,7 @@ export default function StudentProfile() {
     start_date: "",
     student_id: userData?.id,
   });
-
+  const [refreshing, setRefreshing] = useState(false)
   // hooks
   const params = useParams();
   const dispatch = useDispatch();
@@ -161,7 +163,7 @@ export default function StudentProfile() {
       })
       .finally(setRefreshPayments(false));
     if (!userData?.id) {
-      navigate("/", { replace: true });
+      navigate("/students", { replace: true });
     }
   }, [refreshPayments, currentPage]);
 
@@ -170,7 +172,8 @@ export default function StudentProfile() {
     axios.get(`/api/students/${params?.id}/groups`).then((res) => {
       setStudentGroups(res?.data);
     });
-  }, []);
+  }, [refreshing]);
+
   function submit(e) {
     e.preventDefault();
     const { group_id, start_date } = group;
@@ -189,6 +192,7 @@ export default function StudentProfile() {
           });
           message.success("Пользователь успешно добавлен!");
           // dispatch(refreshStudentsData());
+          setRefreshing(!refreshing)
         })
         .catch((err) => {
           if (err?.response?.data?.message === "student id already exists") {
@@ -253,7 +257,13 @@ export default function StudentProfile() {
           </div>
           <div className="grid mb-2 md:mb-4">
             <label className="mb-2">Баланс</label>
-            <p className="text-red-400">{userData?.balance} сум</p>
+            <p
+              className={`${
+                userData?.balance >= 0 ? "text-green-400" : "text-red-400"
+              }`}
+            >
+              {Number(userData?.balance).toLocaleString()} сум
+            </p>
           </div>
           <div className="grid mb-2 md:mb-4">
             <label className="mb-2">Контактные данные</label>
@@ -286,9 +296,6 @@ export default function StudentProfile() {
             >
               <EditOutlined />
             </IconButton>
-            <IconButton color="primary">
-              <Envelope />
-            </IconButton>
             <IconButton
               color="success"
               onClick={() => setVisiblePayment(!visiblePayment)}
@@ -297,9 +304,6 @@ export default function StudentProfile() {
             </IconButton>
             <IconButton color="primary" onClick={showModal}>
               <TeamOutlined />
-            </IconButton>
-            <IconButton color="success">
-              <Flag />
             </IconButton>
             <IconButton color="danger">
               <Trash />
@@ -401,34 +405,42 @@ export default function StudentProfile() {
       <Tabs className="col-span-6 md:col-span-3 lg:col-span-4">
         <Tabs.TabPane tab="Профиль" key="item-1">
           <label className="text-lg block w-full mb-2">Группы</label>
-          <div className="grid lg:grid-cols-2 gap-2 mb-4">
-            {studentGroups?.data?.map((group) => (
-              <div
-                className="flex justify-between flex-col sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
+          <div className="flex flex-wrap justify-start xl:grid w-full xl:grid-cols-2 gap-2 mb-4 relative">
+            {studentGroups?.data?.sort((a, b) => a?.id - b?.id)?.map((group, i) => {
+              if (group?.id == studentGroups?.data?.sort((a, b) => a?.id - b?.id)[i+1]?.id) {
+                return null
+              } else {
+                return (
+                  <div
+                className="flex justify-start sm:justify-between flex-col items-start sm:items-center sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
                 key={group?.id}
               >
-                <Link
-                  to={`/groups/${group?.id}`}
-                  onClick={() =>
-                    dispatch(
-                      setGroupData(groups?.find((x) => x?.id === group?.id))
-                    )
-                  }
-                  className="font-bold text-md text-cyan-500"
-                >
-                  {group?.name}
-                </Link>
-                {group?.active ? (
-                  <span className="font-bold text-green-400">
-                    Группа активна
-                  </span>
-                ) : (
-                  <span className="font-bold text-red-400">
-                    Группа неактивна
-                  </span>
-                )}
+                <div className="flex flex-col justify-start gap-1 w-full">
+                  <Link
+                    to={`/groups/${group?.id}`}
+                    onClick={() =>
+                      dispatch(
+                        setGroupData(groups?.find((x) => x?.id === group?.id))
+                      )
+                    }
+                    className="font-bold text-xl text-cyan-500"
+                  >
+                    {group?.name}
+                  </Link>
+                  {group?.active ? (
+                    <span className="font-bold text-green-400">
+                      Группа активна
+                    </span>
+                  ) : (
+                    <span className="font-bold text-red-400">
+                      Группа неактивна
+                    </span>
+                  )}
+                </div>
               </div>
-            ))}
+                )
+              }
+            })}
           </div>
           <label className="text-lg block w-full">Платежи</label>
           <Table
@@ -456,7 +468,7 @@ export default function StudentProfile() {
           </center>
         </Tabs.TabPane>
         <Tabs.TabPane tab="История" key="item-2">
-          <div className="bg-orange-50 p-4">Ничего не найдено</div>
+          <InProcess />
         </Tabs.TabPane>
       </Tabs>
     </div>

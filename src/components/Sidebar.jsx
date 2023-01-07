@@ -13,6 +13,7 @@ import {
   Git,
   Coin,
   CurrencyExchange,
+  ExclamationCircle,
 } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
@@ -28,7 +29,7 @@ export default function Sidebar() {
   const { Sider } = Layout;
   const items = [
     getItem(<Link to="/">Главная страница</Link>, "home", <House />),
-    getItem(<Link to="/leads">Заявки</Link>, "application", <Download />),
+    // getItem(<Link to="/leads">Заявки</Link>, "application", <Download />),
     getItem(<Link to="/students">Студенты</Link>, "pupils", <Mortarboard />),
     getItem(
       <Link to="/teachers">Учителя</Link>,
@@ -55,8 +56,17 @@ export default function Sidebar() {
         </Link>,
         "expenses"
       ),
+      getItem(
+        <Link
+          className="flex items-center justify-start gap-3"
+          to="/finance/debtors"
+        >
+          <ExclamationCircle /> Должники
+        </Link>,
+        "debtors"
+      ),
     ]),
-    getItem(<Link to="/report">Отчеты</Link>, "report", <PieChartOutlined />),
+    // getItem(<Link to="/report">Отчеты</Link>, "report", <PieChartOutlined />),
     getItem("Дополнительные", "addition", <Wallet2 />, [
       getItem(
         <Link className="flex items-center justify-start gap-3" to="/employees">

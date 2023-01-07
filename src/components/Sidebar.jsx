@@ -13,6 +13,7 @@ import {
   Git,
   Coin,
   CurrencyExchange,
+  ExclamationCircle,
 } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
@@ -54,6 +55,15 @@ export default function Sidebar() {
           <CurrencyExchange /> Учет расходов
         </Link>,
         "expenses"
+      ),
+      getItem(
+        <Link
+          className="flex items-center justify-start gap-3"
+          to="/finance/debtors"
+        >
+          <ExclamationCircle /> Должники
+        </Link>,
+        "debtors"
       ),
     ]),
     // getItem(<Link to="/report">Отчеты</Link>, "report", <PieChartOutlined />),

@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
 
 import { Card, Dropdown, Space, Avatar, Tabs, Table } from "antd";
 import { ArrowRight } from "react-bootstrap-icons";
 import photo from "../../assets/img/Default-avatar.jpg";
+import InProcess from "../../UI/InProcess.style";
 
 export default function TeacherProfile() {
   const { Meta } = Card;
@@ -93,21 +93,7 @@ export default function TeacherProfile() {
                 <label className="text-slate-600 mb-1">Роли:</label>
                 <div className="flex flex-wrap gap-2">
                   <span className="px-2 py-0.5 rounded-md text-violet-500 border border-violet-500 text-sm">
-                    CEO
-                  </span>
-                  <span className="px-2 py-0.5 rounded-md text-violet-500 border border-violet-500 text-sm">
-                    English teacher
-                  </span>
-                  <span className="px-2 py-0.5 rounded-md text-violet-500 border border-violet-500 text-sm">
-                    Accounter
-                  </span>
-                </div>
-              </div>
-              <div className="grid mb-2 md:mb-4">
-                <label className="text-slate-600 mb-1">Филиалы:</label>
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-2 py-0.5 rounded-md text-cyan-500 border border-cyan-500 text-sm">
-                    Saodat
+                    Teacher
                   </span>
                 </div>
               </div>
@@ -115,7 +101,7 @@ export default function TeacherProfile() {
           </div>
           <div>
             <p className="text-xl font-bold mb-4">Группы</p>
-            <div className="grid gap-2">
+            {/* <div className="grid gap-2">
               <div className="rounded-sm flex flex-wrap gap-4 bg-orange-50 p-4 justify-between items-center">
                 <div className="grid gap-0.5">
                   <div>
@@ -136,9 +122,10 @@ export default function TeacherProfile() {
                   </span>
                 </div>
               </div>
-            </div>
+            </div> */}
+            <p className="text-xl bg-white p-4">В разработке</p>
           </div>
-          <div>
+          {/* <div>
             <p className="text-xl font-bold mb-4">О группе</p>
             <div className="rounded-sm bg-white p-4 drop-shadow">
               <div className="grid md:grid-cols-2 border-b mb-2 md:mb-4">
@@ -169,15 +156,16 @@ export default function TeacherProfile() {
                 </Link>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </Tabs.TabPane>
       <Tabs.TabPane tab="Зарплата" key="item-2">
-        <Table
+        <InProcess />
+        {/* <Table
           columns={columns}
           className="overflow-auto"
           rowKey={uuidv4()}
-        ></Table>
+        ></Table> */}
       </Tabs.TabPane>
     </Tabs>
   );

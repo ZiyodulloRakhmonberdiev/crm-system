@@ -39,6 +39,7 @@ import {
 } from "../../redux/studentsSlice";
 import AddStudentForm from "./AddStudentForm";
 import AddPaymentForm from "../finance/AddPaymentForm";
+import InProcess from "../../UI/InProcess.style";
 
 export default function StudentProfile() {
   // states
@@ -239,26 +240,6 @@ export default function StudentProfile() {
     dispatch(changeUpdateUserData(data));
   };
 
-  // active students in group
-  // function activeStudent(groupId) {
-  //   axios
-  //     .post(`/api/groups/active/${groupId}/${params?.id}`)
-  //     .then((res) => console.log(res))
-  //     .catch((err) => console.log(err));
-  // }
-  // const [studentsActivity, setStudentsActivity] = useState([]);
-  // const moreDetails = (groupId) => {
-  //   axios
-  //     .get(
-  //       `/api/groups/${groupId}/attendance?from=${groupData?.group_start_date}&to=${groupData?.group_end_date}`
-  //     )
-  //     .then((res) => {
-  //       setStudentsActivity(res?.data?.students);
-  //     })
-  //     .catch((err) => console.log(err));
-  // };
-
-  // console.log(groupData);
   return (
     <div className="grid grid-cols-6 gap-8">
       <div className="col-span-6 md:col-span-3 lg:col-span-2">
@@ -313,9 +294,6 @@ export default function StudentProfile() {
             >
               <EditOutlined />
             </IconButton>
-            {/* <IconButton color="primary">
-              <Envelope />
-            </IconButton> */}
             <IconButton
               color="success"
               onClick={() => setVisiblePayment(!visiblePayment)}
@@ -325,9 +303,6 @@ export default function StudentProfile() {
             <IconButton color="primary" onClick={showModal}>
               <TeamOutlined />
             </IconButton>
-            {/* <IconButton color="success">
-              <Flag />
-            </IconButton> */}
             <IconButton color="danger">
               <Trash />
             </IconButton>
@@ -431,11 +406,6 @@ export default function StudentProfile() {
           <div className="flex flex-wrap justify-start xl:grid w-full xl:grid-cols-2 gap-2 mb-4 relative">
             {studentGroups?.data?.map((group) => (
               <div
-                // className={`${
-                //   showGroupDetails
-                //     ? "grid"
-                //     : "flex justify-start sm:justify-between flex-col items-start sm:items-center sm:flex-row"
-                // } gap-2 p-4 bg-white drop-shadow-md rounded-sm`}
                 className="flex justify-start sm:justify-between flex-col items-start sm:items-center sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
                 key={group?.id}
               >
@@ -460,65 +430,7 @@ export default function StudentProfile() {
                       Группа неактивна
                     </span>
                   )}
-                  {/* <button
-                    onClick={() => {
-                      dispatch(
-                        setGroupData(groups?.find((x) => x?.id === group?.id))
-                      );
-                      moreDetails(group?.id);
-                      setShowGroupDetails(!showGroupDetails);
-                    }}
-                    className="px-2 py-1 rounded-md"
-                  >
-                    Все детали
-                  </button> */}
                 </div>
-                {/* {studentsActivity.map((student) => {
-                  const studentIsNotActive =
-                    student?.id === params?.id && student?.active === false;
-                  studentIsNotActive && (
-                    <div>
-                      <MyButton
-                        onClick={() => activeStudent(group?.id)}
-                        color="success"
-                      >
-                        Активировать студента
-                      </MyButton>
-                    </div>
-                  );
-                })}
-                {showGroupDetails && (
-                  <div className="w-full">
-                    <div className="flex justify-between">
-                      <label>Курсы:</label>
-                      <p>{groupData?.course?.name}</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <label>Кабинеты::</label>
-                      <p>{groupData?.room?.name}</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <label>Время:</label>
-                      <p>{groupData?.time?.time}</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <label>Дата начала группы</label>
-                      <p>{groupData?.group_start_date}</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <label>Дата следующего платежа</label>
-                      <p>{groupData?.next_payment_date}</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <label>Дата закрытия группы</label>
-                      <p className="flex gap-1">
-                        {groupData?.tachers?.map((teacher) => (
-                          <span>{teacher?.name}</span>
-                        ))}
-                      </p>
-                    </div>
-                  </div>
-                )} */}
               </div>
             ))}
           </div>
@@ -547,9 +459,9 @@ export default function StudentProfile() {
             />
           </center>
         </Tabs.TabPane>
-        {/* <Tabs.TabPane tab="История" key="item-2">
-          <div className="bg-orange-50 p-4">Ничего не найдено</div>
-        </Tabs.TabPane> */}
+        <Tabs.TabPane tab="История" key="item-2">
+          <InProcess />
+        </Tabs.TabPane>
       </Tabs>
     </div>
   );

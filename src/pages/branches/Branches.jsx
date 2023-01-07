@@ -13,6 +13,8 @@ import {
   fetchedBranches,
   fetchedError,
 } from "../../redux/branchesSlice";
+import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
+import MyHeaderButton from "../../UI/MyHeaderButton.style";
 
 export default function Branches() {
   const [editingBranch, setEditingBranch] = useState(null);
@@ -70,24 +72,22 @@ export default function Branches() {
   }, [refreshBranches]);
   return (
     <div>
-      <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
-        <div className="text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md">
-          <Palette2 />
-        </div>
-        <div className="md:flex md:gap-4 items-center">
-          <p className="text-cyan-400 text-2xl">Филиалы</p>
-          <p className="text-cyan-400">Количество: {branches.length} </p>
-        </div>
-        <MyButton
-          onClick={() => {
-            setVisible(!visible);
-            setModalType("add");
-          }}
-          className="md:ml-auto"
-        >
-          Добавить
-        </MyButton>
-      </header>
+      <HeaderWrapper>
+        <HeaderItem type="secondary">
+          <div className="header__icon">
+            <Palette2 />
+          </div>
+          <div className="header__content">
+            <p className="header__title">Филиалы</p>
+            <p>Количество: </p>
+            <p className="header__result">{branches.length}</p>
+          </div>
+          <MyHeaderButton
+            setModalType={() => setModalType("add")}
+            setVisible={() => setVisible(!visible)}
+          />
+        </HeaderItem>
+      </HeaderWrapper>
       <Drawer
         open={visible}
         title={
@@ -106,7 +106,7 @@ export default function Branches() {
         />
       </Drawer>
       <Spin spinning={fetchLoading}>
-        <div className="grid sm:w-1/2 gap-6">
+        <div className="grid sm:w-2/3 lg:w-1/2 gap-6">
           {branches?.map((branch) => (
             <div
               key={branch?.id}

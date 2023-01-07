@@ -23,7 +23,7 @@ export const MyMessage = styled.div`
         `;
       case "warning":
         return `
-        background-color:  rgb(254 215 170);
+        background-color:  rgb(255 237 213);
         color:  rgb(249 115 22);
         `;
     }

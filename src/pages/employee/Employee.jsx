@@ -16,6 +16,8 @@ import {
   fetchedError,
   setEmployeesData,
 } from "../../redux/employeesSlice";
+import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
+import MyHeaderButton from "../../UI/MyHeaderButton.style";
 
 export default function Employees() {
   const [editingEmployee, setEditingEmployee] = useState(null);
@@ -156,24 +158,22 @@ export default function Employees() {
   }, [refreshEmployees, currentPage]);
   return (
     <div>
-      <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
-        <div className="text-2xl text-blue-400 bg-blue-50 p-2 rounded-md">
-          <Layers />
-        </div>
-        <div className="md:flex md:gap-4 items-center">
-          <p className="text-blue-400 text-2xl">Сотрудники</p>
-          <p className="text-blue-400">Количество: {employees.length} </p>
-        </div>
-        <MyButton
-          onClick={() => {
-            setVisible(!visible);
-            setModalType("add");
-          }}
-          className="md:ml-auto"
-        >
-          Добавить
-        </MyButton>
-      </header>
+      <HeaderWrapper>
+        <HeaderItem type="secondary">
+          <div className="header__icon">
+            <Layers />
+          </div>
+          <div className="header__content">
+            <p className="header__title">Сотрудники</p>
+            <p>Количество: </p>
+            <p className="header__result"> {employees?.length}</p>
+          </div>
+          <MyHeaderButton
+            setModalType={() => setModalType("add")}
+            setVisible={() => setVisible(!visible)}
+          />
+        </HeaderItem>
+      </HeaderWrapper>
       <Drawer
         open={visible}
         title={

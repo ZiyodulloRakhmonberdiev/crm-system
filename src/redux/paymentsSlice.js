@@ -4,6 +4,7 @@ const initialState = {
   payments: [],
   paymentsAmount: "",
   profitAmount: "",
+  debtsAmount: "",
   loading: false,
   error: false,
 };
@@ -15,12 +16,16 @@ const paymentsSlice = createSlice({
     fetchingPayments: (state) => {
       state.loading = true;
     },
-    // fetchingProfitAmount: (state) => {
-    //   state.loading = true;
-    // },
+    fetchingDebts: (state) => {
+      state.loading = true;
+    },
     fetchedPayments: (state, action) => {
       state.loading = false;
       state.payments = action.payload;
+    },
+    fetchedDebts: (state, action) => {
+      state.loading = false;
+      state.debtsAmount = action.payload;
     },
     fetchingPaymentsAmount: (state) => {
       state.loading = true;
@@ -42,7 +47,9 @@ const paymentsSlice = createSlice({
 
 export const {
   fetchingPayments,
+  fetchingDebts,
   fetchedPayments,
+  fetchedDebts,
   fetchingPaymentsAmount,
   fetchedPaymentsAmount,
   fetchedProfitAmount,

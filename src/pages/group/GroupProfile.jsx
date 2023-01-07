@@ -49,6 +49,7 @@ import {
   fetchingErrorAtt,
 } from "../../redux/attendancesSlice";
 import { setUserData } from "../../redux/studentsSlice";
+import InProcess from "../../UI/InProcess.style";
 
 export default function GroupProfile() {
   // states
@@ -184,7 +185,7 @@ export default function GroupProfile() {
         ))}
       </div>
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="flex flex-col drop-shadow-md hover:drop-shadow-2xl transition col-span-1">
+        <div className="flex flex-col drop-shadow-md hover:drop-shadow-lg transition col-span-1">
           <div className="absolute top-4 right-4">
             <div className="flex flex-col gap-2">
               <IconButton
@@ -200,8 +201,8 @@ export default function GroupProfile() {
               </IconButton>
             </div>
           </div>
-          <div className="bg-white p-2 lg:p-4 pt-8">
-            <span className="text-white bg-cyan-400 px-4 py-2 rounded-md">
+          <div className="bg-white p-2 lg:p-4 lg:pt-6">
+            <span className="text-white bg-cyan-400 px-4 py-2 rounded-md text-lg">
               {groupData?.name}
             </span>
             <div className="grid mb-2 md:mb-4 mt-4">
@@ -277,23 +278,22 @@ export default function GroupProfile() {
               {attendances?.students?.map((student) => (
                 <div
                   key={student?.id}
-                  className="flex justify-between flex-wrap items-start"
+                  className={` ${
+                    student?.active === true
+                      ? "hover:bg-green-100"
+                      : "hover:bg-red-100"
+                  } flex justify-between flex-wrap items-center transition p-1`}
                 >
                   <Popover
                     placement="right"
                     content={
                       <div className="bg-white rounded-md p-2">
                         {student?.active !== true && (
-                          <Tooltip title="Активировать">
-                            <button
-                              onClick={() => activeStudent(student?.id)}
-                              className="text-green-400 border-green-400 border p-1 rounded-sm w-full mb-2"
-                            >
-                              Активировать
-                            </button>
-                          </Tooltip>
-                        )}{" "}
-                        <div className="border-b mb-2 md:mb-4">
+                          <MyButton onClick={() => activeStudent(student?.id)}>
+                            Активировать
+                          </MyButton>
+                        )}
+                        <div className="border-b mt-2 mb-2 md:mb-4">
                           <label className="text-xs text-slate-400">
                             Статус
                           </label>
@@ -342,7 +342,13 @@ export default function GroupProfile() {
                       </div>
                     }
                   >
-                    <span className="bg-slate-100 rounded-sm p-1">
+                    <span
+                      className={`${
+                        student?.active === true
+                          ? "text-green-400"
+                          : "text-red-400"
+                      } `}
+                    >
                       {student?.first_name} {student?.last_name}
                     </span>
                   </Popover>
@@ -375,9 +381,7 @@ export default function GroupProfile() {
             </div>
           </Tabs.TabPane>
           <Tabs.TabPane tab="История" key="item-2">
-            <div className="rounded-sm flex flex-wrap gap-4 bg-pink-200 p-4 justify-between items-center">
-              Ничего не найдено
-            </div>
+            <InProcess />
           </Tabs.TabPane>
         </Tabs>
       </div>

@@ -1,225 +1,190 @@
-import { Table, Modal, Input, Select } from 'antd'
-import { useState } from 'react'
-import { CashStack, Chat, ExclamationCircle } from 'react-bootstrap-icons'
-export default function Debtors () {
-  // Search functions which is in the heading on the page
-  const [searchText, setSearchText] = useState('')
-  const [searchDebet, setSearchDebet] = useState('')
-  const [isEditing, setIsEditing] = useState(false)
-  const [editingStudent, setEditingStudent] = useState(null)
-  const [dataSource, setDataSource] = useState([
-    {
-      id: 1,
-      name: 'Umar Abdulazizov',
-      course: ['android', 'english'],
-      comment: "Shu oy to'laydi",
-      phone: '88 855 86 85',
-      debet: '500.00'
-    },
-    {
-      id: 2,
-      name: 'Yoqub Abdulazizov',
-      course: ['android', 'english'],
-      comment: "Shu oy to'laydi",
-      phone: '88 855 13 49',
-      debet: '1500.00'
-    },
-    {
-      id: 3,
-      name: 'Temur Abdulazizov',
-      course: ['android', 'english'],
-      comment: "Shu oy to'laydi",
-      phone: '88 855 86 85',
-      debet: '500.00'
-    },
-    {
-      id: 4,
-      name: 'Jahongir Abdulazizov',
-      course: ['android', 'english'],
-      comment: "Shu oy to'laydi",
-      phone: '88 855 86 85',
-      debet: '500.00'
-    }
-  ])
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
+import { v4 as uuidv4 } from "uuid";
+import { Table, Input, Pagination } from "antd";
+import { ExclamationCircle, ExclamationDiamond } from "react-bootstrap-icons";
+import { fetchedDebts, fetchingDebts } from "../../redux/paymentsSlice";
+import axios from "../../axios/axios";
+import {
+  fetchedError,
+  fetchedStudents,
+  fetchingStudents,
+  setUserData,
+} from "../../redux/studentsSlice";
+import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
+
+export default function Debtors() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [per_page, setPerPage] = useState(30);
+  const [last_page, setLastPage] = useState(1);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [debtsAmountHandle, setDebtsAmountHandle] = useState("");
+  const { students, loading } = useSelector((state) => state.students);
+  const { employees } = useSelector((state) => state.employees);
+  const dispatch = useDispatch();
+
+  // fetching students
+  useEffect(() => {
+    dispatch(fetchingStudents());
+    axios
+      .get(`/api/students`)
+      .then((res) => {
+        dispatch(fetchedStudents(res?.data?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, [currentPage, dispatch]);
+
+  // debtors static data
+  let debtors = [];
+  students?.map((item) => {
+    item?.balance < 0 &&
+      debtors?.push({
+        id: item?.id,
+        phone: item?.phone,
+        address: item?.address,
+        birthday: item?.birthday,
+        uid: uuidv4(),
+        student_id: (
+          <div>
+            {students?.map((student) => {
+              if (student?.id === item?.id) {
+                return (
+                  <Link
+                    key={student?.id}
+                    className="text-cyan-500"
+                    to={`/students/profile/${student?.id}`}
+                    onClick={() => dispatch(setUserData(student))}
+                  >
+                    {student?.first_name + " " + student?.last_name}
+                  </Link>
+                );
+              }
+            })}
+          </div>
+        ),
+        debt: Number(item?.balance).toLocaleString(),
+      });
+  });
+
+  // fetching debts
+  useEffect(() => {
+    dispatch(fetchingDebts());
+    axios.get(`/api/students/debtors`).then((res) => {
+      dispatch(fetchedDebts(res?.data?.data?.data?.debt));
+      setDebtsAmountHandle(res?.data?.data?.data?.debt);
+    });
+  }, [currentPage, dispatch]);
 
   // Table headers
   const columns = [
     {
-      key: '2',
-      title: 'Ism',
-      dataIndex: 'name',
-      fixed: 'top',
-      filteredValue: [searchText],
-      onFilter: (value, record) => {
-        return (
-          String(record.name)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.email)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.phone)
-            .toLowerCase()
-            .includes(value.toLowerCase())
-        )
-      }
+      key: 1,
+      title: "",
+      dataIndex: "id",
+      width: 80,
+      fixed: "top",
     },
     {
-      key: '4',
-      title: 'Telefon',
-      dataIndex: 'phone',
-      fixed: 'top'
+      key: 2,
+      title: "Имя",
+      dataIndex: "student_id",
+      fixed: "top",
     },
     {
-      key: '5',
-      title: 'Kurslari',
-      dataIndex: 'course',
-      fixed: 'top',
-      render: record => {
-        return (
-          <div className='flex gap-1 flex-wrap'>
-            {record.map(c => (
-              <span className='border rounded-sm text-xs border-violet-400 p-0.5'>
-                {c}
-              </span>
-            ))}
-          </div>
-        )
-      }
+      key: 3,
+      title: "Телефон",
+      dataIndex: "phone",
+      fixed: "top",
     },
     {
-      key: '6',
-      title: 'Qarz miqdori',
-      dataIndex: 'debet',
-      fixed: 'top',
-      filteredValue: [searchDebet],
-      onFilter: (value, record) => {
-        return String(record.debet)
-          .toLowerCase()
-          .includes(value.toLowerCase())
-      }
+      key: 4,
+      title: "Адрес",
+      dataIndex: "address",
+      fixed: "top",
     },
     {
-      key: '7',
-      title: 'Izoh',
-      dataIndex: 'comment',
-      fixed: 'top'
+      key: 5,
+      title: "Год рождения",
+      dataIndex: "birthday",
+      fixed: "top",
     },
     {
-      key: '8',
-      title: 'Amallar',
-      render: record => {
-        return (
-          <button
-            className='flex items-center rounded-full p-2 relative hover:pl-9 lg:pl-9 hover:bg-violet-500 transition-all w-0 hover:w-auto lg:w-auto lg:bg-violet-400 outline-none'
-            onClick={() => {
-              onEditStudent(record)
-            }}
-          >
-            <span className='p-2 rounded-full bg-white flex items-center justify-center mr-2 absolute -left-px inset-y-0 border border-violet-400'>
-              <Chat className='text-violet-500' />
-            </span>
-            <span className='text-white text-xs'>Izoh qoldirish</span>
-          </button>
-        )
-      },
-      fixed: 'top'
-    }
-  ]
-
-  const onEditStudent = record => {
-    setIsEditing(true)
-    setEditingStudent({ ...record })
-  }
-  const resetEditing = () => {
-    setIsEditing(false)
-    setEditingStudent(null)
-  }
+      key: 6,
+      title: "Сумма",
+      dataIndex: "debt",
+      fixed: "top",
+    },
+  ];
 
   return (
     <div>
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-8'>
-        <div className='bg-white flex flex-col p-4 rounded-lg items-start justify-between'>
-          <div className='text-2xl text-red-400 bg-red-50 p-2 rounded-md'>
+      <HeaderWrapper display="grid">
+        <HeaderItem type="danger">
+          <div className="header__icon">
             <ExclamationCircle />
           </div>
-          <p className='text-red-400 my-4'>Jami qarzdor o'quvchilar soni</p>
-          <p className='text-red-400 text-2xl'>3 ta</p>
-        </div>
-        <div className='bg-white flex flex-col p-4 rounded-lg items-start justify-between'>
-          <div className='text-2xl text-slate-400 bg-slate-50 p-2 rounded-md'>
-            <CashStack />
+          <div className="header__content">
+            <p className="header__title">Задолженность</p>
+            <p>Общая сумма: </p>
+            <p className="header__result">
+              {Number(debtsAmountHandle)?.toLocaleString()} сум
+            </p>
           </div>
-          <p className='text-slate-400 my-4'>Jami qarzlar miqdori</p>
-          <p className='text-slate-500 text-2xl'>4 600.000 so'm</p>
+        </HeaderItem>
+        <HeaderItem type="secondary">
+          <div className="header__icon">
+            <ExclamationDiamond />
+          </div>
+          <div className="header__content">
+            <p className="header__title xl:w-auto">Должники</p>
+            <p>Общее количество должников:</p>
+            <p className="header__result">{debtors?.length}</p>
+          </div>
+        </HeaderItem>
+      </HeaderWrapper>
+      <div className="flex flex-wrap gap-2 mb-8">
+        <div className="w-42 mr-8">
+          <Input.Search
+            placeholder="По номеру телефона или имени"
+            allowClear
+            className="min-w-[200px] md:min-w-[250px]"
+          />
+        </div>
+        <div className="w-42">
+          <Input.Search
+            placeholder="Поиск по сумме долга"
+            allowClear
+            className="min-w-[200px] md:min-w-[250px]"
+          />
         </div>
       </div>
-      <header className='flex flex-wrap gap-2 mb-8'>
-        <div className='w-42 sm:mr-8'>
-          <Input.Search
-            placeholder='Ism yoki telefon orqali qidirish'
-            onSearch={value => {
-              setSearchText(value)
-            }}
-            onChange={e => {
-              setSearchText(e.target.value)
-            }}
-            allowClear
-            className='min-w-[200px] md:min-w-[250px]'
-          />
-        </div>
-        <div className='w-42 sm:mr-8'>
-          <Input.Search
-            placeholder="Qarz miqdori bo'yicha qidirish"
-            onSearch={value => {
-              setSearchDebet(value)
-            }}
-            onChange={e => {
-              setSearchDebet(e.target.value)
-            }}
-            allowClear
-            className='min-w-[200px] md:min-w-[250px]'
-          />
-        </div>
-      </header>
       <Table
+        loading={loading}
         columns={columns}
-        dataSource={dataSource}
-        size='small'
+        dataSource={debtors}
         scroll={{
-          x: 850
+          x: 1000,
         }}
+        rowKey={(record) => record.uid}
+        pagination={false}
       ></Table>
-      <Modal
-        title='Tahrirlash'
-        visible={isEditing}
-        okText='Saqlash'
-        cancelText='Yopish'
-        onCancel={() => {
-          resetEditing()
-        }}
-        onOk={() => {
-          setDataSource(pre => {
-            return pre.map(student => {
-              if (student.id === editingStudent.id) {
-                return editingStudent
-              } else {
-                return student
-              }
-            })
-          })
-          resetEditing()
-        }}
-      >
-        <Input
-          value={editingStudent?.comment}
-          onChange={e => {
-            setEditingStudent(pre => {
-              return { ...pre, comment: e.target.value }
-            })
+      <br />
+      <center>
+        <Pagination
+          pageSize={per_page ? per_page : 30}
+          total={last_page * per_page}
+          current={currentPage}
+          onChange={(page, x) => {
+            setCurrentPage(page);
+            setPerPage(x);
           }}
         />
-      </Modal>
+      </center>
     </div>
-  )
+  );
 }

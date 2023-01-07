@@ -79,7 +79,7 @@ const Schedule = () => {
         <h3 className="text-lg">Расписание</h3>
       </center>
 
-      {schedule?.length < 1 && (
+      {/* {schedule?.length < 1 && (
         <center className="p-8 rounded-md">
           <h3 className="text-lg text-red-400">
             Группы должны быть активированы для просмотра расписания уроков. В
@@ -87,7 +87,7 @@ const Schedule = () => {
             активируйте их или создайте новый.
           </h3>
         </center>
-      )}
+      )} */}
       {loading ? (
         <Skeleton active={true} />
       ) : (

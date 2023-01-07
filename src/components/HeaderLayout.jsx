@@ -18,7 +18,9 @@ import { MyButton } from "../UI/Button.style";
 import {
   fetchedError,
   fetchedStudents,
+  fetchedStudentsDebtors,
   fetchingStudents,
+  fetchingStudentsDebtors,
 } from "../redux/studentsSlice";
 import { fetchedGroups, fetchingGroups } from "../redux/groupsSlice";
 
@@ -26,6 +28,7 @@ export default function HeaderLayout() {
   // states
   const { students, refreshStudents } = useSelector((state) => state.students);
   const { groups, refreshGroups } = useSelector((state) => state.groups);
+
   // hooks
   const dispatch = useDispatch();
 
@@ -35,12 +38,31 @@ export default function HeaderLayout() {
     axios
       .get("/api/students")
       .then((res) => {
-        dispatch(fetchedStudents(res?.data?.data));
+        dispatch(fetchedStudents(res?.data?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
       });
   }, [refreshStudents]);
+
+  // fetching students in debt
+  useEffect(() => {
+    dispatch(fetchingStudentsDebtors());
+    axios
+      .get("/api/students/debtors")
+      .then((res) => {
+        dispatch(fetchedStudentsDebtors(res?.data?.data?.data?.students));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, [refreshStudents]);
+
+  // get debtors
+  let debtors = [];
+  students?.map((student) => {
+    student?.balance < 0 && debtors.push({ student });
+  });
 
   // fetching groups
   useEffect(() => {
@@ -67,9 +89,9 @@ export default function HeaderLayout() {
             </p>
             <p className="text-slate-400 mb-2">
               В этом месяце в учебном центре зарегистрировались{" "}
-              <span className="text-violet-400">{students?.data?.length}</span>{" "}
+              <span className="text-violet-400">{students?.length}</span>{" "}
               студентов. На данный момент нам доверяют более{" "}
-              <span className="text-violet-400">{students?.data?.length}</span>{" "}
+              <span className="text-violet-400">{students?.length}</span>{" "}
               студентов
             </p>
             <MyButton color="primary">Смотреть все</MyButton>
@@ -86,7 +108,7 @@ export default function HeaderLayout() {
             <Download />
           </div>
           <p className="text-violet-400 my-4">Заявки</p>
-          <p className="text-violet-500 text-2xl">123</p>
+          <p className="text-violet-500 text-2xl">нет</p>
         </Link>
         <Link
           to="/groups"
@@ -106,7 +128,7 @@ export default function HeaderLayout() {
             <Mortarboard />
           </div>
           <p className="text-cyan-400 my-4">Студенты</p>
-          <p className="text-cyan-400 text-2xl">{students?.data?.length}</p>
+          <p className="text-cyan-400 text-2xl">{students?.length}</p>
         </Link>
         <Link
           to="/"
@@ -117,7 +139,7 @@ export default function HeaderLayout() {
             <div />
           </div>
           <p className="text-violet-400 my-4">Ушли из активной группы</p>
-          <p className="text-violet-400 text-2xl">3 </p>
+          <p className="text-violet-400 text-2xl">нет</p>
         </Link>
         <Link
           to="/finance/debtors"
@@ -127,7 +149,7 @@ export default function HeaderLayout() {
             <ExclamationCircle />
           </div>
           <p className="text-red-400 my-4">Должники</p>
-          <p className="text-red-400 text-2xl">3 </p>
+          <p className="text-red-400 text-2xl">{debtors?.length}</p>
         </Link>
         <Link
           to="/"
@@ -137,7 +159,7 @@ export default function HeaderLayout() {
             <Hourglass />
           </div>
           <p className="text-green-400 my-4">В пробном уроке</p>
-          <p className="text-green-500 text-2xl">5</p>
+          <p className="text-green-500 text-2xl">нет</p>
         </Link>
         <Link
           to="/"
@@ -147,7 +169,7 @@ export default function HeaderLayout() {
             <Cash />
           </div>
           <p className="text-sky-400 my-4">Оплатил в текущем месяце</p>
-          <p className="text-sky-500 text-2xl">5</p>
+          <p className="text-sky-500 text-2xl">нет</p>
         </Link>
         <Link
           to="/"
@@ -157,7 +179,7 @@ export default function HeaderLayout() {
             <Arrow90degLeft />
           </div>
           <p className="text-slate-400 my-4">Ушли после пробного периода</p>
-          <p className="text-slate-500 text-2xl">14</p>
+          <p className="text-slate-500 text-2xl">нет</p>
         </Link>
       </div>
     </>

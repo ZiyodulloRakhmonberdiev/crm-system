@@ -14,6 +14,8 @@ import {
   fetchedRooms,
   fetchedError,
 } from "../../redux/roomsSlice";
+import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
+import MyHeaderButton from "../../UI/MyHeaderButton.style";
 
 export default function Rooms() {
   const [editingRoom, setEditingRoom] = useState(null);
@@ -127,24 +129,22 @@ export default function Rooms() {
   }, [refreshRooms]);
   return (
     <div>
-      <header className="bg-white flex flex-wrap p-4 rounded-lg items-center justify-center sm:justify-between md:justify-start gap-4 mb-8">
-        <div className="text-2xl text-sky-400 bg-sky-50 p-2 rounded-md">
-          <DoorOpen />
-        </div>
-        <div className="md:flex md:gap-4 items-center">
-          <p className="text-sky-400 text-2xl">Кабинеты</p>
-          <p className="text-sky-400">Количество: {rooms?.length} </p>
-        </div>
-        <MyButton
-          onClick={() => {
-            setVisible(!visible);
-            setModalType("add");
-          }}
-          className="md:ml-auto"
-        >
-          Добавить
-        </MyButton>
-      </header>
+      <HeaderWrapper>
+        <HeaderItem type="secondary">
+          <div className="header__icon">
+            <DoorOpen />
+          </div>
+          <div className="header__content">
+            <p className="header__title">Кабинеты</p>
+            <p>Количество: </p>
+            <p className="header__result">{rooms?.length}</p>
+          </div>
+          <MyHeaderButton
+            setModalType={() => setModalType("add")}
+            setVisible={() => setVisible(!visible)}
+          />
+        </HeaderItem>
+      </HeaderWrapper>
       <Drawer
         open={visible}
         title={
@@ -166,10 +166,7 @@ export default function Rooms() {
         loading={loading}
         columns={columns}
         dataSource={dataSource}
-        scroll={{
-          x: 1000,
-        }}
-        className="overflow-auto"
+        className="overflow-auto sm:w-2/3 lg:w-1/2"
         pagination={false}
         rowKey={(record) => record.uid}
       ></Table>

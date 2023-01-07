@@ -63,7 +63,7 @@ export default function StudentProfile() {
     start_date: "",
     student_id: userData?.id,
   });
-
+  const [refreshing, setRefreshing] = useState(false)
   // hooks
   const params = useParams();
   const dispatch = useDispatch();
@@ -172,7 +172,8 @@ export default function StudentProfile() {
     axios.get(`/api/students/${params?.id}/groups`).then((res) => {
       setStudentGroups(res?.data);
     });
-  }, []);
+  }, [refreshing]);
+
   function submit(e) {
     e.preventDefault();
     const { group_id, start_date } = group;
@@ -191,6 +192,7 @@ export default function StudentProfile() {
           });
           message.success("Пользователь успешно добавлен!");
           // dispatch(refreshStudentsData());
+          setRefreshing(!refreshing)
         })
         .catch((err) => {
           if (err?.response?.data?.message === "student id already exists") {
@@ -404,8 +406,12 @@ export default function StudentProfile() {
         <Tabs.TabPane tab="Профиль" key="item-1">
           <label className="text-lg block w-full mb-2">Группы</label>
           <div className="flex flex-wrap justify-start xl:grid w-full xl:grid-cols-2 gap-2 mb-4 relative">
-            {studentGroups?.data?.map((group) => (
-              <div
+            {studentGroups?.data?.sort((a, b) => a?.id - b?.id)?.map((group, i) => {
+              if (group?.id == studentGroups?.data?.sort((a, b) => a?.id - b?.id)[i+1]?.id) {
+                return null
+              } else {
+                return (
+                  <div
                 className="flex justify-start sm:justify-between flex-col items-start sm:items-center sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
                 key={group?.id}
               >
@@ -432,7 +438,9 @@ export default function StudentProfile() {
                   )}
                 </div>
               </div>
-            ))}
+                )
+              }
+            })}
           </div>
           <label className="text-lg block w-full">Платежи</label>
           <Table

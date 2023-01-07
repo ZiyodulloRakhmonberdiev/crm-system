@@ -57,8 +57,9 @@ export default function GroupProfile() {
   const [visible, setVisible] = useState(false);
   const [activeGroup, setActiveGroup] = useState(false);
   const [modalType, setModalType] = useState("add");
-  const [refreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [studentActivating, setStudentActivating] = useState(false)
   const { groupData } = useSelector((state) => state.groups);
   const { teachers } = useSelector((state) => state.teachers);
   const { courses, coursesData } = useSelector((state) => state.courses);
@@ -110,7 +111,7 @@ export default function GroupProfile() {
     if (!groupData?.id) {
       navigate("/groups", { replace: true });
     }
-  }, []);
+  }, [refreshing]);
 
   // fetching teachers
   useEffect(() => {
@@ -118,7 +119,7 @@ export default function GroupProfile() {
     axios.get(`/api/teachers`).then((res) => {
       dispatch(fetchedTeachers(res?.data?.data));
     });
-  }, []);
+  }, [refreshing]);
 
   // fetching students
   useEffect(() => {
@@ -137,10 +138,16 @@ export default function GroupProfile() {
 
   //  active students in group
   function activeStudent(studentId) {
+    setStudentActivating(true)
     axios
       .post(`/api/groups/active/${params?.id}/${studentId}`)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setRefreshing(!refreshing)
+      })
+      .catch((err) => {
+        message.error("Произошла ошибка! Попробуйте еще раз!")
+      })
+      .finally(() => setStudentActivating(false))
   }
   return (
     <>
@@ -289,9 +296,11 @@ export default function GroupProfile() {
                     content={
                       <div className="bg-white rounded-md p-2">
                         {student?.active !== true && (
-                          <MyButton onClick={() => activeStudent(student?.id)}>
-                            Активировать
-                          </MyButton>
+                            <Spin spinning={studentActivating}>
+                              <MyButton onClick={() => activeStudent(student?.id)}>
+                                Активировать
+                              </MyButton>
+                            </Spin>
                         )}
                         <div className="border-b mt-2 mb-2 md:mb-4">
                           <label className="text-xs text-slate-400">

@@ -38,7 +38,7 @@ export default function Courses() {
       description: item?.description,
       lesson_duration: item?.lesson_duration,
       month: item?.month,
-      price: item?.price,
+      price: Number(item?.price).toLocaleString(),
       actions: (
         <div className="flex gap-2">
           <IconButton
@@ -135,7 +135,7 @@ export default function Courses() {
           {courses?.map((course) => (
             <div
               key={course?.id}
-              className="flex flex-col drop-shadow-md hover:drop-shadow-2xl transition relative"
+              className="flex flex-col drop-shadow-md hover:drop-shadow-lg transition relative"
             >
               <Link
                 to={`/courses/${course?.id}`}
@@ -165,8 +165,10 @@ export default function Courses() {
                 </div>
               </div>
               <div className="flex flex-col gap-8 items-start justify-start px-6 py-8 bg-white">
-                <p className="text-xl text-pink-500">{course.name}</p>
-                <p className="text-slate-600">{course.price} сум</p>
+                <p className="text-xl text-pink-500">{course?.name}</p>
+                <p className="text-slate-600">
+                  {Number(course?.price).toLocaleString()} сум
+                </p>
               </div>
             </div>
           ))}

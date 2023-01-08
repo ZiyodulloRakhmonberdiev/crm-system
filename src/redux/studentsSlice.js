@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   students: [],
-  studentsDebtors: {},
+  studentsDebtors: [],
   loading: false,
   loadingJoinedGroups: false,
   loadingPayments: false,

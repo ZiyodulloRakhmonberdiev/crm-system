@@ -6,21 +6,10 @@ import {
   ArrowRight,
   DashLg,
   Dot,
-  Flag,
-  FlagFill,
   PencilSquare,
   Trash,
 } from "react-bootstrap-icons";
-import {
-  Avatar,
-  Drawer,
-  message,
-  Spin,
-  Tabs,
-  Tooltip,
-  Card,
-  Popover,
-} from "antd";
+import { Drawer, message, Spin, Tabs, Tooltip, Popover } from "antd";
 
 import { IconButton } from "../../UI/IconButton.style";
 import {
@@ -59,7 +48,7 @@ export default function GroupProfile() {
   const [modalType, setModalType] = useState("add");
   const [refreshing, setRefreshing] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [studentActivating, setStudentActivating] = useState(false)
+  const [studentActivating, setStudentActivating] = useState(false);
   const { groupData } = useSelector((state) => state.groups);
   const { teachers } = useSelector((state) => state.teachers);
   const { courses, coursesData } = useSelector((state) => state.courses);
@@ -138,16 +127,16 @@ export default function GroupProfile() {
 
   //  active students in group
   function activeStudent(studentId) {
-    setStudentActivating(true)
+    setStudentActivating(true);
     axios
       .post(`/api/groups/active/${params?.id}/${studentId}`)
       .then((res) => {
-        setRefreshing(!refreshing)
+        setRefreshing(!refreshing);
       })
       .catch((err) => {
-        message.error("Произошла ошибка! Попробуйте еще раз!")
+        message.error("Произошла ошибка! Попробуйте еще раз!");
       })
-      .finally(() => setStudentActivating(false))
+      .finally(() => setStudentActivating(false));
   }
   return (
     <>
@@ -287,8 +276,8 @@ export default function GroupProfile() {
                   key={student?.id}
                   className={` ${
                     student?.active === true
-                      ? "hover:bg-green-100"
-                      : "hover:bg-red-100"
+                      ? "hover:bg-green-50"
+                      : "hover:bg-red-50"
                   } flex justify-between flex-wrap items-center transition p-1`}
                 >
                   <Popover
@@ -296,11 +285,14 @@ export default function GroupProfile() {
                     content={
                       <div className="bg-white rounded-md p-2">
                         {student?.active !== true && (
-                            <Spin spinning={studentActivating}>
-                              <MyButton onClick={() => activeStudent(student?.id)}>
-                                Активировать
-                              </MyButton>
-                            </Spin>
+                          <Spin spinning={studentActivating}>
+                            <MyButton
+                              onClick={() => activeStudent(student?.id)}
+                            >
+                              Активировать
+                              {/* Сделать пассивным */}
+                            </MyButton>
+                          </Spin>
                         )}
                         <div className="border-b mt-2 mb-2 md:mb-4">
                           <label className="text-xs text-slate-400">
@@ -311,7 +303,9 @@ export default function GroupProfile() {
                               !student?.active ? "text-red-400" : ""
                             }`}
                           >
-                            {student?.active ? "Активный" : "Не активный"}
+                            {student?.active
+                              ? "Активировано"
+                              : "Не активировано"}
                           </p>
                         </div>
                         <div className="border-b mb-2 md:mb-4">
@@ -331,12 +325,6 @@ export default function GroupProfile() {
                             Дата добавления
                           </label>
                           <p>{student?.start_date}</p>
-                        </div>
-                        <div className="border-b mb-2 md:mb-4">
-                          <label className="text-xs text-slate-400">
-                            Заметка
-                          </label>
-                          <p>Нет заметок</p>
                         </div>
                         <div className="text-right">
                           <Link

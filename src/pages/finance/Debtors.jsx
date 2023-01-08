@@ -10,6 +10,7 @@ import axios from "../../axios/axios";
 import {
   fetchedError,
   fetchedStudents,
+  fetchedStudentsDebtors,
   fetchingStudents,
   setUserData,
 } from "../../redux/studentsSlice";
@@ -19,56 +20,52 @@ export default function Debtors() {
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
   const [last_page, setLastPage] = useState(1);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingStudent, setEditingStudent] = useState(null);
   const [debtsAmountHandle, setDebtsAmountHandle] = useState("");
-  const { students, loading } = useSelector((state) => state.students);
-  const { employees } = useSelector((state) => state.employees);
+  const { studentsDebtors, loading } = useSelector((state) => state.students);
   const dispatch = useDispatch();
 
   // fetching students
   useEffect(() => {
     dispatch(fetchingStudents());
     axios
-      .get(`/api/students`)
+      .get(`/api/students/debtors`)
       .then((res) => {
-        dispatch(fetchedStudents(res?.data?.data?.data));
+        dispatch(fetchedStudentsDebtors(res?.data?.data?.data?.students));
       })
-      .catch((err) => {
+      .catch(() => {
         dispatch(fetchedError());
       });
   }, [currentPage, dispatch]);
 
   // debtors static data
   let debtors = [];
-  students?.map((item) => {
-    item?.balance < 0 &&
-      debtors?.push({
-        id: item?.id,
-        phone: item?.phone,
-        address: item?.address,
-        birthday: item?.birthday,
-        uid: uuidv4(),
-        student_id: (
-          <div>
-            {students?.map((student) => {
-              if (student?.id === item?.id) {
-                return (
-                  <Link
-                    key={student?.id}
-                    className="text-cyan-500"
-                    to={`/students/profile/${student?.id}`}
-                    onClick={() => dispatch(setUserData(student))}
-                  >
-                    {student?.first_name + " " + student?.last_name}
-                  </Link>
-                );
-              }
-            })}
-          </div>
-        ),
-        debt: Number(item?.balance).toLocaleString(),
-      });
+  studentsDebtors?.map((item) => {
+    debtors?.push({
+      id: item?.id,
+      phone: item?.phone,
+      address: item?.address,
+      birthday: item?.birthday,
+      uid: uuidv4(),
+      student_id: (
+        <div>
+          {studentsDebtors?.map((student) => {
+            if (student?.id === item?.id) {
+              return (
+                <Link
+                  key={student?.id}
+                  className="text-cyan-500"
+                  to={`/students/profile/${student?.id}`}
+                  onClick={() => dispatch(setUserData(student))}
+                >
+                  {student?.first_name + " " + student?.last_name}
+                </Link>
+              );
+            }
+          })}
+        </div>
+      ),
+      debt: Number(item?.balance).toLocaleString(),
+    });
   });
 
   // fetching debts

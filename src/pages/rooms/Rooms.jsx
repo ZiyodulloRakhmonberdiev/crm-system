@@ -162,6 +162,8 @@ export default function Rooms() {
           setVisible={() => setVisible(false)}
         />
       </Drawer>
+      {/* <div className="grid"> */}
+      {/* <div className="flex items-center"> */}
       <Table
         loading={loading}
         columns={columns}
@@ -171,7 +173,7 @@ export default function Rooms() {
         rowKey={(record) => record.uid}
       ></Table>
       <br />
-      <center>
+      <center className="sm:w-2/3 lg:w-1/2">
         <Pagination
           pageSize={per_page ? per_page : 30}
           total={last_page * per_page}
@@ -182,6 +184,8 @@ export default function Rooms() {
           }}
         />
       </center>
+      {/* </div> */}
+      {/* </div> */}
     </div>
   );
 }

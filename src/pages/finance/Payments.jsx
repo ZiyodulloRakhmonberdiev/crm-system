@@ -34,7 +34,7 @@ export default function Payments() {
   // states
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
-  const [last_page, setLastPage] = useState(1);
+  const [last_page] = useState(1);
   const { payments, paymentsAmount, profitAmount, loading } = useSelector(
     (state) => state.payments
   );
@@ -153,7 +153,7 @@ export default function Payments() {
   useEffect(() => {
     dispatch(fetchingPayments());
     axios
-      .get(`/api/payments?from=2022-12-01&to=2022-12-30?page=${currentPage}`)
+      .get(`/api/payments?from=2022-12-01&to=2023-12-30?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedPayments(res?.data?.data?.data));
       })

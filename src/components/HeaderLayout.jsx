@@ -101,7 +101,7 @@ export default function HeaderLayout() {
           </div>
         </Link>
         <Link
-          to="/leads"
+          to="/"
           className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
         >
           <div className="text-2xl text-violet-400 bg-violet-50 p-2 rounded-md">

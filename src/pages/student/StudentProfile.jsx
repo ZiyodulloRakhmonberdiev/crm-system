@@ -48,7 +48,6 @@ export default function StudentProfile() {
   const [refreshPayments, setRefreshPayments] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
   const [visible, setVisible] = useState(false);
-  // const [showGroupDetails, setShowGroupDetails] = useState(false);
   const [visiblePayment, setVisiblePayment] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
@@ -63,7 +62,7 @@ export default function StudentProfile() {
     start_date: "",
     student_id: userData?.id,
   });
-  const [refreshing, setRefreshing] = useState(false)
+  const [refreshing, setRefreshing] = useState(false);
   // hooks
   const params = useParams();
   const dispatch = useDispatch();
@@ -191,8 +190,7 @@ export default function StudentProfile() {
             start_date: "",
           });
           message.success("Пользователь успешно добавлен!");
-          // dispatch(refreshStudentsData());
-          setRefreshing(!refreshing)
+          setRefreshing(!refreshing);
         })
         .catch((err) => {
           if (err?.response?.data?.message === "student id already exists") {
@@ -402,75 +400,95 @@ export default function StudentProfile() {
           </MyButton>
         </Spin>
       </Modal>
-      <Tabs className="col-span-6 md:col-span-3 lg:col-span-4">
-        <Tabs.TabPane tab="Профиль" key="item-1">
-          <label className="text-lg block w-full mb-2">Группы</label>
-          <div className="flex flex-wrap justify-start xl:grid w-full xl:grid-cols-2 gap-2 mb-4 relative">
-            {studentGroups?.data?.sort((a, b) => a?.id - b?.id)?.map((group, i) => {
-              if (group?.id == studentGroups?.data?.sort((a, b) => a?.id - b?.id)[i+1]?.id) {
-                return null
-              } else {
-                return (
-                  <div
-                className="flex justify-start sm:justify-between flex-col items-start sm:items-center sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
-                key={group?.id}
-              >
-                <div className="flex flex-col justify-start gap-1 w-full">
-                  <Link
-                    to={`/groups/${group?.id}`}
-                    onClick={() =>
-                      dispatch(
-                        setGroupData(groups?.find((x) => x?.id === group?.id))
-                      )
-                    }
-                    className="font-bold text-xl text-cyan-500"
-                  >
-                    {group?.name}
-                  </Link>
-                  {group?.active ? (
-                    <span className="font-bold text-green-400">
-                      Группа активна
-                    </span>
-                  ) : (
-                    <span className="font-bold text-red-400">
-                      Группа неактивна
-                    </span>
-                  )}
+      <Tabs
+        className="col-span-6 md:col-span-3 lg:col-span-4"
+        items={[
+          {
+            key: "1",
+            label: `Профиль`,
+            children: (
+              <div>
+                <label className="text-lg block w-full mb-2">Группы</label>
+                <div className="flex flex-wrap justify-start xl:grid w-full xl:grid-cols-2 gap-2 mb-4 relative">
+                  {studentGroups?.data
+                    ?.sort((a, b) => a?.id - b?.id)
+                    ?.map((group, i) => {
+                      if (
+                        group?.id ==
+                        studentGroups?.data?.sort((a, b) => a?.id - b?.id)[
+                          i + 1
+                        ]?.id
+                      ) {
+                        return null;
+                      } else {
+                        return (
+                          <div
+                            className="flex justify-start sm:justify-between flex-col items-start sm:items-center sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
+                            key={group?.id}
+                          >
+                            <div className="flex flex-col justify-start gap-1 w-full">
+                              <Link
+                                to={`/groups/${group?.id}`}
+                                onClick={() =>
+                                  dispatch(
+                                    setGroupData(
+                                      groups?.find((x) => x?.id === group?.id)
+                                    )
+                                  )
+                                }
+                                className="font-bold text-xl text-cyan-500"
+                              >
+                                {group?.name}
+                              </Link>
+                              {group?.active ? (
+                                <span className="font-bold text-green-400">
+                                  Группа активна
+                                </span>
+                              ) : (
+                                <span className="font-bold text-red-400">
+                                  Группа неактивна
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      }
+                    })}
                 </div>
+                <label className="text-lg block w-full">Платежи</label>
+                <Table
+                  loading={loadingPayments}
+                  columns={columns}
+                  dataSource={dataSource}
+                  className="overflow-auto mt-2"
+                  pagination={false}
+                  scroll={{
+                    x: 800,
+                  }}
+                  rowKey={(record) => record.uid}
+                ></Table>
+                <br />
+                <center>
+                  <Pagination
+                    pageSize={per_page ? per_page : 30}
+                    total={last_page * per_page}
+                    current={currentPage}
+                    onChange={(page, x) => {
+                      setCurrentPage(page);
+                      setPerPage(x);
+                    }}
+                  />
+                </center>
               </div>
-                )
-              }
-            })}
-          </div>
-          <label className="text-lg block w-full">Платежи</label>
-          <Table
-            loading={loadingPayments}
-            columns={columns}
-            dataSource={dataSource}
-            className="overflow-auto mt-2"
-            pagination={false}
-            scroll={{
-              x: 800,
-            }}
-            rowKey={(record) => record.uid}
-          ></Table>
-          <br />
-          <center>
-            <Pagination
-              pageSize={per_page ? per_page : 30}
-              total={last_page * per_page}
-              current={currentPage}
-              onChange={(page, x) => {
-                setCurrentPage(page);
-                setPerPage(x);
-              }}
-            />
-          </center>
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="История" key="item-2">
-          <InProcess />
-        </Tabs.TabPane>
-      </Tabs>
+            ),
+          },
+          {
+            key: "2",
+            label: `История`,
+            children: <InProcess />,
+          },
+        ]}
+      ></Tabs>
     </div>
   );
 }

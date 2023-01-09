@@ -69,7 +69,7 @@ export default function AddGroupForm({
     axios.get(`/api/teachers`).then((res) => {
       dispatch(fetchedTeachers(res?.data?.data));
     });
-    setManualMarking(false)
+    setManualMarking(false);
   }, []);
 
   // fetching rooms
@@ -124,7 +124,6 @@ export default function AddGroupForm({
           newAddTeacher.push({ ...item, id: uuidv4(), teacher_id: item?.id });
         });
         setInputFields(newAddTeacher);
-        console.log(inputFields);
       } else {
         setInputFields([]);
       }
@@ -158,7 +157,7 @@ export default function AddGroupForm({
     ) {
       setUploading(true);
       if (typeof days == "string") {
-        days = days?.split(",")
+        days = days?.split(",");
       }
       if (modalType === "add") {
         axios
@@ -197,11 +196,13 @@ export default function AddGroupForm({
           })
           .finally(() => setUploading(false));
       } else if (modalType === "update") {
-        const teacherIds = []
-        inputFields.map((item) => teacherIds.push({teacher_id: item?.teacher_id, flex: +item?.flex}))
-        const dayArr = []
+        const teacherIds = [];
+        inputFields.map((item) =>
+          teacherIds.push({ teacher_id: item?.teacher_id, flex: +item?.flex })
+        );
+        const dayArr = [];
         if (!manualMarking) {
-          group?.days?.split(",")?.map(item => dayArr.push(+item))
+          group?.days?.split(",")?.map((item) => dayArr.push(+item));
         }
         axios
           .patch(url + "/" + editingGroup?.id, {
@@ -319,8 +320,6 @@ export default function AddGroupForm({
     },
   ];
 
-  
-
   return (
     <div>
       <form onSubmit={(e) => submit(e)}>
@@ -415,14 +414,14 @@ export default function AddGroupForm({
           </MyButton>
         )}
         <p>Дата старта группы</p>
-        <div className="flex gap-x-2 mb-4 mt-2"> 
+        <div className="flex gap-x-2 mb-4 mt-2">
           <input
             value={group?.group_start_date}
             id="group_start_date"
             onChange={(e) => {
               if (group?.group_end_date !== e.target.value) {
-                handle(e)
-              } 
+                handle(e);
+              }
             }}
             type="date"
             className="rounded-sm p-1 border border-slate-300"
@@ -430,8 +429,9 @@ export default function AddGroupForm({
           <input
             onChange={(e) => {
               if (group?.group_start_date !== e.target.value) {
-                handle(e)
-              } }}
+                handle(e);
+              }
+            }}
             id="group_end_date"
             value={group?.group_end_date}
             min={group?.group_start_date}
@@ -445,7 +445,7 @@ export default function AddGroupForm({
             type="button"
             className="font-bold border rounded-md py-1 px-2"
             onClick={() => {
-              setManualMarking(!manualMarking)
+              setManualMarking(!manualMarking);
               setGroup({ ...group, days: [] });
             }}
           >
@@ -454,37 +454,34 @@ export default function AddGroupForm({
               : "Набрать дни автоматически"}
           </button>
         </p>
-        
-        {
-          manualMarking ? (
-            <Select
-              mode="multiple"
-              className={`${manualMarking ? "" : "hidden"} w-full mb-4 mt-2`}
-              options={options}
-              value={group?.days?.length === 0 ? null : group?.days}
-              onChange={(e) => {
-                setGroup({ ...group, days: e?.filter(e => e !== undefined) });
-                console.log(e);
-              }}
-              placeholder="Выбрать варианты"
-            />
-          ) : (
-            <Select
-              value={group?.days}
-              onChange={(e) => {
-                setGroup({ ...group, days: e });
-              }}
-              placeholder="Выбрать варианты"
-              className={`${manualMarking ? "hidden" : ""} w-full mb-4 mt-2`}
-            >
-              <Select.Option value={"1,3,5"}>Нечетные дни</Select.Option>
-              <Select.Option value={"2,4,6"}>Четные дни</Select.Option>
-              <Select.Option value={"1,2,3,4,5,6"}>Каждый день</Select.Option>
-              <Select.Option value={"6,7"}>Выходные</Select.Option>
-            </Select>
-          )
-        }
-        
+
+        {manualMarking ? (
+          <Select
+            mode="multiple"
+            className={`${manualMarking ? "" : "hidden"} w-full mb-4 mt-2`}
+            options={options}
+            value={group?.days?.length === 0 ? null : group?.days}
+            onChange={(e) => {
+              setGroup({ ...group, days: e?.filter((e) => e !== undefined) });
+            }}
+            placeholder="Выбрать варианты"
+          />
+        ) : (
+          <Select
+            value={group?.days}
+            onChange={(e) => {
+              setGroup({ ...group, days: e });
+            }}
+            placeholder="Выбрать варианты"
+            className={`${manualMarking ? "hidden" : ""} w-full mb-4 mt-2`}
+          >
+            <Select.Option value={"1,3,5"}>Нечетные дни</Select.Option>
+            <Select.Option value={"2,4,6"}>Четные дни</Select.Option>
+            <Select.Option value={"1,2,3,4,5,6"}>Каждый день</Select.Option>
+            <Select.Option value={"6,7"}>Выходные</Select.Option>
+          </Select>
+        )}
+
         <p>Выберите аудиторию</p>
         <Select
           value={group?.room_id}

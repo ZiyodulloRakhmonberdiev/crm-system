@@ -22,60 +22,18 @@ import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
 import moment from "moment";
 
 export default function Expenses() {
-  const prevDate = new Date()
+  const prevDate = new Date();
   prevDate.setMonth(prevDate.getMonth() - 1);
   // states
-  const [expensesAmount, setExpensesAmount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
   const [last_page] = useState(1);
   const { refreshExpenses, expenses, loading } = useSelector(
     (state) => state.expenses
   );
-  const [from, setFrom] = useState(moment(prevDate).format("YYYY-MM-DD"))
-  const [to, setTo] = useState(moment(new Date()).format("YYYY-MM-DD"))
-  const expenseCategories = [
-    {
-      id: 1,
-      name: "Другое",
-    },
-    {
-      id: 2,
-      name: "Административные расходы",
-    },
-    {
-      id: 3,
-      name: "Аренда",
-    },
-    {
-      id: 4,
-      name: "Зарплаты",
-    },
-    {
-      id: 5,
-      name: "Маркетинг",
-    },
-    {
-      id: 6,
-      name: "Канцелярия",
-    },
-    {
-      id: 7,
-      name: "Хозяйственные расходы",
-    },
-    {
-      id: 8,
-      name: "Налоги",
-    },
-    {
-      id: 9,
-      name: "Инвестиции",
-    },
-    {
-      id: 10,
-      name: "Возврат средств",
-    },
-  ];
+  const [from, setFrom] = useState(moment(prevDate).format("YYYY-MM-DD"));
+  const [to, setTo] = useState(moment(new Date()).format("YYYY-MM-DD"));
+
   // hooks
   const dispatch = useDispatch();
 
@@ -164,11 +122,6 @@ export default function Expenses() {
       .get(`/api/expenses?from=${from}&to=${to}?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedExpenses(res?.data?.data?.data));
-        let total = 0;
-        for (let i = 0; i < expenses.length; i++) {
-          total = total + expenses[i].amount;
-          setExpensesAmount(total);
-        }
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -213,9 +166,7 @@ export default function Expenses() {
               <div className="header__content">
                 <p className="header__title">Учет расходов</p>
                 <p>Общая сумма: </p>
-                <p className="header__result">
-                  {Number(expensesAmount)?.toLocaleString()} сум
-                </p>
+                <p className="header__result">Нет информации</p>
               </div>
             </HeaderItem>
           </HeaderWrapper>
@@ -227,7 +178,7 @@ export default function Expenses() {
                 name=""
                 id=""
                 value={from}
-                onChange={e => setFrom(e.target.value)}
+                onChange={(e) => setFrom(e.target.value)}
                 className="rounded-md  border border-slate-300 p-2"
               />
             </div>
@@ -238,7 +189,7 @@ export default function Expenses() {
                 name=""
                 id=""
                 value={to}
-                onChange={e => setTo(e.target.value)}
+                onChange={(e) => setTo(e.target.value)}
                 className="rounded-md  border border-slate-300 p-2"
               />
             </div>

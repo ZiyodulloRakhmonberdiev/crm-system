@@ -2,9 +2,17 @@ import { useSelector } from "react-redux";
 
 import { Card, Tabs } from "antd";
 import photo from "../../assets/img/Default-avatar.jpg";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function EmployeeProfile() {
   const { employeesData } = useSelector((state) => state.employees);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!employeesData?.id) {
+      navigate("/employees", { replace: true });
+    }
+  }, []);
 
   return (
     <Tabs>
@@ -32,7 +40,7 @@ export default function EmployeeProfile() {
                 <div className="flex flex-wrap gap-2">
                   {employeesData?.role?.map((item) => (
                     <span
-                      key={item?.id}
+                      key={item}
                       className="px-2 py-0.5 rounded-md text-violet-500 border border-violet-500 text-sm"
                     >
                       {item}

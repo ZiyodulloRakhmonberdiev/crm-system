@@ -15,27 +15,32 @@ import {
   setUserData,
 } from "../../redux/studentsSlice";
 import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
+import moment from "moment";
 
 export default function Debtors() {
+  const prevDate = new Date()
+  prevDate.setMonth(prevDate.getMonth() - 1);
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
   const [last_page, setLastPage] = useState(1);
   const [debtsAmountHandle, setDebtsAmountHandle] = useState("");
   const { studentsDebtors, loading } = useSelector((state) => state.students);
   const dispatch = useDispatch();
+  
+  const [from, setFrom] = useState(moment(prevDate).format("YYYY-MM-DD"))
+  const [to, setTo] = useState(moment(new Date()).format("YYYY-MM-DD"))
 
   // fetching students
   useEffect(() => {
-    dispatch(fetchingStudents());
     axios
-      .get(`/api/students/debtors`)
+      .get(`/api/students/debtors?from=${from}&to=${to}`)
       .then((res) => {
         dispatch(fetchedStudentsDebtors(res?.data?.data?.data?.students));
       })
       .catch(() => {
         dispatch(fetchedError());
       });
-  }, [currentPage, dispatch]);
+  }, [currentPage, from, to]);
 
   // debtors static data
   let debtors = [];
@@ -145,7 +150,29 @@ export default function Debtors() {
         </HeaderItem>
       </HeaderWrapper>
       <div className="flex flex-wrap gap-2 mb-8">
-        <div className="w-42 mr-8">
+      <div className="flex flex-col gap-1 justify-center">
+              <label htmlFor="">Дата от</label>
+              <input
+                type="date"
+                name=""
+                id=""
+                value={from}
+                onChange={e => setFrom(e.target.value)}
+                className="rounded-md  border border-slate-300 p-2"
+              />
+            </div>
+            <div className="flex flex-col gap-1 justify-center">
+              <label htmlFor="">Дата до</label>
+              <input
+                type="date"
+                name=""
+                id=""
+                value={to}
+                onChange={e => setTo(e.target.value)}
+                className="rounded-md  border border-slate-300 p-2"
+              />
+            </div>
+        {/* <div className="w-42 mr-8">
           <Input.Search
             placeholder="По номеру телефона или имени"
             allowClear
@@ -158,7 +185,7 @@ export default function Debtors() {
             allowClear
             className="min-w-[200px] md:min-w-[250px]"
           />
-        </div>
+        </div> */}
       </div>
       <Table
         loading={loading}

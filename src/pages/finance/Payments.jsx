@@ -29,19 +29,22 @@ import { fetchedGroups, fetchingGroups } from "../../redux/groupsSlice";
 import { fetchedTeachers, fetchingTeachers } from "../../redux/teachersSlice";
 import { MyButton } from "../../UI/Button.style";
 import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
+import moment from "moment";
 
 export default function Payments() {
+  const prevDate = new Date()
+  prevDate.setMonth(prevDate.getMonth() - 1);
   // states
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
   const [last_page] = useState(1);
+  const [from, setFrom] = useState(moment(prevDate).format("YYYY-MM-DD"))
+  const [to, setTo] = useState(moment(new Date()).format("YYYY-MM-DD"))
   const { payments, paymentsAmount, profitAmount, loading } = useSelector(
     (state) => state.payments
   );
   const { students } = useSelector((state) => state.students);
   const { employees } = useSelector((state) => state.employees);
-  const { groups } = useSelector((state) => state.groups);
-  const { teachers } = useSelector((state) => state.teachers);
   const { refreshExpenses } = useSelector((state) => state.expenses);
   const paymentMethods = [
     "Наличные",
@@ -153,39 +156,39 @@ export default function Payments() {
   useEffect(() => {
     dispatch(fetchingPayments());
     axios
-      .get(`/api/payments?from=2022-12-01&to=2023-12-30?page=${currentPage}`)
+      .get(`/api/payments?from=${from}&to=${to}?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedPayments(res?.data?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, [currentPage, dispatch]);
+  }, [currentPage, dispatch, from, to]);
 
   // fetching all payments amount
   useEffect(() => {
     dispatch(fetchingPaymentsAmount());
     axios
-      .get(`/api/payments/amount?from=2022-12-01&to=2023-12-30`)
+      .get(`/api/payments/amount?from=${from}&to=${to}`)
       .then((res) => {
         dispatch(fetchedPaymentsAmount(res?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, [currentPage, dispatch]);
+  }, [currentPage, from, to]);
 
   // fetching profit amount
   useEffect(() => {
     axios
-      .get(`/api/payments/profit?from=2022-12-01&to=2023-12-30`)
+      .get(`/api/payments/profit?from=${from}&to=${to}`)
       .then((res) => {
         dispatch(fetchedProfitAmount(res?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, [refreshExpenses, currentPage, dispatch]);
+  }, [refreshExpenses, currentPage, from, to]);
 
   // fetching students
   useEffect(() => {
@@ -198,7 +201,7 @@ export default function Payments() {
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, [currentPage, dispatch]);
+  }, [currentPage]);
 
   // fetching employees
   useEffect(() => {
@@ -271,19 +274,23 @@ export default function Payments() {
             type="date"
             name=""
             id=""
-            className="rounded-md p-1 border border-slate-300 py-2 w-full"
-          />
+            value={from}
+            onChange={e => setFrom(e.target.value)}
+            className="rounded-md p-2 border border-slate-300 w-full"
+            />
         </div>
         <div className="flex flex-col gap-1 justify-center">
           <label htmlFor="">Дата до</label>
           <input
+            value={to}
+            onChange={e => setTo(e.target.value)}
             type="date"
             name=""
             id=""
-            className="rounded-md p-1 border border-slate-300 py-2"
+            className="rounded-md  border border-slate-300 p-2"
           />
         </div>
-        <div className="flex flex-col gap-1 justify-center">
+        {/* <div className="flex flex-col gap-1 justify-center">
           <label htmlFor="">Имя или телефон</label>
           <Input
             placeholder="Имя или телефон"
@@ -349,7 +356,7 @@ export default function Payments() {
         </div>
         <div className="mt-4 sm:mt-auto">
           <MyButton>Фильтровать</MyButton>
-        </div>
+        </div> */}
       </div>
       <Table
         loading={loading}

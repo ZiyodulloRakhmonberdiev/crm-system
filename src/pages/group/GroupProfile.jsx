@@ -278,7 +278,7 @@ export default function GroupProfile() {
                     student?.active === true
                       ? "hover:bg-green-50"
                       : "hover:bg-red-50"
-                  } flex justify-between flex-wrap items-center transition p-1`}
+                  } flex justify-between flex-wrap items-center transition p-1 `}
                 >
                   <Popover
                     placement="right"
@@ -318,7 +318,7 @@ export default function GroupProfile() {
                           <label className="text-xs text-slate-400">
                             Баланс
                           </label>
-                          <p>{Number(student?.balance).toLocaleString()} сум</p>
+                          <p className={`p-1 rounded-md ${student?.balance < 0 ? "bg-red-200 text-red-600" : "bg-green-200 text-green-600"}`} >{Number(student?.balance).toLocaleString()} сум</p>
                         </div>
                         <div className="border-b mb-2 md:mb-4">
                           <label className="text-xs text-slate-400">
@@ -339,15 +339,20 @@ export default function GroupProfile() {
                       </div>
                     }
                   >
-                    <span
-                      className={`${
-                        student?.active === true
+                    <div className="flex gap-2 items-center">
+
+                      <span className={`w-[15px] h-[15px] rounded-full inline-block  
+                        ${student?.balance < 0 ? "bg-red-400" : "bg-green-400"}`}></span>
+                      <span
+                        className={`${
+                          student?.active === true
                           ? "text-green-400"
                           : "text-red-400"
-                      } `}
-                    >
-                      {student?.first_name} {student?.last_name}
-                    </span>
+                        } `}
+                        >
+                        {student?.first_name} {student?.last_name}
+                      </span>
+                    </div>
                   </Popover>
                   <div className="flex flex-col items-center">
                     <a href={`tel:${student?.phone}`}>{student?.phone}</a>

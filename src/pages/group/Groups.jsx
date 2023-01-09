@@ -129,7 +129,7 @@ export default function Groups() {
             {days?.map((item) => {
               return (
                 <span
-                  key={item?.id}
+                  key={uuidv4()}
                   className="px-1 py-0.5 rounded-md text-white bg-gray-400 font-semibold"
                   style={{ fontSize: "10px" }}
                 >
@@ -258,7 +258,6 @@ export default function Groups() {
       render: (record) => {
         return <span className="text-xs">{record}</span>;
       },
-      width: "250px",
     },
     {
       key: "6",
@@ -330,7 +329,7 @@ export default function Groups() {
           />
         </HeaderItem>
       </HeaderWrapper>
-      <div className="flex flex-wrap gap-4 mb-8">
+      {/* <div className="flex flex-wrap gap-4 mb-8">
         <Select
           mode="multiple"
           maxTagCount={1}
@@ -340,7 +339,7 @@ export default function Groups() {
         >
           {groupsStatus.map((course) => {
             return (
-              <Select.Option key={course?.id} value={course}>
+              <Select.Option key={uuidv4()} value={course}>
                 {course}
               </Select.Option>
             );
@@ -354,7 +353,7 @@ export default function Groups() {
         >
           {teachers?.data?.map((item) => {
             return (
-              <Select.Option key={item?.id} value={item?.name}>
+              <Select.Option key={uuidv4()} value={item?.name}>
                 {item?.name}
               </Select.Option>
             );
@@ -369,7 +368,7 @@ export default function Groups() {
         >
           {courses?.map((course) => {
             return (
-              <Select.Option key={course?.id} value={course?.name}>
+              <Select.Option key={uuidv4()} value={course?.name}>
                 {course?.name}
               </Select.Option>
             );
@@ -384,7 +383,7 @@ export default function Groups() {
         >
           {days?.map((item) => {
             return (
-              <Select.Option key={item?.id} value={item}>
+              <Select.Option key={uuidv4()} value={item}>
                 {item}
               </Select.Option>
             );
@@ -396,7 +395,7 @@ export default function Groups() {
           block
           format="YYYY-MM-DD"
         />
-      </div>
+      </div> */}
       <Drawer
         open={visible}
         title={
@@ -425,6 +424,7 @@ export default function Groups() {
         pagination={false}
         size="small"
         rowClassName={(e) => (e?.active ? "" : "bg-orange-100")}
+        rowKey={(record) => record.uid}
       ></Table>
       <br />
       <center>

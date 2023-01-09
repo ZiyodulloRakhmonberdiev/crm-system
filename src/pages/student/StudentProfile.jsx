@@ -276,7 +276,7 @@ export default function StudentProfile() {
           <div className="grid mb-2 md:mb-4 ">
             <label className="mb-2">Дополнительные:</label>
             {userData?.addition_phone?.map((item) => (
-              <div key={item?.id} className="grid grid-cols-2">
+              <div key={uuidv4()} className="grid grid-cols-2">
                 <p className="text-slate-400">{item?.label}</p>
                 <span className="text-xs flex items-center justify-start gap-1 text-slate-400">
                   <TelephoneFill className="text-green-400" />{" "}
@@ -354,9 +354,9 @@ export default function StudentProfile() {
           className="w-full mb-1"
           showSearch={true}
         >
-          {groups?.map((item, index) => {
+          {groups?.map((item) => {
             return (
-              <Select.Option value={item?.id} key={index}>
+              <Select.Option value={item?.id} key={item?.id}>
                 <button
                   onClick={() => {
                     dispatch(setUserGroupData(item));
@@ -423,7 +423,7 @@ export default function StudentProfile() {
                       } else {
                         return (
                           <div
-                            className="flex justify-start sm:justify-between flex-col items-start sm:items-center sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
+                            className="flex justify-start sm:justify-between w-full flex-col items-start sm:items-center sm:flex-row gap-2 p-4 bg-white drop-shadow-md rounded-sm"
                             key={group?.id}
                           >
                             <div className="flex flex-col justify-start gap-1 w-full">

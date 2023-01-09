@@ -32,14 +32,14 @@ import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
 import moment from "moment";
 
 export default function Payments() {
-  const prevDate = new Date()
+  const prevDate = new Date();
   prevDate.setMonth(prevDate.getMonth() - 1);
   // states
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
   const [last_page] = useState(1);
-  const [from, setFrom] = useState(moment(prevDate).format("YYYY-MM-DD"))
-  const [to, setTo] = useState(moment(new Date()).format("YYYY-MM-DD"))
+  const [from, setFrom] = useState(moment(prevDate).format("YYYY-MM-DD"));
+  const [to, setTo] = useState(moment(new Date()).format("YYYY-MM-DD"));
   const { payments, paymentsAmount, profitAmount, loading } = useSelector(
     (state) => state.payments
   );
@@ -68,6 +68,7 @@ export default function Payments() {
             if (student?.id === item?.student?.id) {
               return (
                 <Link
+                  key={student?.id}
                   className="text-cyan-500"
                   to={`/students/profile/${student?.id}`}
                   onClick={() => dispatch(setUserData(student))}
@@ -90,6 +91,7 @@ export default function Payments() {
             if (employee?.id === item?.employee?.id) {
               return (
                 <Link
+                  key={employee?.id}
                   className="text-cyan-500"
                   to={`/employees/profile/${employee?.id}`}
                   onClick={() => dispatch(setEmployeesData(employee))}
@@ -275,15 +277,15 @@ export default function Payments() {
             name=""
             id=""
             value={from}
-            onChange={e => setFrom(e.target.value)}
+            onChange={(e) => setFrom(e.target.value)}
             className="rounded-md p-2 border border-slate-300 w-full"
-            />
+          />
         </div>
         <div className="flex flex-col gap-1 justify-center">
           <label htmlFor="">Дата до</label>
           <input
             value={to}
-            onChange={e => setTo(e.target.value)}
+            onChange={(e) => setTo(e.target.value)}
             type="date"
             name=""
             id=""

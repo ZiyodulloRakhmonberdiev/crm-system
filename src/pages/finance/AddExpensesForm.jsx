@@ -42,7 +42,7 @@ export default function AddexpenseForm() {
     },
     {
       id: 6,
-      name: "Канцелярия",
+      name: "Офисные расходы",
     },
     {
       id: 7,
@@ -158,19 +158,15 @@ export default function AddexpenseForm() {
           className="mb-4 mt-2"
         />
         <p>Сумма</p>
-        <InputMask
-          mask="999 999 999"
+        <Input
           onChange={(e) => {
             setExpense({ ...expense, amount: e.target.value });
           }}
           value={expense?.amount}
-          maskChar={null}
-        >
-          {(props) => (
-            <Input {...props} required addonAfter="сум" className="mb-4 mt-2" />
-          )}
-        </InputMask>
-
+          required
+          addonAfter="сум"
+          className="mb-4 mt-2"
+        />
         <Spin spinning={uploading}>
           <MyButton htmlType="submit" color="primary">
             Отправить

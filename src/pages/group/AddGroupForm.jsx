@@ -190,6 +190,8 @@ export default function AddGroupForm({
             console.log(err);
             if (err?.response?.data?.message === "Lesson chalk in the room") {
               message.error("Кабинет в это время занята!");
+            } else if (err?.response?.data?.data?.teachers) {
+              message.error("Пожалуйста, добавьте учителя!");
             } else {
               message.error("Произошла ошибка! Попробуйте еще раз!");
             }
@@ -234,6 +236,10 @@ export default function AddGroupForm({
           .catch((err) => {
             if (err?.response?.data?.data?.room_id) {
               message.error("Кабинет в это время занята!");
+            } else if (err?.response?.data?.data?.days) {
+              message.error("Пожалуйста, удалите дни и введите их заново!");
+            } else if (err?.response?.data?.data?.teachers) {
+              message.error("Пожалуйста, добавьте учителя!");
             } else {
               console.log(err);
               message.error("Произошла ошибка! Попробуйте еще раз!");
@@ -344,9 +350,9 @@ export default function AddGroupForm({
           className="w-full mb-4 mt-2"
           showSearch={true}
         >
-          {courses?.map((course, index) => {
+          {courses?.map((course) => {
             return (
-              <Select.Option value={course?.id} key={index}>
+              <Select.Option value={course?.id} key={uuidv4()}>
                 {course.name}
               </Select.Option>
             );
@@ -355,7 +361,7 @@ export default function AddGroupForm({
         <p>Выберите учителя и процент дохода (%)</p>
         <div className="mt-2 mb-4">
           {inputFields?.map((inputField) => (
-            <div key={inputField?.id} className="mb-2">
+            <div key={uuidv4()} className="mb-2">
               <div className="flex justify-between items-end mb-2">
                 <span>Другой учитель</span>
                 <button
@@ -376,13 +382,13 @@ export default function AddGroupForm({
                 className="w-3/4"
                 showSearch={true}
               >
-                {teachers?.data?.map((teacher, index) => {
+                {teachers?.data?.map((teacher) => {
                   const curr = inputFields.find(
                     (item) => item?.teacher_id == teacher?.id
                   );
                   if (!curr || curr.id === inputField.id) {
                     return (
-                      <Select.Option value={teacher?.id} key={index}>
+                      <Select.Option value={teacher?.id} key={uuidv4()}>
                         {teacher?.name}
                       </Select.Option>
                     );
@@ -492,9 +498,9 @@ export default function AddGroupForm({
           className="w-full mb-4 mt-2"
           showSearch={true}
         >
-          {rooms?.map((room, index) => {
+          {rooms?.map((room) => {
             return (
-              <Select.Option value={room?.id} key={room.id}>
+              <Select.Option value={room?.id} key={uuidv4()}>
                 {room.name}
               </Select.Option>
             );
@@ -511,7 +517,9 @@ export default function AddGroupForm({
           showSearch={true}
         >
           {times?.map((time) => (
-            <Select.Option value={time?.id}>{time?.time}</Select.Option>
+            <Select.Option key={uuidv4()} value={time?.id}>
+              {time?.time}
+            </Select.Option>
           ))}
         </Select>
         <Spin spinning={uploading}>

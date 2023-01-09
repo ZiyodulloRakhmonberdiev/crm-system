@@ -22,8 +22,8 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
   const { students, studentJoinedGroups, loadingJoinedGroups } = useSelector(
     (state) => state.students
   );
-  const location = useLocation()
-  const params = useParams()
+  const location = useLocation();
+  const params = useParams();
   const [payment, setPayment] = useState({
     student_id: "",
     group_id: "",
@@ -34,7 +34,9 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
   });
   useEffect(() => {
     setPayment({
-      student_id: location?.pathname?.includes("/students/profile") ? +params?.id : "",
+      student_id: location?.pathname?.includes("/students/profile")
+        ? +params?.id
+        : "",
       group_id: "",
       amount: "",
       payment_type: "",
@@ -154,18 +156,15 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
           </Select>
         </Spin>
         <p>Сумма</p>
-        <InputMask
-          mask="999 999 999"
+        <Input
           onChange={(e) => {
             setPayment({ ...payment, amount: e.target.value });
           }}
           value={payment?.amount}
-          maskChar={null}
-        >
-          {(props) => (
-            <Input {...props} required addonAfter="сум" className="mb-4 mt-2" />
-          )}
-        </InputMask>
+          required
+          addonAfter="сум"
+          className="mb-4 mt-2"
+        />
         <p>Дата</p>
         <input
           id="date"

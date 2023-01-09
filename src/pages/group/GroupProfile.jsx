@@ -130,10 +130,10 @@ export default function GroupProfile() {
     setStudentActivating(true);
     axios
       .post(`/api/groups/active/${params?.id}/${studentId}`)
-      .then((res) => {
+      .then(() => {
         setRefreshing(!refreshing);
       })
-      .catch((err) => {
+      .catch(() => {
         message.error("Произошла ошибка! Попробуйте еще раз!");
       })
       .finally(() => setStudentActivating(false));
@@ -175,13 +175,16 @@ export default function GroupProfile() {
             </MyMessage>
           )}
       <div className="text-xl mb-8 bg-white p-4 rounded-lg flex flex-wrap gap-4 items-center">
-        {groupData?.name} <Dot /> {groupData?.course?.name} <Dot />{" "}
+        {groupData?.name} <Dot /> {groupData?.course?.name}{" "}
         {groupData?.tachers?.map((teacher) => (
-          <span key={teacher?.id}>{teacher?.name}</span>
+          <span key={teacher?.id} className="flex gap-4 items-center">
+            <Dot />
+            {teacher?.name}
+          </span>
         ))}
       </div>
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="flex flex-col drop-shadow-md hover:drop-shadow-lg transition col-span-1">
+      <div className="flex flex-col md:flex-row gap-8 w-full">
+        <div className="flex flex-col md:w-1/2 lg:w-1/3 drop-shadow-md hover:drop-shadow-lg transition">
           <div className="absolute top-4 right-4">
             <div className="flex flex-col gap-2">
               <IconButton
@@ -197,7 +200,7 @@ export default function GroupProfile() {
               </IconButton>
             </div>
           </div>
-          <div className="bg-white p-2 lg:p-4 lg:pt-6">
+          <div className="bg-white p-2 lg:p-4 pt-6">
             <span className="text-white bg-cyan-400 px-4 py-2 rounded-md text-lg">
               {groupData?.name}
             </span>
@@ -219,7 +222,7 @@ export default function GroupProfile() {
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Учителя:</label>
-              <p>
+              <p className="grid gap-0.5">
                 {groupData?.tachers?.map((teacher) => (
                   <Link
                     key={teacher?.id}
@@ -318,7 +321,17 @@ export default function GroupProfile() {
                           <label className="text-xs text-slate-400">
                             Баланс
                           </label>
-                          <p className={`p-1 rounded-md ${student?.balance < 0 ? "bg-red-200 text-red-600" : "bg-green-200 text-green-600"}`} >{Number(student?.balance).toLocaleString()} сум</p>
+                          <p
+                            className={`p-1 rounded-md ${
+                              student?.balance < 0
+                                ? "bg-red-400 text-white"
+                                : student?.balance === 0
+                                ? "bg-blue-400 text-white"
+                                : "bg-green-400 text-white"
+                            }`}
+                          >
+                            {Number(student?.balance).toLocaleString()} сум
+                          </p>
                         </div>
                         <div className="border-b mb-2 md:mb-4">
                           <label className="text-xs text-slate-400">
@@ -340,16 +353,22 @@ export default function GroupProfile() {
                     }
                   >
                     <div className="flex gap-2 items-center">
-
-                      <span className={`w-[15px] h-[15px] rounded-full inline-block  
-                        ${student?.balance < 0 ? "bg-red-400" : "bg-green-400"}`}></span>
+                      <span
+                        className={`w-[7px] h-[7px] rounded-full inline-block  
+                        ${
+                          student?.balance < 0
+                            ? "bg-red-600"
+                            : student?.balance === 0
+                            ? "bg-blue-600"
+                            : "bg-green-600"
+                        }
+                        `}
+                      ></span>
                       <span
                         className={`${
-                          student?.active === true
-                          ? "text-green-400"
-                          : "text-red-400"
-                        } `}
-                        >
+                          student?.active === true ? "" : "text-red-400"
+                        }`}
+                      >
                         {student?.first_name} {student?.last_name}
                       </span>
                     </div>
@@ -362,30 +381,39 @@ export default function GroupProfile() {
             </div>
           </div>
         </div>
-        <Tabs className="col-span-1 lg:col-span-2">
-          <Tabs.TabPane tab="Посещаемость" key="item-1">
-            <div className="grid gap-2">
-              {groupData?.active
-                ? !activeGroup && (
-                    <div className="bg-white rounded-md px-6 py-4 overflow-x-auto ">
-                      {groupData?.student_count == 0 ? (
-                        "В этой группе нет студентов"
-                      ) : (
-                        <GroupAttendance />
+        <Tabs
+          className="w-full"
+          items={[
+            {
+              key: "1",
+              label: `Посещаемость`,
+              children: (
+                <div className="grid gap-2">
+                  {groupData?.active
+                    ? !activeGroup && (
+                        <div className="bg-white rounded-md px-6 py-4 overflow-x-auto ">
+                          {groupData?.student_count == 0 ? (
+                            "В этой группе нет студентов"
+                          ) : (
+                            <GroupAttendance />
+                          )}
+                        </div>
+                      )
+                    : !activeGroup && (
+                        <div className="shadow-md rounded-md bg-white p-4 ">
+                          Группа не активна
+                        </div>
                       )}
-                    </div>
-                  )
-                : !activeGroup && (
-                    <div className="shadow-md rounded-md bg-white p-4 ">
-                      Группа не активна
-                    </div>
-                  )}
-            </div>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="История" key="item-2">
-            <InProcess />
-          </Tabs.TabPane>
-        </Tabs>
+                </div>
+              ),
+            },
+            {
+              key: "2",
+              label: `История`,
+              children: <InProcess />,
+            },
+          ]}
+        ></Tabs>
       </div>
     </>
   );

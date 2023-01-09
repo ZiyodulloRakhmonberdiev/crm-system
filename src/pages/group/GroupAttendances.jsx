@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Input, Modal, Spin, Tooltip } from "antd";
+import { Input, message, Modal, Spin, Tooltip } from "antd";
 import { CheckCircle, X, XCircle } from "react-bootstrap-icons";
 import moment from "moment";
+import { v4 as uuidv4 } from "uuid";
 import "moment/locale/ru";
 import {
   fetchedAtt,
@@ -84,6 +85,18 @@ const GroupAttendance = () => {
     return date1 > date2;
   };
 
+  const deleteAtt = (currentId) => {
+    setUploading(true);
+    axios
+      .delete(`/api/groups/attendance/${currentId}`)
+      .then(() => {
+        setRefreshing(!refreshing);
+      })
+      .catch((err) => {
+        message.error("Произошла ошибка! Попробуйте еще раз!");
+      })
+      .finally(() => setUploading(false));
+  };
   if (error) return <center>При загрузке произошла ошибка</center>;
 
   return (
@@ -104,21 +117,23 @@ const GroupAttendance = () => {
       </Modal>
       <div>
         <table className="overflow-auto">
-          <tr className="flex rounded-sm mb-3">
-            <th width="200" align="left">
-              Имя
-            </th>
-            {attendances?.days?.map((day) => (
-              <th key={day?.id} width="100">
-                {moment(day?.data).format("DD MMM")}
+          <thead>
+            <tr className="flex rounded-sm mb-3">
+              <th width="200" align="left">
+                Имя
               </th>
-            ))}
-          </tr>
+              {attendances?.days?.map((day) => (
+                <th key={uuidv4()} width="100">
+                  {moment(day?.data).format("DD MMM")}
+                </th>
+              ))}
+            </tr>
+          </thead>
           <tbody>
             {attendances?.students?.map(
               (student) =>
                 student?.active === true && (
-                  <tr key={student?.id} className="flex mb-2">
+                  <tr key={uuidv4()} className="flex mb-2">
                     <td width={200} className="bg-gray-100 rounded-sm p-1">
                       {student?.first_name} {student?.last_name}
                     </td>
@@ -126,10 +141,9 @@ const GroupAttendance = () => {
                       const current = student.attendance.find(
                         (att) => att?.date === day?.data
                       );
-
                       return current ? (
                         <td
-                          key={day?.id}
+                          key={uuidv4()}
                           width="100"
                           className="flex items-center justify-center"
                         >
@@ -141,34 +155,38 @@ const GroupAttendance = () => {
                                   : "Нет описания"
                               }
                             >
-                              <span className="cursor-pointer bg-red-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper">
-                                {/* <button
+                              <span className="bg-red-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper">
+                                <button
+                                  onClick={() => {
+                                    deleteAtt(current?.id);
+                                  }}
                                   className="absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn"
                                 >
                                   <X />
-                                </button> */}
+                                </button>
                                 Нет
                               </span>
                             </Tooltip>
                           ) : (
-                            <Tooltip
-                              title={
-                                current?.description
-                                  ? current?.description
-                                  : "Нет описания"
-                              }
+                            <span
+                              key={uuidv4()}
+                              className="bg-blue-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper"
                             >
-                              <span className="cursor-pointer bg-blue-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper">
-                                {/* <button className="absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn">
+                              <button
+                                onClick={() => {
+                                  deleteAtt(current?.id);
+                                }}
+                                className="absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn"
+                              >
                                 <X />
-                              </button> */}
-                                Был
-                              </span>
-                            </Tooltip>
+                              </button>
+                              Был
+                            </span>
                           )}
                         </td>
                       ) : (
                         <td
+                          key={uuidv4()}
                           width="100"
                           className="flex items-center justify-center"
                         >
@@ -192,26 +210,26 @@ const GroupAttendance = () => {
                                     student_id: student?.id,
                                     group_id: params?.id,
                                   });
-                                  setModalIsOpen(true);
+                                  handleSetAttendanceStudent();
                                 }}
                                 className={`
-                              have
-                              text-blue-500 
-                              hover:bg-blue-500 
-                              hover:text-bg-500 
-                              hover:text-white 
-                              rounded-full
-                              p-1 w-8 h-8 
-                              opacity-0 
+                                  have
+                                  text-blue-500 
+                                  hover:bg-blue-500 
+                                  hover:text-bg-500 
+                                  hover:text-white 
+                                  rounded-full
+                                  p-1 w-8 h-8 
+                                  opacity-0 
                               ${
                                 compareDate(day?.data)
                                   ? ""
                                   : "hover:opacity-100"
                               } 
-                              flex 
-                              items-center 
-                              justify-center 
-                              transition
+                                  flex 
+                                  items-center 
+                                  justify-center 
+                                  transition
                               `}
                               >
                                 <CheckCircle />

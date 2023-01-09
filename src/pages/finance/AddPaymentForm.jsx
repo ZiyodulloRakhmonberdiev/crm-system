@@ -90,7 +90,7 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
           date: payment.date,
           description: payment.description,
         })
-        .then((res) => {
+        .then(() => {
           setPayment({
             student_id: "",
             group_id: "",
@@ -104,7 +104,6 @@ export default function AddPaymentForm({ visible, setVisiblePayment }) {
           navigate("/", { replace: true });
         })
         .catch((err) => {
-          console.log(err);
           message.error("Произошла ошибка! Попробуйте еще раз!");
         })
         .finally(() => setUploading(false));

@@ -187,7 +187,6 @@ export default function AddGroupForm({
             setVisible();
           })
           .catch((err) => {
-            console.log(err);
             if (err?.response?.data?.message === "Lesson chalk in the room") {
               message.error("Кабинет в это время занята!");
             } else if (err?.response?.data?.data?.teachers) {
@@ -241,7 +240,6 @@ export default function AddGroupForm({
             } else if (err?.response?.data?.data?.teachers) {
               message.error("Пожалуйста, добавьте учителя!");
             } else {
-              console.log(err);
               message.error("Произошла ошибка! Попробуйте еще раз!");
             }
           })

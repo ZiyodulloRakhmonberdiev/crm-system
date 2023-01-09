@@ -54,7 +54,6 @@ export default function AddBranchForm({
             name: branch.name,
           })
           .then((res) => {
-            console.log(res);
             setBranch({
               name: "",
             });

@@ -92,7 +92,6 @@ export default function AddCourseForm({
             setVisible();
           })
           .catch((err) => {
-            console.log(err);
             message.error("Произошла ошибка! Попробуйте еще раз!");
           })
           .finally(() => setUploading(false));

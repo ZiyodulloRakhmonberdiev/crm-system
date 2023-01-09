@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Modal, Drawer, Spin } from "antd";
 import { PencilSquare, Trash, Palette2 } from "react-bootstrap-icons";
 
-import { MyButton } from "../../UI/Button.style";
 import { IconButton } from "../../UI/IconButton.style";
 import axios from "../../axios/axios";
 import AddBranchForm from "./AddBranchForm";

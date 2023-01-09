@@ -1,143 +1,143 @@
-import { useState, useEffect } from 'react'
-import { Input, Form, Radio, message, Spin } from 'antd'
-import axios from '../../axios/axios'
-import { MyButton } from '../../UI/Button.style'
-import { useDispatch } from 'react-redux'
-import { refreshTeachersData } from '../../redux/teachersSlice'
-import InputMask from 'react-input-mask'
+import { useState, useEffect } from "react";
+import { Input, Form, Radio, message, Spin } from "antd";
+import axios from "../../axios/axios";
+import { MyButton } from "../../UI/Button.style";
+import { useDispatch } from "react-redux";
+import { refreshTeachersData } from "../../redux/teachersSlice";
+import InputMask from "react-input-mask";
 
-export default function AddTeacherForm ({
+export default function AddTeacherForm({
   modalType,
   editingTeacher,
   visible,
-  setVisible
+  setVisible,
 }) {
-  const url = '/api/teachers'
+  const url = "/api/teachers";
   const [teacher, setTeacher] = useState({
-    name: '',
-    phone: '',
-    password: '',
-    gender: '',
-    salary_percentage: ''
-  })
-  const [uploading, setUploading] = useState(false)
-  const dispatch = useDispatch()
+    name: "",
+    phone: "",
+    password: "",
+    gender: "",
+    salary_percentage: "",
+  });
+  const [uploading, setUploading] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (modalType === 'add') {
+    if (modalType === "add") {
       setTeacher({
-        name: '',
-        phone: '',
-        password: '',
-        gender: '',
-        salary_percentage: ''
-      })
+        name: "",
+        phone: "",
+        password: "",
+        gender: "",
+        salary_percentage: "",
+      });
     } else {
-      const { name, phone, gender, salary_percentage } = editingTeacher
+      const { name, phone, gender, salary_percentage } = editingTeacher;
       setTeacher({
         name: name,
         phone: phone.length === 9 ? phone : phone.slice(4, 13),
-        password: '',
+        password: "",
         gender: gender,
-        salary_percentage: salary_percentage
-      })
+        salary_percentage: salary_percentage,
+      });
     }
-  }, [modalType, visible])
+  }, [modalType, visible]);
 
-  function handle (e) {
-    const newTeacher = { ...teacher }
-    newTeacher[e.target.id] = e.target.value
-    setTeacher(newTeacher)
+  function handle(e) {
+    const newTeacher = { ...teacher };
+    newTeacher[e.target.id] = e.target.value;
+    setTeacher(newTeacher);
   }
 
-  function submit (e) {
-    e.preventDefault()
-    const { name, phone, gender, salary_percentage } = teacher
+  function submit(e) {
+    e.preventDefault();
+    const { name, phone, gender, salary_percentage } = teacher;
     if (name && phone && gender && salary_percentage) {
-      setUploading(true)
-      if (modalType === 'add') {
+      setUploading(true);
+      if (modalType === "add") {
         axios
           .post(url, {
             name: teacher.name,
-            phone: '+998' + teacher.phone?.split(' ').join(''),
+            phone: "+998" + teacher.phone?.split(" ").join(""),
             password: teacher.password,
             gender: teacher.gender,
-            salary_percentage: teacher.salary_percentage
+            salary_percentage: teacher.salary_percentage,
           })
-          .then(res => {
+          .then((res) => {
             setTeacher({
-              name: '',
-              phone: '',
-              password: '',
-              gender: '',
-              salary_percentage: ''
-            })
-            message.success('Учитель успешно добавлен!')
-            dispatch(refreshTeachersData())
-            setVisible()
+              name: "",
+              phone: "",
+              password: "",
+              gender: "",
+              salary_percentage: "",
+            });
+            message.success("Учитель успешно добавлен!");
+            dispatch(refreshTeachersData());
+            setVisible();
           })
-          .catch(err => {
+          .catch((err) => {
             if (err.response.data.data.phone) {
-              message.error('Этот номер телефона уже зарегистрирован!')
+              message.error("Этот номер телефона уже зарегистрирован!");
             } else {
-              message.error('Произошла ошибка! Попробуйте еще раз!')
+              message.error("Произошла ошибка! Попробуйте еще раз!");
             }
           })
-          .finally(() => setUploading(false))
-      } else if (modalType === 'update') {
+          .finally(() => setUploading(false));
+      } else if (modalType === "update") {
         axios
-          .patch(url + '/' + editingTeacher?.id, {
+          .patch(url + "/" + editingTeacher?.id, {
             teacher_id: editingTeacher?.id,
             name: teacher.name,
-            phone: '+998' + teacher.phone?.split(' ').join(''),
+            phone: "+998" + teacher.phone?.split(" ").join(""),
             password: teacher.password,
             gender: teacher.gender,
-            salary_percentage: teacher.salary_percentage
+            salary_percentage: teacher.salary_percentage,
           })
-          .then(res => {
+          .then((res) => {
             setTeacher({
-              name: '',
-              phone: '',
-              password: '',
-              gender: '',
-              salary_percentage: ''
-            })
-            message.success('Учитель успешно обновлен!')
-            dispatch(refreshTeachersData())
-            setVisible()
+              name: "",
+              phone: "",
+              password: "",
+              gender: "",
+              salary_percentage: "",
+            });
+            message.success("Учитель успешно обновлен!");
+            dispatch(refreshTeachersData());
+            setVisible();
           })
-          .catch(err => {
+          .catch((err) => {
             if (err.response.data.data.phone) {
-              message.error('Этот номер телефона уже зарегистрирован!')
+              message.error("Этот номер телефона уже зарегистрирован!");
             } else {
-              message.error('Произошла ошибка! Попробуйте еще раз!')
+              message.error("Произошла ошибка! Попробуйте еще раз!");
             }
           })
-          .finally(() => setUploading(false))
+          .finally(() => setUploading(false));
       }
     } else {
-      message.error('Заполните все поля!')
+      message.error("Заполните все поля!");
     }
   }
 
   return (
     <div>
-      <form onSubmit={e => submit(e)}>
+      <form onSubmit={(e) => submit(e)}>
         <p>Телефон</p>
         <InputMask
-          mask='99 999 99 99'
-          onChange={e => {
-            setTeacher({ ...teacher, phone: e.target.value })
+          mask="99 999 99 99"
+          onChange={(e) => {
+            setTeacher({ ...teacher, phone: e.target.value });
           }}
           value={teacher.phone}
           maskChar={null}
         >
-          {props => (
+          {(props) => (
             <Input
               {...props}
               required
-              addonBefore='+998'
-              className='mb-4 mt-2'
+              addonBefore="+998"
+              className="mb-4 mt-2"
             />
           )}
         </InputMask>
@@ -145,34 +145,34 @@ export default function AddTeacherForm ({
         <p>Имя</p>
         <Input
           required
-          id='name'
+          id="name"
           value={teacher?.name}
-          onChange={e => {
-            handle(e)
+          onChange={(e) => {
+            handle(e);
           }}
-          type='text'
-          className='mb-4 mt-2'
+          type="text"
+          className="mb-4 mt-2"
         />
         <p>Пол</p>
-        <Radio.Group value={teacher?.gender} className='mb-4 mt-2'>
+        <Radio.Group value={teacher?.gender} className="mb-4 mt-2">
           <Radio
-            checked={teacher?.gender === 'male'}
-            value='male'
-            id='gender'
-            name='gender'
-            onChange={e => {
-              handle(e)
+            checked={teacher?.gender === "male"}
+            value="male"
+            id="gender"
+            name="gender"
+            onChange={(e) => {
+              handle(e);
             }}
           >
             Мужчина
           </Radio>
           <Radio
-            checked={teacher?.gender === 'female'}
-            value='female'
-            id='gender'
-            name='gender'
-            onChange={e => {
-              handle(e)
+            checked={teacher?.gender === "female"}
+            value="female"
+            id="gender"
+            name="gender"
+            onChange={(e) => {
+              handle(e);
             }}
           >
             Женщина
@@ -181,33 +181,33 @@ export default function AddTeacherForm ({
         <p>Зарплата</p>
         <Input
           required
-          id='salary_percentage'
+          id="salary_percentage"
           value={teacher?.salary_percentage}
-          onChange={e => {
-            handle(e)
+          onChange={(e) => {
+            handle(e);
           }}
-          type='text'
-          className='mb-4 mt-2'
+          type="number"
+          className="mb-4 mt-2"
         />
         <Form.Item>
           <p>Пароль</p>
           <Input.Password
-            required={modalType === 'add'}
-            id='password'
-            onChange={e => {
-              handle(e)
+            required={modalType === "add"}
+            id="password"
+            onChange={(e) => {
+              handle(e);
             }}
-            type='password'
+            type="password"
             value={teacher?.password}
-            className='mb-4 mt-2'
+            className="mb-4 mt-2"
           />
         </Form.Item>
         <Spin spinning={uploading}>
-          <MyButton htmlType='submit' color='primary'>
+          <MyButton htmlType="submit" color="primary">
             Отправить
           </MyButton>
         </Spin>
       </form>
     </div>
-  )
+  );
 }

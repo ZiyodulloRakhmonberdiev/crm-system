@@ -65,7 +65,7 @@ export default function Employees() {
       ),
       phone: item?.phone?.toLocaleString(),
       gender: item?.gender,
-      salary: item?.salary,
+      salary: Number(item?.salary).toLocaleString(),
       actions: (
         <div className="flex gap-2">
           <IconButton
@@ -118,6 +118,12 @@ export default function Employees() {
     },
     {
       key: "5",
+      title: "	Зарплата",
+      dataIndex: "salary",
+      fixed: "top",
+    },
+    {
+      key: "6",
       title: "Действие",
       width: 120,
       dataIndex: "actions",

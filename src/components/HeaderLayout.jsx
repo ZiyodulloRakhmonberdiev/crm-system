@@ -38,7 +38,7 @@ export default function HeaderLayout() {
     axios
       .get("/api/students")
       .then((res) => {
-        dispatch(fetchedStudents(res?.data?.data?.data));
+        dispatch(fetchedStudents(res?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -60,7 +60,7 @@ export default function HeaderLayout() {
 
   // get debtors
   let debtors = [];
-  students?.map((student) => {
+  students?.data?.map((student) => {
     student?.balance < 0 && debtors.push({ student });
   });
 
@@ -89,9 +89,9 @@ export default function HeaderLayout() {
             </p>
             <p className="text-slate-400 mb-2">
               В этом месяце в учебном центре зарегистрировались{" "}
-              <span className="text-violet-400">{students?.length}</span>{" "}
+              <span className="text-violet-400">{students?.data?.length}</span>{" "}
               студентов. На данный момент нам доверяют более{" "}
-              <span className="text-violet-400">{students?.length}</span>{" "}
+              <span className="text-violet-400">{students?.data?.length}</span>{" "}
               студентов
             </p>
             <MyButton color="primary">Смотреть все</MyButton>
@@ -101,7 +101,7 @@ export default function HeaderLayout() {
           </div>
         </Link>
         <Link
-          to="/leads"
+          to="/"
           className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
         >
           <div className="text-2xl text-violet-400 bg-violet-50 p-2 rounded-md">
@@ -128,7 +128,7 @@ export default function HeaderLayout() {
             <Mortarboard />
           </div>
           <p className="text-cyan-400 my-4">Студенты</p>
-          <p className="text-cyan-400 text-2xl">{students?.length}</p>
+          <p className="text-cyan-400 text-2xl">{students?.data?.length}</p>
         </Link>
         <Link
           to="/"

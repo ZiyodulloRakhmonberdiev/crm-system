@@ -138,7 +138,7 @@ export default function AddGroupForm({
   }
   function submit(e) {
     e.preventDefault();
-    const {
+    let {
       name,
       time_id,
       group_start_date,
@@ -153,10 +153,13 @@ export default function AddGroupForm({
       group_start_date &&
       teacher_ids &&
       room_id &&
-      days &&
+      days?.length !== 0 &&
       course_id
     ) {
       setUploading(true);
+      if (typeof days == "string") {
+        days = days?.split(",")
+      }
       if (modalType === "add") {
         axios
           .post(url, {
@@ -200,8 +203,6 @@ export default function AddGroupForm({
         if (!manualMarking) {
           group?.days?.split(",")?.map(item => dayArr.push(+item))
         }
-        console.log(group?.days);
-        console.log(dayArr);
         axios
           .patch(url + "/" + editingGroup?.id, {
             group_id: editingGroup?.id,
@@ -394,6 +395,7 @@ export default function AddGroupForm({
                 onChange={(event) => {
                   handleChangeInput("flex", inputField.id, event);
                 }}
+                disabled={!inputField?.teacher_id}
                 value={inputField?.flex}
                 placeholder="%"
                 className="w-1/4 ml-auto"

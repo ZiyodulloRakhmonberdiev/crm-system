@@ -19,8 +19,11 @@ import { MyButton } from "../../UI/Button.style";
 import AddExpensesForm from "./AddExpensesForm";
 import { IconButton } from "../../UI/IconButton.style";
 import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
+import moment from "moment";
 
 export default function Expenses() {
+  const prevDate = new Date()
+  prevDate.setMonth(prevDate.getMonth() - 1);
   // states
   const [expensesAmount, setExpensesAmount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,6 +32,8 @@ export default function Expenses() {
   const { refreshExpenses, expenses, loading } = useSelector(
     (state) => state.expenses
   );
+  const [from, setFrom] = useState(moment(prevDate).format("YYYY-MM-DD"))
+  const [to, setTo] = useState(moment(new Date()).format("YYYY-MM-DD"))
   const expenseCategories = [
     {
       id: 1,
@@ -156,7 +161,7 @@ export default function Expenses() {
   useEffect(() => {
     dispatch(fetchingExpenses());
     axios
-      .get(`/api/expenses?from=2022-12-01&to=2022-12-30?page=${currentPage}`)
+      .get(`/api/expenses?from=${from}&to=${to}?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedExpenses(res?.data?.data?.data));
         let total = 0;
@@ -168,7 +173,7 @@ export default function Expenses() {
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, [refreshExpenses, currentPage, dispatch]);
+  }, [refreshExpenses, currentPage, dispatch, from, to]);
 
   // fetching employees
   useEffect(() => {
@@ -221,7 +226,9 @@ export default function Expenses() {
                 type="date"
                 name=""
                 id=""
-                className="rounded-md p-1 border border-slate-300 py-2"
+                value={from}
+                onChange={e => setFrom(e.target.value)}
+                className="rounded-md  border border-slate-300 p-2"
               />
             </div>
             <div className="flex flex-col gap-1 justify-center">
@@ -230,10 +237,12 @@ export default function Expenses() {
                 type="date"
                 name=""
                 id=""
-                className="rounded-md p-1 border border-slate-300 py-2"
+                value={to}
+                onChange={e => setTo(e.target.value)}
+                className="rounded-md  border border-slate-300 p-2"
               />
             </div>
-            <div className="flex flex-col gap-1 justify-center">
+            {/* <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Описание</label>
               <Input className="sm:max-w-[130px]" allowClear />
             </div>
@@ -261,7 +270,7 @@ export default function Expenses() {
             </div>
             <div className="mt-4 sm:mt-auto">
               <MyButton>Фильтровать</MyButton>
-            </div>
+            </div> */}
           </div>
           <Table
             loading={loading}

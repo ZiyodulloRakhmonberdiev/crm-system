@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 
 import InputMask from "react-input-mask";
-import { Form, Input, message, Spin } from "antd";
+import { Form, Input, message, Select, Spin } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import axios from "../../axios/axios";
 import { checkUserIdLoggedIn, login } from "../../redux/loginSlice";
@@ -19,6 +19,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const [logged, setLogged] = useState(true);
+  const [roles, setRoles] = useState(null)
+  const [seletedRole, setSelectedRole] = useState(null)
 
   useEffect(() => {
     setLoading(true);
@@ -43,7 +45,7 @@ export default function Login() {
         JSON.stringify({
           phone: "+998" + phone?.split(" ").join(""),
           password,
-          role: "Limited Administrator"
+          role: seletedRole,
         }),
         {
           headers: { "Content-Type": "application/json" },
@@ -64,16 +66,23 @@ export default function Login() {
         setPhone("");
         setPassword("");
         localStorage.setItem("crm_token", response?.data?.data?.token);
+        localStorage.setItem("crm_role", response?.data?.data?.role);
+
         message.success("Успешно введено");
         navigate("/", { replace: true });
       })
       .catch((err) => {
         if (err?.response?.data?.message === "phone or password incorrect") {
           message.error("Введен неверный логин или пароль!");
-        } else if (err?.message === "Network Error") {
-          message.error("У вас нет подключения к интернету!");
+        } else if (err?.response?.data?.data?.roles !== null) {
+          setRoles(err?.response?.data?.data?.roles);
+          message.info("Kем вы хотите войти?")
         } else {
-          message.error("Произошла ошибка! Попробуйте еще раз!");
+          if (err?.message === "Network Error") {
+            message.error("У вас нет подключения к интернету!");
+          } else {
+            message.error("Произошла ошибка! Попробуйте еще раз!");
+          }
         }
       })
       .finally(() => {
@@ -126,6 +135,22 @@ export default function Login() {
                 )
               }
             />
+            {
+              roles && (
+                <Select
+                  className="bg-white focus:outline-none tracking-wide login-password w-full"
+                  onChange={e => setSelectedRole(e)}
+                >
+                {
+                  roles?.map(item => (
+                    <Select.Option value={item}>
+                      {item}
+                    </Select.Option>
+                  ))
+                }
+              </Select>
+              )
+            }
             <MyButton color="primary" htmlType="submit">
               Вход
             </MyButton>

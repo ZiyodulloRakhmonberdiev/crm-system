@@ -69,7 +69,7 @@ export default function AddGroupForm({
     axios.get(`/api/teachers`).then((res) => {
       dispatch(fetchedTeachers(res?.data?.data));
     });
-    setManualMarking(false)
+    setManualMarking(false);
   }, []);
 
   // fetching rooms
@@ -124,7 +124,6 @@ export default function AddGroupForm({
           newAddTeacher.push({ ...item, id: uuidv4(), teacher_id: item?.id });
         });
         setInputFields(newAddTeacher);
-        console.log(inputFields);
       } else {
         setInputFields([]);
       }
@@ -136,6 +135,8 @@ export default function AddGroupForm({
     newGroup[e.target.id] = e.target.value;
     setGroup(newGroup);
   }
+  console.log(group)
+            console.log(inputFields)
   function submit(e) {
     e.preventDefault();
     let {
@@ -158,7 +159,8 @@ export default function AddGroupForm({
     ) {
       setUploading(true);
       if (typeof days == "string") {
-        days = days?.split(",")
+        days = days?.split(",");
+        console.log(days, " is string");
       }
       if (modalType === "add") {
         axios
@@ -169,7 +171,7 @@ export default function AddGroupForm({
             group_end_date: group.group_end_date,
             teachers: inputFields,
             room_id: group.room_id,
-            days: manualMarking ? group.days : group.days?.split(","),
+            days: manualMarking ? (typeof group.days == "string" ?  group.days?.split(",")?.map(x => +x) : group.days) : group.days?.split(","),
             course_id: group.course_id,
           })
           .then((res) => {
@@ -188,21 +190,20 @@ export default function AddGroupForm({
             setVisible();
           })
           .catch((err) => {
-            console.log(err);
             if (err?.response?.data?.message === "Lesson chalk in the room") {
               message.error("Кабинет в это время занята!");
+            } else if (err?.response?.data?.data?.teachers) {
+              message.error("Пожалуйста, добавьте учителя!");
             } else {
               message.error("Произошла ошибка! Попробуйте еще раз!");
             }
           })
           .finally(() => setUploading(false));
       } else if (modalType === "update") {
-        const teacherIds = []
-        inputFields.map((item) => teacherIds.push({teacher_id: item?.teacher_id, flex: +item?.flex}))
-        const dayArr = []
-        if (!manualMarking) {
-          group?.days?.split(",")?.map(item => dayArr.push(+item))
-        }
+        const teacherIds = [];
+        inputFields.map((item) =>
+          teacherIds.push({ teacher_id: item?.teacher_id, flex: +item?.flex })
+        ); 
         axios
           .patch(url + "/" + editingGroup?.id, {
             group_id: editingGroup?.id,
@@ -212,7 +213,7 @@ export default function AddGroupForm({
             group_end_date: group.group_end_date,
             teachers: teacherIds,
             room_id: group.room_id,
-            days: manualMarking ? group.days : dayArr,
+            days:  manualMarking ? (typeof group.days == "string" ?  group.days?.split(",")?.map(x => +x) : group.days) : group.days?.split(","),
             course_id: group.course_id,
           })
           .then((res) => {
@@ -233,8 +234,11 @@ export default function AddGroupForm({
           .catch((err) => {
             if (err?.response?.data?.data?.room_id) {
               message.error("Кабинет в это время занята!");
+            } else if (err?.response?.data?.data?.days) {
+              message.error("Пожалуйста, удалите дни и введите их заново!");
+            } else if (err?.response?.data?.data?.teachers) {
+              message.error("Пожалуйста, добавьте учителя!");
             } else {
-              console.log(err);
               message.error("Произошла ошибка! Попробуйте еще раз!");
             }
           })
@@ -319,8 +323,6 @@ export default function AddGroupForm({
     },
   ];
 
-  
-
   return (
     <div>
       <form onSubmit={(e) => submit(e)}>
@@ -345,9 +347,9 @@ export default function AddGroupForm({
           className="w-full mb-4 mt-2"
           showSearch={true}
         >
-          {courses?.map((course, index) => {
+          {courses?.map((course) => {
             return (
-              <Select.Option value={course?.id} key={index}>
+              <Select.Option value={course?.id} key={uuidv4()}>
                 {course.name}
               </Select.Option>
             );
@@ -356,7 +358,7 @@ export default function AddGroupForm({
         <p>Выберите учителя и процент дохода (%)</p>
         <div className="mt-2 mb-4">
           {inputFields?.map((inputField) => (
-            <div key={inputField?.id} className="mb-2">
+            <div key={uuidv4()} className="mb-2">
               <div className="flex justify-between items-end mb-2">
                 <span>Другой учитель</span>
                 <button
@@ -377,13 +379,13 @@ export default function AddGroupForm({
                 className="w-3/4"
                 showSearch={true}
               >
-                {teachers?.data?.map((teacher, index) => {
+                {teachers?.data?.map((teacher) => {
                   const curr = inputFields.find(
                     (item) => item?.teacher_id == teacher?.id
                   );
                   if (!curr || curr.id === inputField.id) {
                     return (
-                      <Select.Option value={teacher?.id} key={index}>
+                      <Select.Option value={teacher?.id} key={uuidv4()}>
                         {teacher?.name}
                       </Select.Option>
                     );
@@ -415,14 +417,14 @@ export default function AddGroupForm({
           </MyButton>
         )}
         <p>Дата старта группы</p>
-        <div className="flex gap-x-2 mb-4 mt-2"> 
+        <div className="flex gap-x-2 mb-4 mt-2">
           <input
             value={group?.group_start_date}
             id="group_start_date"
             onChange={(e) => {
               if (group?.group_end_date !== e.target.value) {
-                handle(e)
-              } 
+                handle(e);
+              }
             }}
             type="date"
             className="rounded-sm p-1 border border-slate-300"
@@ -430,8 +432,9 @@ export default function AddGroupForm({
           <input
             onChange={(e) => {
               if (group?.group_start_date !== e.target.value) {
-                handle(e)
-              } }}
+                handle(e);
+              }
+            }}
             id="group_end_date"
             value={group?.group_end_date}
             min={group?.group_start_date}
@@ -445,7 +448,7 @@ export default function AddGroupForm({
             type="button"
             className="font-bold border rounded-md py-1 px-2"
             onClick={() => {
-              setManualMarking(!manualMarking)
+              setManualMarking(!manualMarking);
               setGroup({ ...group, days: [] });
             }}
           >
@@ -454,37 +457,34 @@ export default function AddGroupForm({
               : "Набрать дни автоматически"}
           </button>
         </p>
-        
-        {
-          manualMarking ? (
-            <Select
-              mode="multiple"
-              className={`${manualMarking ? "" : "hidden"} w-full mb-4 mt-2`}
-              options={options}
-              value={group?.days?.length === 0 ? null : group?.days}
-              onChange={(e) => {
-                setGroup({ ...group, days: e?.filter(e => e !== undefined) });
-                console.log(e);
-              }}
-              placeholder="Выбрать варианты"
-            />
-          ) : (
-            <Select
-              value={group?.days}
-              onChange={(e) => {
-                setGroup({ ...group, days: e });
-              }}
-              placeholder="Выбрать варианты"
-              className={`${manualMarking ? "hidden" : ""} w-full mb-4 mt-2`}
-            >
-              <Select.Option value={"1,3,5"}>Нечетные дни</Select.Option>
-              <Select.Option value={"2,4,6"}>Четные дни</Select.Option>
-              <Select.Option value={"1,2,3,4,5,6"}>Каждый день</Select.Option>
-              <Select.Option value={"6,7"}>Выходные</Select.Option>
-            </Select>
-          )
-        }
-        
+
+        {manualMarking ? (
+          <Select
+            mode="multiple"
+            className={`${manualMarking ? "" : "hidden"} w-full mb-4 mt-2`}
+            options={options}
+            value={group?.days?.length === 0 ? null : (typeof group?.days == "string" ? group?.days?.split(",")?.map(x => +x) : group?.days)}
+            onChange={(e) => {
+              setGroup({ ...group, days: e?.filter((e) => e !== undefined) });
+            }}
+            placeholder="Выбрать варианты"
+          />
+        ) : (
+          <Select
+            value={group?.days}
+            onChange={(e) => {
+              setGroup({ ...group, days: e });
+            }}
+            placeholder="Выбрать варианты"
+            className={`${manualMarking ? "hidden" : ""} w-full mb-4 mt-2`}
+          >
+            <Select.Option value={"1,3,5"}>Нечетные дни</Select.Option>
+            <Select.Option value={"2,4,6"}>Четные дни</Select.Option>
+            <Select.Option value={"1,2,3,4,5,6"}>Каждый день</Select.Option>
+            <Select.Option value={"6,7"}>Выходные</Select.Option>
+          </Select>
+        )}
+
         <p>Выберите аудиторию</p>
         <Select
           value={group?.room_id}
@@ -495,9 +495,9 @@ export default function AddGroupForm({
           className="w-full mb-4 mt-2"
           showSearch={true}
         >
-          {rooms?.map((room, index) => {
+          {rooms?.map((room) => {
             return (
-              <Select.Option value={room?.id} key={room.id}>
+              <Select.Option value={room?.id} key={uuidv4()}>
                 {room.name}
               </Select.Option>
             );
@@ -514,7 +514,9 @@ export default function AddGroupForm({
           showSearch={true}
         >
           {times?.map((time) => (
-            <Select.Option value={time?.id}>{time?.time}</Select.Option>
+            <Select.Option key={uuidv4()} value={time?.id}>
+              {time?.time}
+            </Select.Option>
           ))}
         </Select>
         <Spin spinning={uploading}>

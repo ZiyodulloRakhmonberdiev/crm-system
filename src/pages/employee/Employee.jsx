@@ -6,7 +6,6 @@ import { Table, Modal, Drawer, Pagination } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { PencilSquare, Trash, Layers } from "react-bootstrap-icons";
 
-import { MyButton } from "../../UI/Button.style";
 import { IconButton } from "../../UI/IconButton.style";
 import axios from "../../axios/axios";
 import AddEmployeeForm from "./AddEmployeeForm";
@@ -26,7 +25,7 @@ export default function Employees() {
   const [modalType, setModalType] = useState("add");
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
-  const [last_page, setLastPage] = useState(1);
+  const [last_page] = useState(1);
 
   const dispatch = useDispatch();
   const { employees, loading, refreshEmployees } = useSelector(
@@ -52,14 +51,11 @@ export default function Employees() {
       role: (
         <div className="flex flex-wrap gap-2">
           {item?.role?.map((role, index) => (
-            <>
-              <span
-                key={index}
-                className="px-2 py-1 rounded-md bg-slate-200 text-xs text-gray-500  capitalize"
-              >
+            <div key={index}>
+              <span className="px-2 py-1 rounded-md bg-slate-200 text-xs text-gray-500  capitalize">
                 {role}
               </span>
-            </>
+            </div>
           ))}
         </div>
       ),

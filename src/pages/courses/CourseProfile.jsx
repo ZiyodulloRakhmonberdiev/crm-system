@@ -150,55 +150,64 @@ export default function CourseProfile() {
             </div>
           </div>
         </div>
-        <Tabs className="col-span-1 lg:col-span-2">
-          <Tabs.TabPane tab="Группы" key="item-1">
-            <div className="grid gap-4">
-              {courseGroups?.length < 1 ? (
-                <center>
-                  <MyMessage color="warning">
-                    <span>Для этого курса еще не создана группа</span>
-                    <MyButton color="warning">
-                      <Link to="/groups" className="hover:text-white">
-                        Создать группу
-                      </Link>
-                    </MyButton>
-                  </MyMessage>
-                </center>
-              ) : null}
-              {courseGroups?.map((item) => (
-                <div
-                  key={item?.id}
-                  className="rounded-md flex flex-wrap gap-4 bg-white p-4 justify-between items-center"
-                >
-                  <div className="grid gap-0.5">
-                    <span className="py-0.5 px-2 bg-orange-200 rounded-sm text-center">
-                      {item?.room}
-                    </span>
-                    <span className="font-bold text-md">{item?.name}</span>
-                  </div>
-                  {item?.active === true ? (
-                    <span className="text-green-400">Активировано</span>
-                  ) : (
-                    <span className="text-red-400">Не активировано</span>
-                  )}
-                  <div className="grid gap-0.5">
-                    <span>{item?.days}</span>
-                    <span>{item?.start + " " + item?.end}</span>
-                    <span>{item?.time?.time}</span>
-                  </div>
-                  <div>
-                    <span className="bg-orange-500 rounded-sm text-white px-1 py-0.5">
-                      {item?.student_count} студентов
-                    </span>
-                  </div>
+        <Tabs
+          className="col-span-1 lg:col-span-2"
+          items={[
+            {
+              key: "1",
+              label: `Группы`,
+              children: (
+                <div className="grid gap-4">
+                  {courseGroups?.length < 1 ? (
+                    <center>
+                      <MyMessage color="warning">
+                        <span>Для этого курса еще не создана группа</span>
+                        <MyButton color="warning">
+                          <Link to="/groups" className="hover:text-white">
+                            Создать группу
+                          </Link>
+                        </MyButton>
+                      </MyMessage>
+                    </center>
+                  ) : null}
+                  {courseGroups?.map((item) => (
+                    <div
+                      key={item?.id}
+                      className="rounded-md flex flex-wrap gap-4 bg-white p-4 justify-between items-center"
+                    >
+                      <div className="grid gap-0.5">
+                        <span className="py-0.5 px-2 bg-orange-200 rounded-sm text-center">
+                          {item?.room}
+                        </span>
+                        <span className="font-bold text-md">{item?.name}</span>
+                      </div>
+                      {item?.active === true ? (
+                        <span className="text-green-400">Активировано</span>
+                      ) : (
+                        <span className="text-red-400">Не активировано</span>
+                      )}
+                      <div className="grid gap-0.5">
+                        <span>{item?.days}</span>
+                        <span>{item?.start + " " + item?.end}</span>
+                        <span>{item?.time?.time}</span>
+                      </div>
+                      <div>
+                        <span className="bg-orange-500 rounded-sm text-white px-1 py-0.5">
+                          {item?.student_count} студентов
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Материалы" key="item-2">
-            <InProcess />
-          </Tabs.TabPane>
-        </Tabs>
+              ),
+            },
+            {
+              key: "2",
+              label: `Материалы`,
+              children: <InProcess />,
+            },
+          ]}
+        ></Tabs>
       </div>
     </>
   );

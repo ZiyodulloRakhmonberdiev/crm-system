@@ -80,9 +80,10 @@ export default function Header() {
       </div>
       <div className="w-42 hidden lg:block">
         <Input.Search
-          placeholder="Поиск"
+          placeholder="В разработке..."
           allowClear
-          className="min-w-[250px]"
+          className="min-w-[250px] pointer-events-none"
+          value=""
         />
       </div>
       <div className="flex space-x-2 md:space-x-4 items-center">
@@ -136,10 +137,10 @@ export default function Header() {
         <Dropdown
           overlay={
             <div className="p-3 border bg-white drop-shadow-md flex flex-col gap-2">
-              <a key="0" className="flex items-center gap-2">
+              {/* <a key="0" className="flex items-center gap-2">
                 <Person className="text-gray-400 text-xl" />
                 <span>Мой аккаунт</span>
-              </a>
+              </a> */}
               <a
                 key="1"
                 onClick={() => {

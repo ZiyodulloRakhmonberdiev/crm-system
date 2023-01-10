@@ -7,7 +7,6 @@ import { Table, Modal, Input, Select, Drawer, Pagination } from "antd";
 import { PencilSquare, Trash, Mortarboard } from "react-bootstrap-icons";
 
 import axios from "../../axios/axios";
-import { MyButton } from "../../UI/Button.style";
 import { IconButton } from "../../UI/IconButton.style";
 import AddStudentForm from "./AddStudentForm";
 
@@ -25,7 +24,6 @@ export default function Students() {
   // all states
   const [searchText, setSearchText] = useState("");
   const [editingStudent, setEditingStudent] = useState(null);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [visible, setVisible] = useState(false);
 
   const [modalType, setModalType] = useState("add");
@@ -45,15 +43,6 @@ export default function Students() {
     "Позитивный баланс",
     "Оплатил в текущем месяце",
   ];
-
-  // Table select functions
-  const onSelectChange = (newSelectedRowKeys) => {
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
 
   // students static data
   let dataSource = [];
@@ -211,7 +200,7 @@ export default function Students() {
           />
         </HeaderItem>
       </HeaderWrapper>
-      <div className="flex flex-wrap gap-2 mb-8">
+      {/* <div className="flex flex-wrap gap-2 mb-8">
         <div className="w-42">
           <Input.Search
             placeholder="Поиск по имени или телефону"
@@ -255,7 +244,7 @@ export default function Students() {
             );
           })}
         </Select>
-      </div>
+      </div> */}
       {/* Add a new student with Drawer */}
       <Drawer
         open={visible}
@@ -279,7 +268,6 @@ export default function Students() {
         scroll={{
           x: 1000,
         }}
-        rowSelection={rowSelection}
         className="overflow-auto"
         pagination={false}
         rowKey={(record) => record.uid}

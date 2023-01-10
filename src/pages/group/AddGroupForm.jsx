@@ -135,6 +135,8 @@ export default function AddGroupForm({
     newGroup[e.target.id] = e.target.value;
     setGroup(newGroup);
   }
+  console.log(group)
+            console.log(inputFields)
   function submit(e) {
     e.preventDefault();
     let {
@@ -158,6 +160,7 @@ export default function AddGroupForm({
       setUploading(true);
       if (typeof days == "string") {
         days = days?.split(",");
+        console.log(days, " is string");
       }
       if (modalType === "add") {
         axios
@@ -168,7 +171,7 @@ export default function AddGroupForm({
             group_end_date: group.group_end_date,
             teachers: inputFields,
             room_id: group.room_id,
-            days: manualMarking ? group.days : group.days?.split(","),
+            days: manualMarking ? (typeof group.days == "string" ?  group.days?.split(",")?.map(x => +x) : group.days) : group.days?.split(","),
             course_id: group.course_id,
           })
           .then((res) => {
@@ -200,11 +203,7 @@ export default function AddGroupForm({
         const teacherIds = [];
         inputFields.map((item) =>
           teacherIds.push({ teacher_id: item?.teacher_id, flex: +item?.flex })
-        );
-        const dayArr = [];
-        if (!manualMarking) {
-          group?.days?.split(",")?.map((item) => dayArr.push(+item));
-        }
+        ); 
         axios
           .patch(url + "/" + editingGroup?.id, {
             group_id: editingGroup?.id,
@@ -214,7 +213,7 @@ export default function AddGroupForm({
             group_end_date: group.group_end_date,
             teachers: teacherIds,
             room_id: group.room_id,
-            days: manualMarking ? group.days : dayArr,
+            days:  manualMarking ? (typeof group.days == "string" ?  group.days?.split(",")?.map(x => +x) : group.days) : group.days?.split(","),
             course_id: group.course_id,
           })
           .then((res) => {
@@ -464,7 +463,7 @@ export default function AddGroupForm({
             mode="multiple"
             className={`${manualMarking ? "" : "hidden"} w-full mb-4 mt-2`}
             options={options}
-            value={group?.days?.length === 0 ? null : group?.days}
+            value={group?.days?.length === 0 ? null : (typeof group?.days == "string" ? group?.days?.split(",")?.map(x => +x) : group?.days)}
             onChange={(e) => {
               setGroup({ ...group, days: e?.filter((e) => e !== undefined) });
             }}

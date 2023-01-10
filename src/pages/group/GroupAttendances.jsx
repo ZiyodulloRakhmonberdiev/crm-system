@@ -16,7 +16,8 @@ import axios from "../../axios/axios";
 import "./style.css";
 moment.locale("ru");
 
-const GroupAttendance = () => {
+const GroupAttendance = ({ from, to, setFrom, setTo }) => {
+  
   // states
   const { groupData } = useSelector((state) => state.groups);
   const [refreshing, setRefreshing] = useState(false);
@@ -33,12 +34,39 @@ const GroupAttendance = () => {
     group_id: null,
     description,
   });
+  
+ 
   // hooks
   const params = useParams();
   const dispatch = useDispatch();
 
-  const handleSetAttendanceStudent = () => {
-    const { student_id, group_id, attStatus: status, date } = attendanceData;
+  useEffect(() => {
+    let date = new Date(), y = date.getFullYear(), m = date.getMonth();
+    let firstDay = new Date(y, m, 1);
+    let lastDay = new Date(y, m + 1, 0);
+    
+    setFrom(moment(firstDay).format("YYYY-MM-DD"))
+    setTo(moment(lastDay).format("YYYY-MM-DD"))
+  }, [])
+
+  useEffect(() => {
+    dispatch(fetchingAtt());
+    setTimeout(() => {
+      axios
+      .get(
+        `/api/groups/${params?.id}/attendance?from=${from}&to=${to}`
+      )
+      .then((res) => {
+        dispatch(fetchedAtt(res?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchingErrorAtt());
+      });
+    }, 500)
+  }, [refreshing, from, to]);
+
+  const handleSetAttendanceStudent = (data) => {
+    const { student_id, group_id, attStatus: status, date } = data;
     setUploading(true);
     axios
       .post("/api/groups/attendance", {
@@ -58,19 +86,7 @@ const GroupAttendance = () => {
       });
   };
 
-  useEffect(() => {
-    dispatch(fetchingAtt());
-    axios
-      .get(
-        `/api/groups/${params?.id}/attendance?from=${groupData?.group_start_date}&to=${groupData?.group_end_date}`
-      )
-      .then((res) => {
-        dispatch(fetchedAtt(res?.data));
-      })
-      .catch((err) => {
-        dispatch(fetchingErrorAtt());
-      });
-  }, [refreshing]);
+  
   const compareDate = (d1) => {
     let now = new Date();
     let month = now.getMonth() + 1;
@@ -81,8 +97,12 @@ const GroupAttendance = () => {
 
     let date1 = new Date(d1).getTime();
     let date2 = new Date(today).getTime();
-
-    return date1 > date2;
+    const role = localStorage.getItem("crm_role")
+    if (role === "Administrator" || role === "CEO") {
+      return date1 > date2;
+    } else {
+      return (date1 !== date2)
+    }
   };
 
   const deleteAtt = (currentId) => {
@@ -98,13 +118,13 @@ const GroupAttendance = () => {
       .finally(() => setUploading(false));
   };
   if (error) return <center>При загрузке произошла ошибка</center>;
-
+  console.log(groupData);
   return (
     <Spin spinning={loading}>
       <Modal
         open={modalIsOpen}
         onCancel={() => setModalIsOpen(false)}
-        onOk={() => handleSetAttendanceStudent()}
+        onOk={() => handleSetAttendanceStudent(attendanceData)}
         title={"Описание..."}
         okText="Добавить"
         cancelText="Отмена"
@@ -115,16 +135,17 @@ const GroupAttendance = () => {
           placeholder="Описание не обязательно..."
         ></Input.TextArea>
       </Modal>
-      <div>
-        <table className="overflow-auto">
+      <div className="relative  overflow-x-auto pb-2">
+        
+        <table className=" ">
           <thead>
-            <tr className="flex rounded-sm mb-3">
+            <tr className="flex rounded-sm mb-3 pt-2 border-t">
               <th width="200" align="left">
                 Имя
               </th>
               {attendances?.days?.map((day) => (
                 <th key={uuidv4()} width="100">
-                  {moment(day?.data).format("DD MMM")}
+                  {moment(day?.date).format("DD MMM")}
                 </th>
               ))}
             </tr>
@@ -139,7 +160,7 @@ const GroupAttendance = () => {
                     </td>
                     {attendances?.days?.map((day) => {
                       const current = student.attendance.find(
-                        (att) => att?.date === day?.data
+                        (att) => att?.date === day?.date
                       );
                       return current ? (
                         <td
@@ -157,6 +178,7 @@ const GroupAttendance = () => {
                             >
                               <span className="bg-red-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper">
                                 <button
+                                  disabled={uploading || compareDate(day?.date)}
                                   onClick={() => {
                                     deleteAtt(current?.id);
                                   }}
@@ -173,10 +195,11 @@ const GroupAttendance = () => {
                               className="bg-blue-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper"
                             >
                               <button
+                                  disabled={uploading || compareDate(day?.date)}
                                 onClick={() => {
                                   deleteAtt(current?.id);
                                 }}
-                                className="absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn"
+                                className="  absolute rounded-full bg-white -top-2 -right-2 border border-slate-400 p-0.5 text-slate-400 attendance__cancel-btn"
                               >
                                 <X />
                               </button>
@@ -195,22 +218,22 @@ const GroupAttendance = () => {
                         flex flex-row border rounded-full 
                         border-gray-400 w-10 transition attendance__btn-group
                         ${
-                          compareDate(day?.data)
+                          compareDate(day?.date)
                             ? "opacity-60 bg-gray-200 pointer-events-none"
                             : "hover:w-auto"
                         }`}
                           >
                             <Tooltip title="Был">
                               <button
-                                disabled={uploading || compareDate(day?.data)}
+                                disabled={uploading || compareDate(day?.date)}
                                 onClick={() => {
-                                  setAttendanceData({
+                                  // setAttendanceData();
+                                  handleSetAttendanceStudent({
                                     attStatus: true,
-                                    date: day?.data,
+                                    date: day?.date,
                                     student_id: student?.id,
                                     group_id: params?.id,
                                   });
-                                  handleSetAttendanceStudent();
                                 }}
                                 className={`
                                   have
@@ -222,7 +245,7 @@ const GroupAttendance = () => {
                                   p-1 w-8 h-8 
                                   opacity-0 
                               ${
-                                compareDate(day?.data)
+                                compareDate(day?.date)
                                   ? ""
                                   : "hover:opacity-100"
                               } 
@@ -237,11 +260,11 @@ const GroupAttendance = () => {
                             </Tooltip>
                             <Tooltip title="Нет">
                               <button
-                                disabled={uploading || compareDate(day?.data)}
+                                disabled={uploading || compareDate(day?.date)}
                                 onClick={() => {
                                   setAttendanceData({
                                     attStatus: false,
-                                    date: day?.data,
+                                    date: day?.date,
                                     student_id: student?.id,
                                     group_id: params?.id,
                                   });
@@ -258,7 +281,7 @@ const GroupAttendance = () => {
                             h-8 
                             opacity-0 
                             ${
-                              compareDate(day?.data) ? "" : "hover:opacity-100"
+                              compareDate(day?.date) ? "" : "hover:opacity-100"
                             } 
                             flex items-center justify-center 
                             transition`}

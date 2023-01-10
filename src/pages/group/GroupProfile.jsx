@@ -53,6 +53,8 @@ export default function GroupProfile() {
   const { teachers } = useSelector((state) => state.teachers);
   const { courses, coursesData } = useSelector((state) => state.courses);
   const { attendances } = useSelector((state) => state.attendances);
+  const [from, setFrom ] = useState("")
+  const [to, setTo ] = useState("")
   // hooks
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -391,11 +393,32 @@ export default function GroupProfile() {
                 <div className="grid gap-2">
                   {groupData?.active
                     ? !activeGroup && (
-                        <div className="bg-white rounded-md px-6 py-4 overflow-x-auto ">
+                        <div className="bg-white rounded-md px-6 py-4  overflow-x-hidden ">
                           {groupData?.student_count == 0 ? (
                             "В этой группе нет студентов"
                           ) : (
-                            <GroupAttendance />
+                            <>
+                            <div className="bg-white flex justify-end mb-2">
+                              <input 
+                                className="p-2 outline-none border-none "
+                                value={from}
+                                type="date" onChange={(e) => {
+                                setFrom(e.target.value)
+                              }}  min={groupData.group_start_date} max={groupData.group_end_date} />
+                              <input 
+                                className="p-2 outline-none border-none "
+                                value={to}
+                                type="date" onChange={(e) => {
+                                setTo(e.target.value)
+                              }} max={groupData.group_end_date} min={groupData.group_start_date} />
+                            </div>
+                            <GroupAttendance
+                              from={from}
+                              to={to}
+                              setFrom={setFrom}
+                              setTo={setTo}
+                            />
+                            </>
                           )}
                         </div>
                       )

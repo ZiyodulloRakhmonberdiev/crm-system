@@ -29,7 +29,7 @@ export default function Students() {
   const [modalType, setModalType] = useState("add");
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
-  const [last_page] = useState(1);
+  const [last_page, setLast_page] = useState(1);
   const dispatch = useDispatch();
   const { courses } = useSelector((state) => state.courses);
   const { students, loading, refreshStudents } = useSelector(
@@ -155,6 +155,7 @@ export default function Students() {
       // }
     });
   };
+  console.log(last_page);
   const onEditStudent = (student) => {
     setModalType("update");
     setVisible(true);
@@ -168,6 +169,8 @@ export default function Students() {
       .get(`/api/students?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedStudents(res?.data?.data));
+        setPerPage(res?.data?.data?.per_page)
+        setLast_page(res?.data?.data?.last_page)
       })
       .catch((err) => {
         dispatch(fetchedError());

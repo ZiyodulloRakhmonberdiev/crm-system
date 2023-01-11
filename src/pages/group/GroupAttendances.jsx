@@ -98,7 +98,7 @@ const GroupAttendance = ({ from, to, setFrom, setTo }) => {
     let date1 = new Date(d1).getTime();
     let date2 = new Date(today).getTime();
     const role = localStorage.getItem("crm_role")
-    if (role === "Administrator" || role === "CEO") {
+    if (role?.toUpperCase() === "ADMINISTRATOR" || role?.toUpperCase() === "CEO") {
       return date1 > date2;
     } else {
       return (date1 !== date2)

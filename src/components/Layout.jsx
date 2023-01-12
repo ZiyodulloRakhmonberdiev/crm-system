@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { Button, Drawer, message } from "antd";
 import { CalendarOutlined } from "@ant-design/icons";
@@ -11,11 +11,11 @@ import axios from "../axios/axios";
 import Schedule from "../pages/Schedule/Schedule";
 import { Calendar3 } from "react-bootstrap-icons";
 
-const Layout = () => {
+const Layout = ({ allowedRoles = [], notAllowedRoles = [] }) => {
   const [scheduleIsOpen, setScheduleIsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
+  console.log(localStorage.getItem("crm_role"));
   useEffect(() => {
     if (localStorage.getItem("crm_token")) {
       axios
@@ -31,6 +31,12 @@ const Layout = () => {
       navigate("/login", { replace: true });
     }
   }, []);
+
+  if (notAllowedRoles) {
+    if (notAllowedRoles.includes(localStorage.getItem("crm_role").toUpperCase())) {
+      return <Navigate replace={true} to={"/"} />
+    }
+  }
 
   return (
     <div style={{ maxWidth: 1920 }} className="mx-auto">

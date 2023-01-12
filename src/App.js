@@ -44,10 +44,6 @@ export default function App() {
           <Route path="/teachers" element={<Teachers />} />
           <Route path="/teachers/profile/:id" element={<TeacherProfile />} />
 
-          <Route path="/finance/payments" element={<Payments />} />
-          <Route path="/finance/expenses" element={<Expenses />} />
-          <Route path="/finance/debtors" element={<Debtors />} />
-
           <Route path="/employees" element={<Employee />} />
           <Route path="/employees/profile/:id" element={<EmployeeProfile />} />
 
@@ -56,6 +52,12 @@ export default function App() {
 
           <Route path="/rooms" element={<Rooms />} />
           <Route path="/branches" element={<Branches />} />
+        </Route>
+
+        <Route path="/" element={<Layout notAllowedRoles={["TEACHER"]} />}>
+          <Route path="/finance/payments" element={<Payments />} />
+          <Route path="/finance/expenses" element={<Expenses />} />
+          <Route path="/finance/debtors" element={<Debtors />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFound />} />

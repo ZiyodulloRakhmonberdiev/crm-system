@@ -18,18 +18,18 @@ import {
 import { Link } from "react-router-dom";
 
 export default function Sidebar() {
-  function getItem(label, key, icon, children) {
+  function getItem(label, key, icon, children, notAllowedRoles = []) {
     return {
       key,
       icon,
       children,
       label,
+      notAllowedRoles
     };
   }
   const { Sider } = Layout;
   const items = [
     getItem(<Link to="/">Главная страница</Link>, "home", <House />),
-    // getItem(<Link to="/leads">Заявки</Link>, "application", <Download />),
     getItem(<Link to="/students">Студенты</Link>, "pupils", <Mortarboard />),
     getItem(
       <Link to="/teachers">Учителя</Link>,
@@ -65,7 +65,7 @@ export default function Sidebar() {
         </Link>,
         "debtors"
       ),
-    ]),
+    ], ["TEACHER"]),
     // getItem(<Link to="/report">Отчеты</Link>, "report", <PieChartOutlined />),
     getItem("Дополнительные", "addition", <Wallet2 />, [
       getItem(
@@ -107,7 +107,7 @@ export default function Sidebar() {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={["4"]}
-          items={items}
+          items={items.filter(item => !item?.notAllowedRoles?.includes(localStorage.getItem("crm_role")?.toUpperCase()))}
         />
       </Sider>
     </Layout>

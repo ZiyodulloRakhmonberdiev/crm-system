@@ -13,22 +13,25 @@ import {
   fetchedStudentsDebtors,
   fetchingStudents,
   setUserData,
+  fetchedStudentsStatistics,
+  fetchingStudentsStatistics,
 } from "../../redux/studentsSlice";
 import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
 import moment from "moment";
 
 export default function Debtors() {
-  const prevDate = new Date()
+  const prevDate = new Date();
   prevDate.setMonth(prevDate.getMonth() - 1);
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
   const [last_page, setLastPage] = useState(1);
   const [debtsAmountHandle, setDebtsAmountHandle] = useState("");
-  const { studentsDebtors, loading } = useSelector((state) => state.students);
+  const { studentsDebtors, loading, studentsStatistics, refreshStudents } =
+    useSelector((state) => state.students);
   const dispatch = useDispatch();
-  
-  const [from, setFrom] = useState(moment(prevDate).format("YYYY-MM-DD"))
-  const [to, setTo] = useState(moment(new Date()).format("YYYY-MM-DD"))
+
+  const [from, setFrom] = useState(moment(prevDate).format("YYYY-MM-DD"));
+  const [to, setTo] = useState(moment(new Date()).format("YYYY-MM-DD"));
 
   // fetching students
   useEffect(() => {
@@ -76,12 +79,26 @@ export default function Debtors() {
   // fetching debts
   useEffect(() => {
     dispatch(fetchingDebts());
-    axios.get(`/api/students/debtors`).then((res) => {
+    axios.get(`/api/students/debtors?page=${currentPage}`).then((res) => {
       dispatch(fetchedDebts(res?.data?.data?.data?.debt));
       setDebtsAmountHandle(res?.data?.data?.data?.debt);
+      setPerPage(res?.data?.data?.per_page);
+      setLastPage(res?.data?.data?.last_page);
     });
-  }, [currentPage, dispatch]);
+  }, [refreshStudents, currentPage, from, to]);
 
+  // fetching students statistics
+  useEffect(() => {
+    dispatch(fetchingStudentsStatistics());
+    axios
+      .get("/api/students/statistics")
+      .then((res) => {
+        dispatch(fetchedStudentsStatistics(res?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, [refreshStudents]);
   // Table headers
   const columns = [
     {
@@ -145,44 +162,44 @@ export default function Debtors() {
           <div className="header__content">
             <p className="header__title xl:w-auto">Должники</p>
             <p>Общее количество должников:</p>
-            <p className="header__result">{debtors?.length}</p>
+            <p className="header__result">{studentsStatistics?.debtStudents}</p>
           </div>
         </HeaderItem>
       </HeaderWrapper>
       <div className="flex flex-wrap gap-2 mb-8">
-      <div className="flex flex-col gap-1 justify-center">
-              <label htmlFor="">Дата от</label>
-              <input
-                type="date"
-                name=""
-                id=""
-                value={from}
-                onChange={e => setFrom(e.target.value)}
-                className="rounded-md  border border-slate-300 p-2"
-              />
-            </div>
-            <div className="flex flex-col gap-1 justify-center">
-              <label htmlFor="">Дата до</label>
-              <input
-                type="date"
-                name=""
-                id=""
-                value={to}
-                onChange={e => setTo(e.target.value)}
-                className="rounded-md  border border-slate-300 p-2"
-              />
-            </div>
+        <div className="flex flex-col gap-1 justify-center">
+          <label htmlFor="">Дата от</label>
+          <input
+            type="date"
+            name=""
+            id=""
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            className="rounded-md  border border-slate-300 p-2"
+          />
+        </div>
+        <div className="flex flex-col gap-1 justify-center">
+          <label htmlFor="">Дата до</label>
+          <input
+            type="date"
+            name=""
+            id=""
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            className="rounded-md  border border-slate-300 p-2"
+          />
+        </div>
         {/* <div className="w-42 mr-8">
           <Input.Search
             placeholder="По номеру телефона или имени"
-            allowClear
+            allowclear
             className="min-w-[200px] md:min-w-[250px]"
           />
         </div>
         <div className="w-42">
           <Input.Search
             placeholder="Поиск по сумме долга"
-            allowClear
+            allowclear
             className="min-w-[200px] md:min-w-[250px]"
           />
         </div> */}

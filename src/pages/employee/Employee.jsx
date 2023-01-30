@@ -23,10 +23,6 @@ export default function Employees() {
   const [visible, setVisible] = useState(false);
 
   const [modalType, setModalType] = useState("add");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [per_page, setPerPage] = useState(30);
-  const [last_page] = useState(1);
-
   const dispatch = useDispatch();
   const { employees, loading, refreshEmployees } = useSelector(
     (state) => state.employees
@@ -150,14 +146,14 @@ export default function Employees() {
   useEffect(() => {
     dispatch(fetchingEmployees());
     axios
-      .get(`/api/employees?page=${currentPage}`)
+      .get(`/api/employees`)
       .then((res) => {
         dispatch(fetchedEmployees(res?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, [refreshEmployees, currentPage]);
+  }, [refreshEmployees]);
   return (
     <div>
       <HeaderWrapper>
@@ -204,18 +200,6 @@ export default function Employees() {
         rowKey={(record) => record.uid}
         size="small"
       ></Table>
-      <br />
-      <center>
-        <Pagination
-          pageSize={per_page ? per_page : 30}
-          total={last_page * per_page}
-          current={currentPage}
-          onChange={(page, x) => {
-            setCurrentPage(page);
-            setPerPage(x);
-          }}
-        />
-      </center>
     </div>
   );
 }

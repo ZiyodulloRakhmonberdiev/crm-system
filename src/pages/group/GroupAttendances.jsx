@@ -17,7 +17,6 @@ import "./style.css";
 moment.locale("ru");
 
 const GroupAttendance = ({ from, to, setFrom, setTo }) => {
-  
   // states
   const { groupData } = useSelector((state) => state.groups);
   const [refreshing, setRefreshing] = useState(false);
@@ -34,35 +33,34 @@ const GroupAttendance = ({ from, to, setFrom, setTo }) => {
     group_id: null,
     description,
   });
-  
- 
+
   // hooks
   const params = useParams();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    let date = new Date(), y = date.getFullYear(), m = date.getMonth();
+    let date = new Date(),
+      y = date.getFullYear(),
+      m = date.getMonth();
     let firstDay = new Date(y, m, 1);
     let lastDay = new Date(y, m + 1, 0);
-    
-    setFrom(moment(firstDay).format("YYYY-MM-DD"))
-    setTo(moment(lastDay).format("YYYY-MM-DD"))
-  }, [])
+
+    setFrom(moment(firstDay).format("YYYY-MM-DD"));
+    setTo(moment(lastDay).format("YYYY-MM-DD"));
+  }, []);
 
   useEffect(() => {
     dispatch(fetchingAtt());
     setTimeout(() => {
       axios
-      .get(
-        `/api/groups/${params?.id}/attendance?from=${from}&to=${to}`
-      )
-      .then((res) => {
-        dispatch(fetchedAtt(res?.data));
-      })
-      .catch((err) => {
-        dispatch(fetchingErrorAtt());
-      });
-    }, 500)
+        .get(`/api/groups/${params?.id}/attendance?from=${from}&to=${to}`)
+        .then((res) => {
+          dispatch(fetchedAtt(res?.data));
+        })
+        .catch((err) => {
+          dispatch(fetchingErrorAtt());
+        });
+    }, 500);
   }, [refreshing, from, to]);
 
   const handleSetAttendanceStudent = (data) => {
@@ -86,7 +84,6 @@ const GroupAttendance = ({ from, to, setFrom, setTo }) => {
       });
   };
 
-  
   const compareDate = (d1) => {
     let now = new Date();
     let month = now.getMonth() + 1;
@@ -97,11 +94,14 @@ const GroupAttendance = ({ from, to, setFrom, setTo }) => {
 
     let date1 = new Date(d1).getTime();
     let date2 = new Date(today).getTime();
-    const role = localStorage.getItem("crm_role")
-    if (role?.toUpperCase() === "ADMINISTRATOR" || role?.toUpperCase() === "CEO") {
+    const role = localStorage.getItem("crm_role");
+    if (
+      role?.toUpperCase() === "ADMINISTRATOR" ||
+      role?.toUpperCase() === "CEO"
+    ) {
       return date1 > date2;
     } else {
-      return (date1 !== date2)
+      return date1 !== date2;
     }
   };
 
@@ -118,7 +118,6 @@ const GroupAttendance = ({ from, to, setFrom, setTo }) => {
       .finally(() => setUploading(false));
   };
   if (error) return <center>При загрузке произошла ошибка</center>;
-  console.log(groupData);
   return (
     <Spin spinning={loading}>
       <Modal
@@ -136,7 +135,6 @@ const GroupAttendance = ({ from, to, setFrom, setTo }) => {
         ></Input.TextArea>
       </Modal>
       <div className="relative  overflow-x-auto pb-2">
-        
         <table className=" ">
           <thead>
             <tr className="flex rounded-sm mb-3 pt-2 border-t">
@@ -195,7 +193,7 @@ const GroupAttendance = ({ from, to, setFrom, setTo }) => {
                               className="bg-blue-400 px-2 py-1 text-xs text-white rounded-md relative attendance__cancel-btn-wrapper"
                             >
                               <button
-                                  disabled={uploading || compareDate(day?.date)}
+                                disabled={uploading || compareDate(day?.date)}
                                 onClick={() => {
                                   deleteAtt(current?.id);
                                 }}

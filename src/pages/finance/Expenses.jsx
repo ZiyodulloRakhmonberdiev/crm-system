@@ -27,7 +27,7 @@ export default function Expenses() {
   // states
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
-  const [last_page] = useState(1);
+  const [last_page, setLastPage] = useState(1);
   const { refreshExpenses, expenses, loading } = useSelector(
     (state) => state.expenses
   );
@@ -122,6 +122,8 @@ export default function Expenses() {
       .get(`/api/expenses?from=${from}&to=${to}?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedExpenses(res?.data?.data?.data));
+        setPerPage(res?.data?.data?.per_page);
+        setLastPage(res?.data?.data?.last_page);
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -156,20 +158,20 @@ export default function Expenses() {
   };
   return (
     <div>
-      <div className="grid lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <div className="lg:col-span-2 xl:col-span-3">
-          <HeaderWrapper>
-            <HeaderItem type="danger">
-              <div className="header__icon">
-                <Coin />
-              </div>
-              <div className="header__content">
-                <p className="header__title">Учет расходов</p>
-                <p>Общая сумма: </p>
-                <p className="header__result">0</p>
-              </div>
-            </HeaderItem>
-          </HeaderWrapper>
+      <HeaderWrapper>
+        <HeaderItem type="danger">
+          <div className="header__icon">
+            <Coin />
+          </div>
+          <div className="header__content">
+            <p className="header__title">Учет расходов</p>
+            <p>Общая сумма: </p>
+            <p className="header__result">0</p>
+          </div>
+        </HeaderItem>
+      </HeaderWrapper>
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="col-span-2 lg:col-span-2 xl:col-span-3">
           <div className="flex gap-2 flex-col sm:flex-row flex-wrap mb-4">
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Дата от</label>
@@ -191,7 +193,7 @@ export default function Expenses() {
             </div>
             {/* <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Описание</label>
-              <Input className="sm:max-w-[130px]" allowClear />
+              <Input className="sm:max-w-[130px]" allowclear />
             </div>
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Выбрать категорию</label>
@@ -199,7 +201,7 @@ export default function Expenses() {
                 mode="multiple"
                 maxTagCount={1}
                 placeholder="Выбрать"
-                allowClear
+                allowclear
                 className="min-w-[130px]"
               >
                 {expenseCategories?.map((expenseCategory, index) => {
@@ -213,7 +215,7 @@ export default function Expenses() {
             </div>
             <div className="flex flex-col gap-1 justify-center">
               <label htmlFor="">Сумма</label>
-              <Input className="sm:max-w-[130px]" allowClear />
+              <Input className="sm:max-w-[130px]" allowclear />
             </div>
             <div className="mt-4 sm:mt-auto">
               <MyButton>Фильтровать</MyButton>
@@ -242,7 +244,7 @@ export default function Expenses() {
             />
           </center>
         </div>
-        <div className="lg:col-span-1 bg-white p-4 rounded-md h-full pb-12">
+        <div className="col-span-2 lg:col-span-1 bg-white p-4 rounded-md h-full pb-12">
           <AddExpensesForm />
         </div>
       </div>

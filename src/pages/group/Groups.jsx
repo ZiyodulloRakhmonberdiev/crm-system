@@ -77,6 +77,8 @@ export default function Groups() {
       .get(`/api/groups?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedGroups(res?.data?.data?.data));
+        setPerPage(res?.data?.data?.per_page);
+        setLastPage(res?.data?.data?.last_page);
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -321,7 +323,10 @@ export default function Groups() {
           <div className="header__content">
             <p className="header__title">Группы</p>
             <p>Количество: </p>
-            <p className="header__result"> {groups?.length}</p>
+            <p className="header__result">
+              {" "}
+              {groups?.length} {groups?.length > 30 ? "+" : ""}
+            </p>
           </div>
           <MyHeaderButton
             setModalType={() => setModalType("add")}
@@ -334,7 +339,7 @@ export default function Groups() {
           mode="multiple"
           maxTagCount={1}
           placeholder="Статус группы"
-          allowClear
+          allowclear
           className="min-w-[200px]"
         >
           {groupsStatus.map((course) => {
@@ -363,7 +368,7 @@ export default function Groups() {
           mode="multiple"
           maxTagCount={1}
           placeholder="По курсам"
-          allowClear
+          allowclear
           className="min-w-[200px]"
         >
           {courses?.map((course) => {
@@ -378,7 +383,7 @@ export default function Groups() {
           mode="multiple"
           placeholder="Дни"
           maxTagCount={1}
-          allowClear
+          allowclear
           className="min-w-[200px]"
         >
           {days?.map((item) => {

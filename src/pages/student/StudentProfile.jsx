@@ -240,8 +240,6 @@ export default function StudentProfile() {
     dispatch(changeUpdateUserData(data));
   };
 
-  console.log(userGroupData);
-
   return (
     <div className="grid grid-cols-6 gap-8">
       <div className="col-span-6 md:col-span-3 lg:col-span-2">
@@ -375,7 +373,7 @@ export default function StudentProfile() {
         <div>
           {group?.group_id && (
             <p className="mb-4 text-xs">
-              Дата старта группы {userGroupData?.group_start_date }
+              Дата старта группы {userGroupData?.group_start_date}
             </p>
           )}
         </div>

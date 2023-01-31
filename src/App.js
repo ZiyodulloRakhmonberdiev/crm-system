@@ -54,7 +54,7 @@ export default function App() {
           <Route path="/branches" element={<Branches />} />
         </Route>
 
-        <Route path="/" element={<Layout notAllowedRoles={["TEACHER"]} />}>
+        <Route path="/" element={<Layout notallowedroles={["TEACHER"]} />}>
           <Route path="/finance/payments" element={<Payments />} />
           <Route path="/finance/expenses" element={<Expenses />} />
           <Route path="/finance/debtors" element={<Debtors />} />

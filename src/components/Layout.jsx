@@ -11,11 +11,10 @@ import axios from "../axios/axios";
 import Schedule from "../pages/Schedule/Schedule";
 import { Calendar3 } from "react-bootstrap-icons";
 
-const Layout = ({ allowedRoles = [], notAllowedRoles = [] }) => {
+const Layout = ({ allowedRoles = [], notallowedroles = [] }) => {
   const [scheduleIsOpen, setScheduleIsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(localStorage.getItem("crm_role"));
   useEffect(() => {
     if (localStorage.getItem("crm_token")) {
       axios
@@ -32,9 +31,11 @@ const Layout = ({ allowedRoles = [], notAllowedRoles = [] }) => {
     }
   }, []);
 
-  if (notAllowedRoles) {
-    if (notAllowedRoles.includes(localStorage.getItem("crm_role").toUpperCase())) {
-      return <Navigate replace={true} to={"/"} />
+  if (notallowedroles) {
+    if (
+      notallowedroles.includes(localStorage.getItem("crm_role").toUpperCase())
+    ) {
+      return <Navigate replace={true} to={"/"} />;
     }
   }
 

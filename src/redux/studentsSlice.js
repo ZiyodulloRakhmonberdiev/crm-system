@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   students: [],
   studentsDebtors: [],
+  studentsStatistics: [],
   loading: false,
   loadingJoinedGroups: false,
   loadingPayments: false,
@@ -24,6 +25,9 @@ const studentsSlice = createSlice({
     fetchingStudentsDebtors: (state) => {
       state.loading = true;
     },
+    fetchingStudentsStatistics: (state) => {
+      state.loading = true;
+    },
     fetchedStudents: (state, action) => {
       state.loading = false;
       state.students = action.payload;
@@ -31,6 +35,10 @@ const studentsSlice = createSlice({
     fetchedStudentsDebtors: (state, action) => {
       state.loading = false;
       state.studentsDebtors = action.payload;
+    },
+    fetchedStudentsStatistics: (state, action) => {
+      state.loading = false;
+      state.studentsStatistics = action.payload;
     },
     fetchedError: (state) => {
       state.loading = false;
@@ -79,6 +87,8 @@ export const {
   setUserData,
   setUserGroupData,
   changeUpdateUserData,
+  fetchingStudentsStatistics,
+  fetchedStudentsStatistics,
 } = studentsSlice.actions;
 const studentsReducer = studentsSlice.reducer;
 export default studentsReducer;

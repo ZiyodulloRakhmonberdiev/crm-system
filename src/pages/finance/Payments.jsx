@@ -37,7 +37,7 @@ export default function Payments() {
   // states
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
-  const [last_page] = useState(1);
+  const [last_page, setLastPage] = useState(1);
   const [from, setFrom] = useState(moment(prevDate).format("YYYY-MM-DD"));
   const [to, setTo] = useState(moment(new Date()).format("YYYY-MM-DD"));
   const { payments, paymentsAmount, profitAmount, loading } = useSelector(
@@ -161,6 +161,8 @@ export default function Payments() {
       .get(`/api/payments?from=${from}&to=${to}?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedPayments(res?.data?.data?.data));
+        setPerPage(res?.data?.data?.per_page);
+        setLastPage(res?.data?.data?.last_page);
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -222,7 +224,7 @@ export default function Payments() {
   useEffect(() => {
     dispatch(fetchingGroups());
     axios
-      .get(`/api/groups?page=${currentPage}`)
+      .get(`/api/groups`)
       .then((res) => {
         dispatch(fetchedGroups(res?.data?.data?.data));
       })
@@ -278,7 +280,7 @@ export default function Payments() {
             id=""
             value={from}
             onChange={(e) => setFrom(e.target.value)}
-            className="rounded-md p-2 border border-slate-300 w-full"
+            className="rounded-md p-2 border border-slate-300"
           />
         </div>
         <div className="flex flex-col gap-1 justify-center">
@@ -289,7 +291,7 @@ export default function Payments() {
             type="date"
             name=""
             id=""
-            className="rounded-md  border border-slate-300 p-2"
+            className="rounded-md border border-slate-300 p-2"
           />
         </div>
         {/* <div className="flex flex-col gap-1 justify-center">
@@ -297,7 +299,7 @@ export default function Payments() {
           <Input
             placeholder="Имя или телефон"
             className="sm:max-w-[130px]"
-            allowClear
+            allowclear
           />
         </div>
         <div className="flex flex-col gap-1 justify-center">
@@ -306,7 +308,7 @@ export default function Payments() {
             mode="multiple"
             maxTagCount={1}
             placeholder="Выбрать"
-            allowClear
+            allowclear
             className="min-w-[130px]"
           >
             {groups?.map((group) => (
@@ -322,7 +324,7 @@ export default function Payments() {
             mode="multiple"
             maxTagCount={1}
             placeholder="Выбрать"
-            allowClear
+            allowclear
             className="min-w-[130px]"
           >
             {teachers?.data?.map((teacher) => {
@@ -340,7 +342,7 @@ export default function Payments() {
             mode="multiple"
             maxTagCount={1}
             placeholder="Выбрать"
-            allowClear
+            allowclear
             className="min-w-[130px]"
           >
             {paymentMethods?.map((paymentMethod, index) => {
@@ -354,7 +356,7 @@ export default function Payments() {
         </div>
         <div className="flex flex-col gap-1 justify-center">
           <label htmlFor="">Сумма</label>
-          <Input placeholder="Сумма" className="sm:max-w-[130px]" allowClear />
+          <Input placeholder="Сумма" className="sm:max-w-[130px]" allowclear />
         </div>
         <div className="mt-4 sm:mt-auto">
           <MyButton>Фильтровать</MyButton>

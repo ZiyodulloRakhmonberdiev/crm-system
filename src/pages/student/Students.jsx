@@ -15,6 +15,8 @@ import {
   fetchedStudents,
   fetchedError,
   setUserData,
+  fetchingStudentsStatistics,
+  fetchedStudentsStatistics,
 } from "../../redux/studentsSlice";
 import { fetchedCourses, fetchingCourses } from "../../redux/coursesSlice";
 import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
@@ -32,9 +34,8 @@ export default function Students() {
   const [last_page, setLast_page] = useState(1);
   const dispatch = useDispatch();
   const { courses } = useSelector((state) => state.courses);
-  const { students, loading, refreshStudents } = useSelector(
-    (state) => state.students
-  );
+  const { students, loading, refreshStudents, studentsStatistics } =
+    useSelector((state) => state.students);
 
   const finance = [
     "Есть долг",
@@ -54,7 +55,7 @@ export default function Students() {
       lastName: item?.last_name,
       name: (
         <Link
-          to={`/students/profile/${item.id}`}
+          to={`/students/profile/${item?.id}`}
           onClick={() => dispatch(setUserData(item))}
           className="text-cyan-500"
         >
@@ -155,7 +156,6 @@ export default function Students() {
       // }
     });
   };
-  console.log(last_page);
   const onEditStudent = (student) => {
     setModalType("update");
     setVisible(true);
@@ -169,8 +169,8 @@ export default function Students() {
       .get(`/api/students?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedStudents(res?.data?.data));
-        setPerPage(res?.data?.data?.per_page)
-        setLast_page(res?.data?.data?.last_page)
+        setPerPage(res?.data?.data?.per_page);
+        setLast_page(res?.data?.data?.last_page);
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -185,9 +185,21 @@ export default function Students() {
     });
   }, []);
 
+  // fetching students statistics
+  useEffect(() => {
+    dispatch(fetchingStudentsStatistics());
+    axios
+      .get("/api/students/statistics")
+      .then((res) => {
+        dispatch(fetchedStudentsStatistics(res?.data?.data));
+      })
+      .catch((err) => {
+        dispatch(fetchedError());
+      });
+  }, [refreshStudents]);
   return (
     <div>
-      <HeaderWrapper>
+      <HeaderWrapper display="grid">
         <HeaderItem type="secondary">
           <div className="header__icon">
             <Mortarboard />
@@ -195,12 +207,29 @@ export default function Students() {
           <div className="header__content">
             <p className="header__title">Студенты</p>
             <p>Количество: </p>
-            <p className="header__result"> {students?.data?.length}</p>
+            <p className="header__result"> {studentsStatistics?.students}</p>
           </div>
           <MyHeaderButton
             setModalType={() => setModalType("add")}
             setVisible={() => setVisible(!visible)}
           />
+        </HeaderItem>
+        <HeaderItem
+          type={`${
+            studentsStatistics?.debtStudents > 0 ? "danger" : "secondary"
+          }`}
+        >
+          <div className="header__icon">
+            <Mortarboard />
+          </div>
+          <div className="header__content">
+            <p className="header__title">Должники</p>
+            <p>Количество: </p>
+            <p className="header__result">
+              {" "}
+              {studentsStatistics?.debtStudents}
+            </p>
+          </div>
         </HeaderItem>
       </HeaderWrapper>
       {/* <div className="flex flex-wrap gap-2 mb-8">
@@ -213,7 +242,7 @@ export default function Students() {
             onChange={(e) => {
               setSearchText(e.target.value);
             }}
-            allowClear
+            allowclear
             className="min-w-[200px] md:min-w-[250px] pr-8"
           />
         </div>
@@ -222,7 +251,7 @@ export default function Students() {
           maxTagCount={2}
           className="min-w-[200px]"
           placeholder="По курсам"
-          allowClear
+          allowclear
         >
           {courses?.map((course) => {
             return (
@@ -236,7 +265,7 @@ export default function Students() {
           mode="multiple"
           placeholder="Финансовое ситуация"
           maxTagCount={2}
-          allowClear
+          allowclear
           className="min-w-[200px]"
         >
           {finance.map((item, index) => {

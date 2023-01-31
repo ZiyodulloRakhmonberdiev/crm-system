@@ -89,7 +89,6 @@ export default function Rooms() {
       key: "4",
       title: "Действие",
       fixed: "top",
-      width: 120,
       dataIndex: "actions",
     },
   ];
@@ -119,9 +118,11 @@ export default function Rooms() {
   useEffect(() => {
     dispatch(fetchingRooms());
     axios
-      .get(`/api/rooms`)
+      .get(`/api/rooms?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedRooms(res?.data?.data?.data));
+        setPerPage(res?.data?.data?.per_page);
+        setLastPage(res?.data?.data?.last_page);
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -162,13 +163,11 @@ export default function Rooms() {
           setVisible={() => setVisible(false)}
         />
       </Drawer>
-      {/* <div className="grid"> */}
-      {/* <div className="flex items-center"> */}
       <Table
         loading={loading}
         columns={columns}
         dataSource={dataSource}
-        className="overflow-auto sm:w-2/3 lg:w-1/2"
+        className="overflow-auto bg-white sm:w-2/3 lg:w-1/2"
         pagination={false}
         rowKey={(record) => record.uid}
       ></Table>
@@ -184,8 +183,6 @@ export default function Rooms() {
           }}
         />
       </center>
-      {/* </div> */}
-      {/* </div> */}
     </div>
   );
 }

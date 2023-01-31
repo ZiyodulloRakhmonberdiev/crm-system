@@ -81,14 +81,14 @@ export default function Header() {
       <div className="w-42 hidden lg:block">
         <Input.Search
           placeholder="В разработке..."
-          allowClear
           className="min-w-[250px] pointer-events-none"
           value=""
         />
       </div>
       <div className="flex space-x-2 md:space-x-4 items-center">
         <Search
-          className="block lg:hidden sm:text-xl text-gray-500 font-bold cursor-pointer "
+          className="block lg:hidden sm:text-xl text-gray-500 font-bold cursor-pointer"
+          value=""
           onClick={() => {
             setIsOpenSearchModal(!isOpenSearchModal);
           }}
@@ -102,7 +102,11 @@ export default function Header() {
             resetEditing();
           }}
         >
-          <Input placeholder="Поиск" className="mb-2" />
+          <Input
+            placeholder="В разработке..."
+            value=""
+            className="mb-2 pointer-events-none"
+          />
         </Modal>
         <Dropdown
           overlay={

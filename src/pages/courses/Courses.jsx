@@ -28,6 +28,15 @@ export default function Courses() {
   const dispatch = useDispatch();
   const { courses, refreshCourses } = useSelector((state) => state.courses);
 
+  // get TEACHER
+  const [TEACHER, setTEACHER] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "TEACHER") {
+      setTEACHER(true);
+    } else {
+      setTEACHER(false);
+    }
+  }, []);
   // courses static data
   let dataSource = [];
   courses?.map((item) => {
@@ -39,7 +48,7 @@ export default function Courses() {
       lesson_duration: item?.lesson_duration,
       month: item?.month,
       price: Number(item?.price).toLocaleString(),
-      actions: (
+      actions: !TEACHER ? (
         <div className="flex gap-2">
           <IconButton
             color="primaryOutlined"
@@ -58,6 +67,8 @@ export default function Courses() {
             <Trash />
           </IconButton>
         </div>
+      ) : (
+        ""
       ),
     });
   });
@@ -109,10 +120,14 @@ export default function Courses() {
             <p>Количество: </p>
             <p className="header__result">{courses?.length}</p>
           </div>
-          <MyHeaderButton
-            setModalType={() => setModalType("add")}
-            setVisible={() => setVisible(!visible)}
-          />
+          {!TEACHER ? (
+            <MyHeaderButton
+              setModalType={() => setModalType("add")}
+              setVisible={() => setVisible(!visible)}
+            />
+          ) : (
+            ""
+          )}
         </HeaderItem>
       </HeaderWrapper>
       <Drawer
@@ -144,26 +159,30 @@ export default function Courses() {
               >
                 {course?.name}
               </Link>
-              <div className="absolute top-4 right-4">
-                <div className="flex gap-2">
-                  <IconButton
-                    color="primaryOutlined"
-                    onClick={() => {
-                      onEditCourse(course);
-                    }}
-                  >
-                    <PencilSquare />
-                  </IconButton>
-                  <IconButton
-                    color="dangerOutlined"
-                    onClick={() => {
-                      onDeleteCourse(course);
-                    }}
-                  >
-                    <Trash />
-                  </IconButton>
+              {!TEACHER ? (
+                <div className="absolute top-4 right-4">
+                  <div className="flex gap-2">
+                    <IconButton
+                      color="primaryOutlined"
+                      onClick={() => {
+                        onEditCourse(course);
+                      }}
+                    >
+                      <PencilSquare />
+                    </IconButton>
+                    <IconButton
+                      color="dangerOutlined"
+                      onClick={() => {
+                        onDeleteCourse(course);
+                      }}
+                    >
+                      <Trash />
+                    </IconButton>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                ""
+              )}
               <div className="flex flex-col gap-8 items-start justify-start px-6 py-8 bg-white">
                 <p className="text-xl text-pink-500">{course?.name}</p>
                 <p className="text-slate-600">

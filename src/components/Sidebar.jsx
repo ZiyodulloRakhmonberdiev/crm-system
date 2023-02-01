@@ -70,9 +70,15 @@ export default function Sidebar() {
           "debtors"
         ),
       ],
-      ["TEACHER"]
+      [
+        "BRANCH DIRECTOR",
+        "ADMINISTRATOR",
+        "LIMITED ADMINISTRATOR",
+        "TEACHER",
+        "MARKETER",
+        "CASHIER",
+      ]
     ),
-    // getItem(<Link to="/report">Отчеты</Link>, "report", <PieChartOutlined />),
     getItem("Дополнительные", "addition", <Wallet2 />, [
       getItem(
         <Link className="flex items-center justify-start gap-3" to="/employees">
@@ -115,7 +121,7 @@ export default function Sidebar() {
           defaultSelectedKeys={["4"]}
           items={items.filter(
             (item) =>
-              !item?.notallowedroles?.includes(
+              !item?.allowedroles?.includes(
                 localStorage.getItem("crm_role")?.toUpperCase()
               )
           )}

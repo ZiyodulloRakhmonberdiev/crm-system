@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-
+import { useState, useEffect } from "react";
 import { Card, Tabs } from "antd";
 import photo from "../../assets/img/Default-avatar.jpg";
 import InProcess from "../../UI/InProcess.style";
@@ -7,6 +7,14 @@ import InProcess from "../../UI/InProcess.style";
 export default function TeacherProfile() {
   const { teachersData } = useSelector((state) => state.teachers);
 
+  const [CEO, setCEO] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "CEO") {
+      setCEO(true);
+    } else {
+      setCEO(false);
+    }
+  });
   return (
     <Tabs
       className="col-span-6 md:col-span-3 lg:col-span-4"
@@ -54,7 +62,17 @@ export default function TeacherProfile() {
         {
           key: "2",
           label: "Зарплата",
-          children: <InProcess />,
+          children: (
+            <div>
+              {CEO ? (
+                <InProcess />
+              ) : (
+                <div className="px-5 py-5 bg-white rounded-md">
+                  Доступно только CEO
+                </div>
+              )}
+            </div>
+          ),
         },
       ]}
     ></Tabs>

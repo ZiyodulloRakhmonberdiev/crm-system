@@ -9,6 +9,7 @@ import {
   PencilSquare,
   Trash,
 } from "react-bootstrap-icons";
+import { v4 as uuidv4 } from "uuid";
 import { Drawer, message, Spin, Tabs, Tooltip, Popover } from "antd";
 
 import { IconButton } from "../../UI/IconButton.style";
@@ -53,13 +54,22 @@ export default function GroupProfile() {
   const { teachers } = useSelector((state) => state.teachers);
   const { courses, coursesData } = useSelector((state) => state.courses);
   const { attendances } = useSelector((state) => state.attendances);
-  const [from, setFrom ] = useState("")
-  const [to, setTo ] = useState("")
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   // hooks
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const params = useParams();
 
+  // get TEACHER
+  const [TEACHER, setTEACHER] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "TEACHER") {
+      setTEACHER(true);
+    } else {
+      setTEACHER(false);
+    }
+  }, []);
   // functions
   const onEditGroup = (group) => {
     setModalType("update");
@@ -140,6 +150,64 @@ export default function GroupProfile() {
       })
       .finally(() => setStudentActivating(false));
   }
+
+  const shortDays = [
+    {
+      id: 1,
+      day: "Пн",
+    },
+    {
+      id: 2,
+      day: "Вт",
+    },
+    {
+      id: 3,
+      day: "Ср",
+    },
+    {
+      id: 4,
+      day: "Чт",
+    },
+    {
+      id: 5,
+      day: "Пт",
+    },
+    {
+      id: 6,
+      day: "Сб",
+    },
+    {
+      id: 7,
+      day: "Вс",
+    },
+  ];
+  // get days
+  const getDays = (days) => {
+    let returnData = null;
+    switch (days) {
+      case ["1", "3", "5"]:
+        returnData = "Нечетные дни";
+      case ["2", "4", "6"]:
+        returnData = "Четные дни";
+      default:
+        returnData = (
+          <div className="flex flex-wrap gap-1">
+            {groupData?.days?.map((item) => {
+              return (
+                <span
+                  key={uuidv4()}
+                  className="px-1 py-0.5 rounded-md text-white bg-gray-400 font-semibold"
+                  style={{ fontSize: "12px" }}
+                >
+                  {shortDays.find((x) => x.id == item)?.day}
+                </span>
+              );
+            })}
+          </div>
+        );
+    }
+    return returnData;
+  };
   return (
     <>
       <Drawer
@@ -187,23 +255,27 @@ export default function GroupProfile() {
       </div>
       <div className="flex flex-col md:flex-row gap-8 w-full">
         <div className="flex flex-col md:w-1/2 lg:w-1/3 drop-shadow-md hover:drop-shadow-lg transition">
-          <div className="absolute top-4 right-4">
-            <div className="flex flex-col gap-2">
-              <IconButton
-                color="primaryOutlined"
-                onClick={() => {
-                  onEditGroup(groupData);
-                }}
-              >
-                <PencilSquare />
-              </IconButton>
-              <IconButton color="dangerOutlined">
-                <Trash />
-              </IconButton>
+          {TEACHER ? (
+            ""
+          ) : (
+            <div className="absolute top-4 right-4">
+              <div className="flex flex-col gap-2">
+                <IconButton
+                  color="primaryOutlined"
+                  onClick={() => {
+                    onEditGroup(groupData);
+                  }}
+                >
+                  <PencilSquare />
+                </IconButton>
+                <IconButton color="dangerOutlined">
+                  <Trash />
+                </IconButton>
+              </div>
             </div>
-          </div>
+          )}
           <div className="bg-white p-2 lg:p-4 pt-6">
-            <span className="text-white bg-cyan-400 px-4 py-2 rounded-md text-lg">
+            <span className="text-white bg-cyan-400 px-4 py-2 rounded-sm text-lg">
               {groupData?.name}
             </span>
             <div className="grid mb-2 md:mb-4 mt-4">
@@ -253,6 +325,10 @@ export default function GroupProfile() {
                 <p>{groupData?.time?.time}</p>
                 <p>({groupData?.course?.lesson_duration} минут)</p>
               </div>
+            </div>
+            <div className="grid mb-2 md:mb-4">
+              <label className="text-slate-600">Дни:</label>
+              <div className="flex flex-row gap-1">{getDays()}</div>
             </div>
             <div className="grid mb-2 md:mb-4">
               <label className="text-slate-600">Кабинеты:</label>
@@ -398,26 +474,34 @@ export default function GroupProfile() {
                             "В этой группе нет студентов"
                           ) : (
                             <>
-                            <div className="bg-white flex justify-end mb-2">
-                              <input 
-                                className="p-2 outline-none border-none "
-                                value={from}
-                                type="date" onChange={(e) => {
-                                setFrom(e.target.value)
-                              }}  min={groupData.group_start_date} max={groupData.group_end_date} />
-                              <input 
-                                className="p-2 outline-none border-none "
-                                value={to}
-                                type="date" onChange={(e) => {
-                                setTo(e.target.value)
-                              }} max={groupData.group_end_date} min={groupData.group_start_date} />
-                            </div>
-                            <GroupAttendance
-                              from={from}
-                              to={to}
-                              setFrom={setFrom}
-                              setTo={setTo}
-                            />
+                              <div className="bg-white flex justify-end mb-2">
+                                <input
+                                  className="p-2 outline-none border-none "
+                                  value={from}
+                                  type="date"
+                                  onChange={(e) => {
+                                    setFrom(e.target.value);
+                                  }}
+                                  min={groupData.group_start_date}
+                                  max={groupData.group_end_date}
+                                />
+                                <input
+                                  className="p-2 outline-none border-none "
+                                  value={to}
+                                  type="date"
+                                  onChange={(e) => {
+                                    setTo(e.target.value);
+                                  }}
+                                  max={groupData.group_end_date}
+                                  min={groupData.group_start_date}
+                                />
+                              </div>
+                              <GroupAttendance
+                                from={from}
+                                to={to}
+                                setFrom={setFrom}
+                                setTo={setTo}
+                              />
                             </>
                           )}
                         </div>

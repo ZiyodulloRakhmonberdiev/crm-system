@@ -62,6 +62,15 @@ export default function StudentProfile() {
     start_date: "",
     student_id: userData?.id,
   });
+  // get TEACHER
+  const [TEACHER, setTEACHER] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "TEACHER") {
+      setTEACHER(true);
+    } else {
+      setTEACHER(false);
+    }
+  }, []);
   const [refreshing, setRefreshing] = useState(false);
   // hooks
   const params = useParams();
@@ -300,9 +309,13 @@ export default function StudentProfile() {
             >
               <CashStack />
             </IconButton>
-            <IconButton color="primary" onClick={showModal}>
-              <TeamOutlined />
-            </IconButton>
+            {TEACHER ? (
+              ""
+            ) : (
+              <IconButton color="primary" onClick={showModal}>
+                <TeamOutlined />
+              </IconButton>
+            )}
             <IconButton color="danger">
               <Trash />
             </IconButton>

@@ -7,6 +7,7 @@ import {
   Tabs,
   Table,
   Modal,
+  InputNumber,
   Select,
   DatePicker,
   message,
@@ -20,6 +21,7 @@ import {
   Flag,
   TelephoneFill,
   Trash,
+  Percent,
 } from "react-bootstrap-icons";
 
 import { EditOutlined, TeamOutlined } from "@ant-design/icons";
@@ -48,6 +50,7 @@ export default function StudentProfile() {
   const [refreshPayments, setRefreshPayments] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [discountModal, setDiscountModal] = useState(false);
   const [visiblePayment, setVisiblePayment] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
@@ -56,11 +59,18 @@ export default function StudentProfile() {
   const [studentGroups, setStudentGroups] = useState([]);
   const { userData, userGroupData, studentPayments, loadingPayments } =
     useSelector((state) => state.students);
+
   const { groups } = useSelector((state) => state.groups);
   const [group, setGroup] = useState({
     group_id: "",
     start_date: "",
     student_id: userData?.id,
+  });
+  const [discountGroup, setDiscountGroup] = useState({
+    groupId: "",
+    studentId: userData?.id,
+    discount: "",
+    deadline: "",
   });
   // get TEACHER
   const [TEACHER, setTEACHER] = useState(false);
@@ -220,8 +230,14 @@ export default function StudentProfile() {
   const showModal = () => {
     setIsModalOpen(true);
   };
+  // handle modal  "Add discount"
+  const showDiscountModal = () => {
+    setDiscountModal(true);
+  };
+
   const handleCancel = () => {
     setIsModalOpen(false);
+    setDiscountModal(false);
   };
 
   // editing student
@@ -248,6 +264,45 @@ export default function StudentProfile() {
   const changeUpdateUserDataFunc = (data) => {
     dispatch(changeUpdateUserData(data));
   };
+
+  function setDiscountToStudent(e) {
+    const url = `/api/discounts`;
+    e.preventDefault();
+    const { groupId, deadline, discount } = discountGroup;
+    if (groupId && deadline && discount) {
+      setUploading(true);
+      axios
+        .post(url, {
+          group_id: discountGroup.groupId,
+          student_id: params.id,
+          deadline: discountGroup.deadline,
+          discount: discountGroup.discount,
+        })
+        .then(() => {
+          setDiscountGroup({
+            group_id: "",
+            deadline: "",
+            discount: "",
+          });
+          message.success("Скидка успешно добавлен!");
+
+          setRefreshing(!refreshing);
+        })
+        .catch((err) => {
+          if (err?.message === "Network Error") {
+            message.error("У вас нет подключения к интернету!");
+          } else {
+            message.error("Произошла ошибка! Попробуйте еще раз!");
+          }
+        })
+        .finally(() => {
+          setUploading(false);
+          setDiscountModal(false);
+        });
+    } else {
+      message.error("Заполните все поля!");
+    }
+  }
 
   return (
     <div className="grid grid-cols-6 gap-8">
@@ -304,10 +359,13 @@ export default function StudentProfile() {
               <EditOutlined />
             </IconButton>
             <IconButton
-              color="success"
+              color="primary"
               onClick={() => setVisiblePayment(!visiblePayment)}
             >
               <CashStack />
+            </IconButton>
+            <IconButton color="success" onClick={showDiscountModal}>
+              <Percent />
             </IconButton>
             {TEACHER ? (
               ""
@@ -411,6 +469,66 @@ export default function StudentProfile() {
         </div>
         <Spin spinning={uploading}>
           <MyButton htmlType="submit" color="primary" onClick={submit}>
+            Добавить
+          </MyButton>
+        </Spin>
+      </Modal>
+      <Modal
+        title="Добавить скидку"
+        open={discountModal}
+        footer={null}
+        onCancel={handleCancel}
+      >
+        <p className="text-xs mb-1">Выберите группу</p>
+        <Select
+          value={discountGroup?.id}
+          onChange={(e) => {
+            setDiscountGroup({ ...discountGroup, groupId: e });
+          }}
+          placeholder="Выберите группу"
+          className="w-full"
+          showSearch={true}
+        >
+          {studentGroups?.data?.map((item) => {
+            return (
+              <Select.Option value={item?.id} key={item?.id}>
+                <button className="w-full block text-left">{item?.name}</button>
+              </Select.Option>
+            );
+          })}
+        </Select>
+        <div className="w-full mb-4">
+          {discountGroup?.groupId && (
+            <div>
+              <p className="text-xs mb-1 mt-4">Сколько процентов</p>
+              <InputNumber
+                className="w-full"
+                onChange={(disc) => {
+                  setDiscountGroup({ ...discountGroup, discount: disc });
+                }}
+              />
+            </div>
+          )}
+        </div>
+        <div className="w-full mb-1">
+          {discountGroup?.groupId && (
+            <div>
+              <p className="text-xs mb-1 mt-4">Скидка действует до:</p>
+              <DatePicker
+                className="w-full mb-4"
+                onChange={(date, dateString) => {
+                  setDiscountGroup({ ...discountGroup, deadline: dateString });
+                }}
+              />
+            </div>
+          )}
+        </div>
+        <Spin spinning={uploading}>
+          <MyButton
+            htmlType="submit"
+            color="primary"
+            onClick={setDiscountToStudent}
+          >
             Добавить
           </MyButton>
         </Spin>

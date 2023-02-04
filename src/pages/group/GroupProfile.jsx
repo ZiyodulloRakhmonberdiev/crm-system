@@ -359,7 +359,7 @@ export default function GroupProfile() {
                     student?.active === true
                       ? "hover:bg-green-50"
                       : "hover:bg-red-50"
-                  } flex justify-between flex-wrap items-center transition p-1 `}
+                  } flex justify-start flex-wrap items-center transition p-1 `}
                 >
                   <Popover
                     placement="right"
@@ -411,6 +411,29 @@ export default function GroupProfile() {
                             {Number(student?.balance).toLocaleString()} сум
                           </p>
                         </div>
+                        <label className="text-xs text-slate-400 flex justify-between">
+                          <span>Скидки</span>
+                          {student?.discount?.length > 0 ? (
+                            <span>Действует до:</span>
+                          ) : (
+                            ""
+                          )}
+                        </label>
+                        {student?.discount?.length > 0 ? (
+                          student?.discount?.map((item) => (
+                            <div
+                              className="border-b mb-1 md:mb-4"
+                              key={uuidv4()}
+                            >
+                              <div className="flex justify-between">
+                                <span>{item?.discount} %</span>
+                                <span>{item?.deadline}</span>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="border-b mb-2 md:mb-4">Нет скидки</p>
+                        )}
                         <div className="border-b mb-2 md:mb-4">
                           <label className="text-xs text-slate-400">
                             Дата добавления
@@ -451,9 +474,14 @@ export default function GroupProfile() {
                       </span>
                     </div>
                   </Popover>
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center ml-auto">
                     <a href={`tel:${student?.phone}`}>{student?.phone}</a>
                   </div>
+                  {student?.discount?.length > 0 ? (
+                    <span className="inline w-3 h-1 bg-green-500 ml-2"></span>
+                  ) : (
+                    ""
+                  )}
                 </div>
               ))}
             </div>

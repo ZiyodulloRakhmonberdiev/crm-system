@@ -11,7 +11,7 @@ import axios from "../axios/axios";
 import Schedule from "../pages/Schedule/Schedule";
 import { Calendar3 } from "react-bootstrap-icons";
 
-const Layout = ({ allowedRoles = [], notallowedroles = [] }) => {
+const Layout = ({ allowedroles = [], notallowedroles = [] }) => {
   const [scheduleIsOpen, setScheduleIsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();

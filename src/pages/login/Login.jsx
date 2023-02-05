@@ -19,8 +19,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const [logged, setLogged] = useState(true);
-  const [roles, setRoles] = useState(null)
-  const [seletedRole, setSelectedRole] = useState(null)
+  const [roles, setRoles] = useState(null);
+  const [seletedRole, setSelectedRole] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -76,7 +76,7 @@ export default function Login() {
           message.error("Введен неверный логин или пароль!");
         } else if (err?.response?.data?.data?.roles !== null) {
           setRoles(err?.response?.data?.data?.roles);
-          message.info("Kем вы хотите войти?")
+          message.info("Kем вы хотите войти?");
         } else {
           if (err?.message === "Network Error") {
             message.error("У вас нет подключения к интернету!");
@@ -135,22 +135,16 @@ export default function Login() {
                 )
               }
             />
-            {
-              roles && (
-                <Select
-                  className="bg-white focus:outline-none tracking-wide login-password w-full"
-                  onChange={e => setSelectedRole(e)}
-                >
-                {
-                  roles?.map(item => (
-                    <Select.Option value={item}>
-                      {item}
-                    </Select.Option>
-                  ))
-                }
+            {roles && (
+              <Select
+                className="bg-white focus:outline-none tracking-wide login-password w-full"
+                onChange={(e) => setSelectedRole(e)}
+              >
+                {roles?.map((item) => (
+                  <Select.Option value={item}>{item}</Select.Option>
+                ))}
               </Select>
-              )
-            }
+            )}
             <MyButton color="primary" htmlType="submit">
               Вход
             </MyButton>

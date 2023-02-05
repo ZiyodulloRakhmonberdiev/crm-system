@@ -31,6 +31,26 @@ export default function Teachers() {
   const { teachers, loading, refreshTeachers } = useSelector(
     (state) => state.teachers
   );
+
+  // get CEO
+  const [CEO, setCEO] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "CEO") {
+      setCEO(true);
+    } else {
+      setCEO(false);
+    }
+  });
+
+  // get TEACHER
+  const [TEACHER, setTEACHER] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "TEACHER") {
+      setTEACHER(true);
+    } else {
+      setTEACHER(false);
+    }
+  }, []);
   // teachers static data
   let dataSource = [];
   teachers?.data?.map((item) => {
@@ -48,8 +68,13 @@ export default function Teachers() {
       ),
       phone: item?.phone?.toLocaleString(),
       gender: item?.gender,
-      salary_percentage: Number(item?.salary_percentage).toLocaleString(),
-      actions: (
+      salary_percentage:
+        CEO && !TEACHER
+          ? Number(item?.salary_percentage).toLocaleString()
+          : "Доступно только CEO",
+      actions: TEACHER ? (
+        "Недоступно для вас"
+      ) : (
         <div className="flex gap-2">
           <IconButton
             color="primary"
@@ -156,10 +181,14 @@ export default function Teachers() {
               {teachers?.data?.length > 30 ? "+" : ""}
             </p>
           </div>
-          <MyHeaderButton
-            setModalType={() => setModalType("add")}
-            setVisible={() => setVisible(!visible)}
-          />
+          {!TEACHER ? (
+            <MyHeaderButton
+              setModalType={() => setModalType("add")}
+              setVisible={() => setVisible(!visible)}
+            />
+          ) : (
+            ""
+          )}
         </HeaderItem>
       </HeaderWrapper>
       <Drawer

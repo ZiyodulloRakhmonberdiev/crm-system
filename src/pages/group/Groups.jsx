@@ -38,6 +38,15 @@ export default function Groups() {
     (state) => state.groups
   );
 
+  // get TEACHER
+  const [TEACHER, setTEACHER] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "TEACHER") {
+      setTEACHER(true);
+    } else {
+      setTEACHER(false);
+    }
+  }, []);
   const groupsStatus = [
     "Активные группы",
     "Неактивные группы",
@@ -87,7 +96,7 @@ export default function Groups() {
   const shortDays = [
     {
       id: 1,
-      day: "По",
+      day: "Пн",
     },
     {
       id: 2,
@@ -191,7 +200,9 @@ export default function Groups() {
         </div>
       ),
       student_count: item?.student_count,
-      actions: (
+      actions: TEACHER ? (
+        "Недоступно для вас"
+      ) : (
         <div className="flex gap-2">
           <IconButton
             color="primary"
@@ -328,10 +339,14 @@ export default function Groups() {
               {groups?.length} {groups?.length > 30 ? "+" : ""}
             </p>
           </div>
-          <MyHeaderButton
-            setModalType={() => setModalType("add")}
-            setVisible={() => setVisible(!visible)}
-          />
+          {TEACHER ? (
+            ""
+          ) : (
+            <MyHeaderButton
+              setModalType={() => setModalType("add")}
+              setVisible={() => setVisible(!visible)}
+            />
+          )}
         </HeaderItem>
       </HeaderWrapper>
       {/* <div className="flex flex-wrap gap-4 mb-8">

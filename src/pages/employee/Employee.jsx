@@ -18,7 +18,7 @@ import {
 import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
 import MyHeaderButton from "../../UI/MyHeaderButton.style";
 
-export default function Employees() {
+export default function Employees({ notallowedroles = [] }) {
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [visible, setVisible] = useState(false);
 
@@ -27,6 +27,24 @@ export default function Employees() {
   const { employees, loading, refreshEmployees } = useSelector(
     (state) => state.employees
   );
+  // get CEO
+  const [CEO, setCEO] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "CEO") {
+      setCEO(true);
+    } else {
+      setCEO(false);
+    }
+  });
+  // get TEACHER
+  const [TEACHER, setTEACHER] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "TEACHER") {
+      setTEACHER(true);
+    } else {
+      setTEACHER(false);
+    }
+  });
 
   // employees static data
   let dataSource = [];
@@ -57,8 +75,13 @@ export default function Employees() {
       ),
       phone: item?.phone?.toLocaleString(),
       gender: item?.gender,
-      salary: Number(item?.salary).toLocaleString(),
-      actions: (
+      salary:
+        CEO && !TEACHER
+          ? Number(item?.salary).toLocaleString()
+          : "Доступно только CEO",
+      actions: TEACHER ? (
+        "Недоступно для вас"
+      ) : (
         <div className="flex gap-2">
           <IconButton
             color="primary"
@@ -117,7 +140,6 @@ export default function Employees() {
     {
       key: "6",
       title: "Действие",
-      width: 120,
       dataIndex: "actions",
     },
   ];
@@ -166,10 +188,14 @@ export default function Employees() {
             <p>Количество: </p>
             <p className="header__result"> {employees?.length}</p>
           </div>
-          <MyHeaderButton
-            setModalType={() => setModalType("add")}
-            setVisible={() => setVisible(!visible)}
-          />
+          {TEACHER ? (
+            ""
+          ) : (
+            <MyHeaderButton
+              setModalType={() => setModalType("add")}
+              setVisible={() => setVisible(!visible)}
+            />
+          )}
         </HeaderItem>
       </HeaderWrapper>
       <Drawer

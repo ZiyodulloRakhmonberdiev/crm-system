@@ -27,6 +27,17 @@ export default function CourseProfile() {
   const { groups } = useSelector((state) => state.groups);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // get TEACHER
+  const [TEACHER, setTEACHER] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "TEACHER") {
+      setTEACHER(true);
+    } else {
+      setTEACHER(false);
+    }
+  }, []);
+
   const onEditCourse = (course) => {
     setModalType("update");
     setVisible(true);
@@ -114,21 +125,25 @@ export default function CourseProfile() {
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         <div className="flex flex-col drop-shadow-md hover:drop-shadow-lg transition col-span-1">
           <div className="bg-pink-500 text-center text-xl text-white px-4 py-20 flex items-center justify-center hover:text-white">
-            <div className="absolute top-4 right-4">
-              <div className="flex gap-2">
-                <IconButton
-                  color="primaryOutlined"
-                  onClick={() => {
-                    onEditCourse(coursesData);
-                  }}
-                >
-                  <PencilSquare />
-                </IconButton>
-                <IconButton color="dangerOutlined">
-                  <Trash />
-                </IconButton>
+            {!TEACHER ? (
+              <div className="absolute top-4 right-4">
+                <div className="flex gap-2">
+                  <IconButton
+                    color="primaryOutlined"
+                    onClick={() => {
+                      onEditCourse(coursesData);
+                    }}
+                  >
+                    <PencilSquare />
+                  </IconButton>
+                  <IconButton color="dangerOutlined">
+                    <Trash />
+                  </IconButton>
+                </div>
               </div>
-            </div>
+            ) : (
+              ""
+            )}
             {coursesData?.name}
           </div>
           <div className="bg-white p-8">

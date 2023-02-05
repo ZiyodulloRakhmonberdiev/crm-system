@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Skeleton, Tooltip } from "antd";
+import { Skeleton, Tooltip, Tabs } from "antd";
 import { v4 as uuidv4 } from "uuid";
 
 import axios from "../../axios/axios";
@@ -79,118 +79,445 @@ const Schedule = () => {
       <center className="border-b pb-2">
         <h3 className="text-lg">Расписание</h3>
       </center>
-
-      {/* {schedule?.length < 1 && (
-        <center className="p-8 rounded-md">
-          <h3 className="text-lg text-red-400">
-            Группы должны быть активированы для просмотра расписания уроков. В
-            настоящее время у вас нет активированных групп. Пожалуйста,
-            активируйте их или создайте новый.
-          </h3>
-        </center>
-      )} */}
-      {loading ? (
-        <Skeleton active={true} />
-      ) : (
-        <div className="overflow-auto schedule__table-wrapper pb-8">
-          <table className="relative">
-            <thead>
-              <tr>
-                <td className="bg-gray-100 border-b">Кабинеты</td>
-                {times?.map((time) => {
-                  return (
-                    <td
-                      className="px-4 py-2 border-r-2 border-gray-100"
-                      key={uuidv4()}
-                    >
-                      {time?.time}
-                    </td>
-                  );
-                })}
-              </tr>
-            </thead>
-            <tbody>
-              {rooms?.map((room, indx) => {
-                return (
-                  <tr className="relative" key={uuidv4()}>
-                    <td className=" bg-gray-100 border-b">{room?.name}</td>
-                    {times?.map((time, index) => {
-                      let startedIndex = null;
-                      let endIndex = null;
-                      const curr = schedule?.find((group) => {
-                        if (
-                          time.time === group.start_time &&
-                          group.room.id === room.id
-                        ) {
-                          startedIndex = index;
-                        } else if (
-                          time.time === group.end_time &&
-                          group.room.id === room.id
-                        ) {
-                          endIndex = index;
-                        }
-                        return (
-                          time.time === group.start_time &&
-                          group.room.id === room.id
-                        );
-                      });
-                      if (curr) {
-                        return (
-                          <td
-                            key={uuidv4()}
-                            colSpan={curr?.lesson_duration / 30}
-                            className="relative p-1 border border-gray-100"
-                            role="cell"
-                          >
-                            <div className="bg-cyan-300 w-full">
-                              <div className="p-2 shadow-md text-xs flex flex-wrap gap-1">
-                                <span className="bg-cyan-500 rounded-sm p-1 text-white px-1 w-full">
-                                  {curr?.name}
-                                </span>
-                                {curr?.teachers?.length !== 0 ? (
-                                  <Tooltip title="Учителя">
-                                    <span className="bg-pink-400 rounded-sm px-1 py-0.5 text-white">
-                                      {curr?.teachers?.[0]?.name}
-                                    </span>
-                                  </Tooltip>
-                                ) : (
-                                  ""
-                                )}
-                                <span
-                                  className="bg-white rounded-sm px-1 py-0.5 text-xs"
-                                  style={{ fontSize: 10 }}
+      <div>
+        <Tabs
+          className="col-span-6 md:col-span-3 lg:col-span-4"
+          items={[
+            {
+              key: "1",
+              label: `Нечетные дни`,
+              children: (
+                <div>
+                  {loading ? (
+                    <Skeleton active={true} />
+                  ) : (
+                    <div className="overflow-auto schedule__table-wrapper pb-8">
+                      <table className="relative">
+                        <thead>
+                          <tr>
+                            <td className="bg-gray-100 border-b">Кабинеты</td>
+                            {times?.map((time) => {
+                              return (
+                                <td
+                                  className="pl-1 pr-6 py-2 border-r-2 border-gray-100"
+                                  key={uuidv4()}
                                 >
-                                  {curr?.group_start_date} -{" "}
-                                  {curr?.group_end_date}{" "}
-                                </span>
-                              </div>
-                            </div>
-                          </td>
-                        );
-                      } else {
-                        if (
-                          !mustDeleteTd.find(
-                            (x) =>
-                              x?.roomIndex === indx && x?.currIndex === index
-                          )
-                        ) {
-                          return (
-                            <td
-                              style={{ width: "70px" }}
-                              className="border border-gray-100"
-                              key={uuidv4()}
-                            ></td>
-                          );
-                        }
-                      }
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+                                  {time?.time}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {rooms?.map((room, indx) => {
+                            return (
+                              <tr className="relative" key={uuidv4()}>
+                                <td className=" bg-gray-100 border-b">
+                                  {room?.name}
+                                </td>
+                                {times?.map((time, index) => {
+                                  let startedIndex = null;
+                                  let endIndex = null;
+                                  const curr = schedule?.find((group) => {
+                                    if (
+                                      time.time === group.start_time &&
+                                      group.room.id === room.id
+                                    ) {
+                                      startedIndex = index;
+                                    } else if (
+                                      time.time === group.end_time &&
+                                      group.room.id === room.id
+                                    ) {
+                                      endIndex = index;
+                                    }
+                                    return (
+                                      time.time === group.start_time &&
+                                      group.room.id === room.id
+                                    );
+                                  });
+                                  if (
+                                    curr &&
+                                    curr?.days[(0, 1, 2)] === ("1", "3", "5")
+                                  ) {
+                                    return (
+                                      <td
+                                        key={uuidv4()}
+                                        colSpan={curr?.lesson_duration / 30}
+                                        className="relative p-1 border border-gray-100"
+                                        role="cell"
+                                      >
+                                        <div className="bg-cyan-300 w-full">
+                                          <div className="p-2 shadow-md text-xs flex flex-wrap gap-1">
+                                            <span className="bg-cyan-500 rounded-sm p-1 text-white px-1 w-full">
+                                              {curr?.name}
+                                            </span>
+                                            {curr?.teachers?.length !== 0 ? (
+                                              <Tooltip title="Учителя">
+                                                <span className="bg-pink-400 rounded-sm px-1 py-0.5 text-white">
+                                                  {curr?.teachers?.[0]?.name}
+                                                </span>
+                                              </Tooltip>
+                                            ) : (
+                                              ""
+                                            )}
+                                            <span
+                                              className="bg-blue-400 text-white rounded-sm px-1 py-0.5 text-xs"
+                                              style={{ fontSize: 10 }}
+                                            >
+                                              {curr?.student_count}
+                                              {" студ"}
+                                            </span>
+                                            <span
+                                              className="bg-white rounded-sm px-1 py-0.5 text-xs"
+                                              style={{ fontSize: 10 }}
+                                            >
+                                              {curr?.group_start_date} -{" "}
+                                              {curr?.group_end_date}{" "}
+                                            </span>
+                                            <span
+                                              className="bg-white rounded-sm px-1 py-0.5 text-xs"
+                                              style={{ fontSize: 10 }}
+                                            >
+                                              {curr?.start_time} -{" "}
+                                              {curr?.end_time}{" "}
+                                            </span>
+                                            <Tooltip title="Дни">
+                                              <span className="flex gap-0.5">
+                                                {curr?.days?.map((item) => (
+                                                  <span
+                                                    key={uuidv4()}
+                                                    className="bg-violet-400 text-white rounded-sm px-2 py-0.5 text-xs"
+                                                    style={{ fontSize: 10 }}
+                                                  >
+                                                    {item}
+                                                  </span>
+                                                ))}
+                                              </span>
+                                            </Tooltip>
+                                          </div>
+                                        </div>
+                                      </td>
+                                    );
+                                  } else {
+                                    if (
+                                      !mustDeleteTd.find(
+                                        (x) =>
+                                          x?.roomIndex === indx &&
+                                          x?.currIndex === index
+                                      )
+                                    ) {
+                                      return (
+                                        <td
+                                          style={{ width: "70px" }}
+                                          className="border border-gray-100"
+                                          key={uuidv4()}
+                                        ></td>
+                                      );
+                                    }
+                                  }
+                                })}
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              ),
+            },
+            {
+              key: "2",
+              label: "Четные дни",
+              children: (
+                <div>
+                  {loading ? (
+                    <Skeleton active={true} />
+                  ) : (
+                    <div className="overflow-auto schedule__table-wrapper pb-8">
+                      <table className="relative">
+                        <thead>
+                          <tr>
+                            <td className="bg-gray-100 border-b">Кабинеты</td>
+                            {times?.map((time) => {
+                              return (
+                                <td
+                                  className="pl-1 pr-6 py-2 border-r-2 border-gray-100"
+                                  key={uuidv4()}
+                                >
+                                  {time?.time}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {rooms?.map((room, indx) => {
+                            return (
+                              <tr className="relative" key={uuidv4()}>
+                                <td className=" bg-gray-100 border-b">
+                                  {room?.name}
+                                </td>
+                                {times?.map((time, index) => {
+                                  let startedIndex = null;
+                                  let endIndex = null;
+                                  const curr = schedule?.find((group) => {
+                                    if (
+                                      time.time === group.start_time &&
+                                      group.room.id === room.id
+                                    ) {
+                                      startedIndex = index;
+                                    } else if (
+                                      time.time === group.end_time &&
+                                      group.room.id === room.id
+                                    ) {
+                                      endIndex = index;
+                                    }
+                                    return (
+                                      time.time === group.start_time &&
+                                      group.room.id === room.id
+                                    );
+                                  });
+                                  if (
+                                    curr &&
+                                    curr?.days[(0, 1, 2)] === ("2", "4", "6")
+                                  ) {
+                                    return (
+                                      <td
+                                        key={uuidv4()}
+                                        colSpan={curr?.lesson_duration / 30}
+                                        className="relative p-1 border border-gray-100"
+                                        role="cell"
+                                      >
+                                        <div className="bg-cyan-300 w-full">
+                                          <div className="p-2 shadow-md text-xs flex flex-wrap gap-1">
+                                            <span className="bg-cyan-500 rounded-sm p-1 text-white px-1 w-full">
+                                              {curr?.name}
+                                            </span>
+                                            {curr?.teachers?.length !== 0 ? (
+                                              <Tooltip title="Учителя">
+                                                <span className="bg-pink-400 rounded-sm px-1 py-0.5 text-white">
+                                                  {curr?.teachers?.[0]?.name}
+                                                </span>
+                                              </Tooltip>
+                                            ) : (
+                                              ""
+                                            )}
+                                            <span
+                                              className="bg-blue-400 text-white rounded-sm px-1 py-0.5 text-xs"
+                                              style={{ fontSize: 10 }}
+                                            >
+                                              {curr?.student_count}
+                                              {" студ"}
+                                            </span>
+                                            <span
+                                              className="bg-white rounded-sm px-1 py-0.5 text-xs"
+                                              style={{ fontSize: 10 }}
+                                            >
+                                              {curr?.group_start_date} -{" "}
+                                              {curr?.group_end_date}{" "}
+                                            </span>
+                                            <span
+                                              className="bg-white rounded-sm px-1 py-0.5 text-xs"
+                                              style={{ fontSize: 10 }}
+                                            >
+                                              {curr?.start_time} -{" "}
+                                              {curr?.end_time}{" "}
+                                            </span>
+
+                                            <Tooltip title="Дни">
+                                              <span className="flex gap-0.5">
+                                                {curr?.days?.map((item) => (
+                                                  <span
+                                                    key={uuidv4()}
+                                                    className="bg-violet-400 text-white rounded-sm px-2 py-0.5 text-xs"
+                                                    style={{ fontSize: 10 }}
+                                                  >
+                                                    {item}
+                                                  </span>
+                                                ))}
+                                              </span>
+                                            </Tooltip>
+                                          </div>
+                                        </div>
+                                      </td>
+                                    );
+                                  } else {
+                                    if (
+                                      !mustDeleteTd.find(
+                                        (x) =>
+                                          x?.roomIndex === indx &&
+                                          x?.currIndex === index
+                                      )
+                                    ) {
+                                      return (
+                                        <td
+                                          style={{ width: "70px" }}
+                                          className="border border-gray-100"
+                                          key={uuidv4()}
+                                        ></td>
+                                      );
+                                    }
+                                  }
+                                })}
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              ),
+            },
+            {
+              key: "3",
+              label: "Другое",
+              children: (
+                <div>
+                  {loading ? (
+                    <Skeleton active={true} />
+                  ) : (
+                    <div className="overflow-auto schedule__table-wrapper pb-8">
+                      <table className="relative">
+                        <thead>
+                          <tr>
+                            <td className="bg-gray-100 border-b">Кабинеты</td>
+                            {times?.map((time) => {
+                              return (
+                                <td
+                                  className="pl-1 pr-6 py-2 border-r-2 border-gray-100"
+                                  key={uuidv4()}
+                                >
+                                  {time?.time}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {rooms?.map((room, indx) => {
+                            return (
+                              <tr className="relative" key={uuidv4()}>
+                                <td className=" bg-gray-100 border-b">
+                                  {room?.name}
+                                </td>
+                                {times?.map((time, index) => {
+                                  let startedIndex = null;
+                                  let endIndex = null;
+                                  const curr = schedule?.find((group) => {
+                                    if (
+                                      time.time === group.start_time &&
+                                      group.room.id === room.id
+                                    ) {
+                                      startedIndex = index;
+                                    } else if (
+                                      time.time === group.end_time &&
+                                      group.room.id === room.id
+                                    ) {
+                                      endIndex = index;
+                                    }
+                                    return (
+                                      time.time === group.start_time &&
+                                      group.room.id === room.id
+                                    );
+                                  });
+
+                                  if (
+                                    curr &&
+                                    curr?.days[(0, 1, 2)] !== ("1", "3", "5") &&
+                                    curr?.days[(0, 1, 2)] !== ("2", "4", "6")
+                                  ) {
+                                    return (
+                                      <td
+                                        key={uuidv4()}
+                                        colSpan={curr?.lesson_duration / 30}
+                                        className="relative p-1 border border-gray-100"
+                                        role="cell"
+                                      >
+                                        <div className="bg-cyan-300 w-full">
+                                          <div className="p-2 shadow-md text-xs flex flex-wrap gap-1">
+                                            <span className="bg-cyan-500 rounded-sm p-1 text-white px-1 w-full">
+                                              {curr?.name}
+                                            </span>
+                                            {curr?.teachers?.length !== 0 ? (
+                                              <Tooltip title="Учителя">
+                                                <span className="bg-pink-400 rounded-sm px-1 py-0.5 text-white">
+                                                  {curr?.teachers?.[0]?.name}
+                                                </span>
+                                              </Tooltip>
+                                            ) : (
+                                              ""
+                                            )}
+                                            <span
+                                              className="bg-blue-400 text-white rounded-sm px-1 py-0.5 text-xs"
+                                              style={{ fontSize: 10 }}
+                                            >
+                                              {curr?.student_count}
+                                              {" студ"}
+                                            </span>
+                                            <span
+                                              className="bg-white rounded-sm px-1 py-0.5 text-xs"
+                                              style={{ fontSize: 10 }}
+                                            >
+                                              {curr?.group_start_date} -{" "}
+                                              {curr?.group_end_date}{" "}
+                                            </span>
+                                            <span
+                                              className="bg-white rounded-sm px-1 py-0.5 text-xs"
+                                              style={{ fontSize: 10 }}
+                                            >
+                                              {curr?.start_time} -{" "}
+                                              {curr?.end_time}{" "}
+                                            </span>
+                                            <Tooltip title="Дни">
+                                              <span className="flex gap-0.5">
+                                                {curr?.days?.map((item) => (
+                                                  <span
+                                                    key={uuidv4()}
+                                                    className="bg-violet-400 text-white rounded-sm px-2 py-0.5 text-xs"
+                                                    style={{ fontSize: 10 }}
+                                                  >
+                                                    {item}
+                                                  </span>
+                                                ))}
+                                              </span>
+                                            </Tooltip>
+                                          </div>
+                                        </div>
+                                      </td>
+                                    );
+                                  } else {
+                                    if (
+                                      !mustDeleteTd.find(
+                                        (x) =>
+                                          x?.roomIndex === indx &&
+                                          x?.currIndex === index
+                                      )
+                                    ) {
+                                      return (
+                                        <td
+                                          style={{ width: "70px" }}
+                                          className="border border-gray-100"
+                                          key={uuidv4()}
+                                        ></td>
+                                      );
+                                    }
+                                  }
+                                })}
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              ),
+            },
+          ]}
+        ></Tabs>
+      </div>
     </div>
   );
 };

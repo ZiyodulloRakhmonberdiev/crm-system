@@ -40,6 +40,7 @@ import {
 } from "../../redux/attendancesSlice";
 import { setUserData } from "../../redux/studentsSlice";
 import InProcess from "../../UI/InProcess.style";
+import moment from "moment";
 
 export default function GroupProfile() {
   // states
@@ -54,8 +55,9 @@ export default function GroupProfile() {
   const { teachers } = useSelector((state) => state.teachers);
   const { courses, coursesData } = useSelector((state) => state.courses);
   const { attendances } = useSelector((state) => state.attendances);
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+
+  const [from, setFrom] = useState(groupData?.group_start_date)
+  const [to, setTo] = useState(moment(new Date()).format('YYYY-MM-DD'))
   // hooks
   const dispatch = useDispatch();
   const navigate = useNavigate();

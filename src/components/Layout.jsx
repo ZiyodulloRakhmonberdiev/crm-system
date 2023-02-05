@@ -33,7 +33,7 @@ const Layout = ({ allowedRoles = [], notallowedroles = [] }) => {
 
   if (notallowedroles) {
     if (
-      notallowedroles.includes(localStorage.getItem("crm_role").toUpperCase())
+      notallowedroles.includes(localStorage.getItem("crm_role")?.toUpperCase())
     ) {
       return <Navigate replace={true} to={"/"} />;
     }

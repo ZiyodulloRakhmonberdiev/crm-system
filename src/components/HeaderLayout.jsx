@@ -15,18 +15,21 @@ import {
 } from "react-bootstrap-icons";
 import student from "../assets/img/student.png";
 import { MyButton } from "../UI/Button.style";
+import { StatisticsItem } from "../UI/StatisticsItem.style";
 import {
   fetchedError,
   fetchedStudents,
-  fetchedStudentsDebtors,
   fetchingStudents,
-  fetchingStudentsDebtors,
+  fetchingStudentsStatistics,
+  fetchedStudentsStatistics,
 } from "../redux/studentsSlice";
 import { fetchedGroups, fetchingGroups } from "../redux/groupsSlice";
 
 export default function HeaderLayout() {
   // states
-  const { students, refreshStudents } = useSelector((state) => state.students);
+  const { students, refreshStudents, studentsStatistics } = useSelector(
+    (state) => state.students
+  );
   const { groups, refreshGroups } = useSelector((state) => state.groups);
 
   // hooks
@@ -45,13 +48,13 @@ export default function HeaderLayout() {
       });
   }, [refreshStudents]);
 
-  // fetching students in debt
+  // fetching students statistics
   useEffect(() => {
-    dispatch(fetchingStudentsDebtors());
+    dispatch(fetchingStudentsStatistics());
     axios
-      .get("/api/students/debtors")
+      .get("/api/students/statistics")
       .then((res) => {
-        dispatch(fetchedStudentsDebtors(res?.data?.data?.data?.students));
+        dispatch(fetchedStudentsStatistics(res?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -89,9 +92,13 @@ export default function HeaderLayout() {
             </p>
             <p className="text-slate-400 mb-2">
               В этом месяце в учебном центре зарегистрировались{" "}
-              <span className="text-violet-400">{students?.data?.length}</span>{" "}
+              <span className="text-violet-400">
+                {studentsStatistics?.students}
+              </span>{" "}
               студентов. На данный момент нам доверяют более{" "}
-              <span className="text-violet-400">{students?.data?.length}</span>{" "}
+              <span className="text-violet-400">
+                {studentsStatistics?.students}
+              </span>{" "}
               студентов
             </p>
             <MyButton color="primary">Смотреть все</MyButton>
@@ -100,87 +107,86 @@ export default function HeaderLayout() {
             <img src={student} alt="" className="w-full" />
           </div>
         </Link>
-        <Link
-          to="/"
-          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
-        >
-          <div className="text-2xl text-violet-400 bg-violet-50 p-2 rounded-md">
-            <Download />
-          </div>
-          <p className="text-violet-400 my-4">Заявки</p>
-          <p className="text-violet-500 text-2xl">нет</p>
-        </Link>
-        <Link
-          to="/groups"
-          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start"
-        >
-          <div className="text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md">
-            <TeamOutlined />
-          </div>
-          <p className="text-cyan-400 my-4">Группы</p>
-          <p className="text-cyan-500 text-2xl">{groups?.length}</p>
-        </Link>
-        <Link
-          to="/students"
-          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
-        >
-          <div className="text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md">
-            <Mortarboard />
-          </div>
-          <p className="text-cyan-400 my-4">Студенты</p>
-          <p className="text-cyan-400 text-2xl">{students?.data?.length}</p>
-        </Link>
-        <Link
-          to="/"
-          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 w-full rounded-lg items-start justify-between"
-        >
-          <div className="text-2xl text-violet-400 bg-violet-50 p-2 rounded-md">
-            <BoxArrowRight />
-            <div />
-          </div>
-          <p className="text-violet-400 my-4">Ушли из активной группы</p>
-          <p className="text-violet-400 text-2xl">нет</p>
-        </Link>
-        <Link
-          to="/finance/debtors"
-          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
-        >
-          <div className="text-2xl text-red-400 bg-red-50 p-2 rounded-md">
-            <ExclamationCircle />
-          </div>
-          <p className="text-red-400 my-4">Должники</p>
-          <p className="text-red-400 text-2xl">{debtors?.length}</p>
-        </Link>
-        <Link
-          to="/"
-          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
-        >
-          <div className="text-2xl text-green-400 bg-green-50 p-2 rounded-md">
-            <Hourglass />
-          </div>
-          <p className="text-green-400 my-4">В пробном уроке</p>
-          <p className="text-green-500 text-2xl">нет</p>
-        </Link>
-        <Link
-          to="/"
-          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
-        >
-          <div className="text-2xl text-sky-400 bg-sky-50 p-2 rounded-md">
-            <Cash />
-          </div>
-          <p className="text-sky-400 my-4">Оплатил в текущем месяце</p>
-          <p className="text-sky-500 text-2xl">нет</p>
-        </Link>
-        <Link
-          to="/"
-          className="bg-white flex flex-col col-span-6 md:col-span-2 lg:col-span-1 p-4 rounded-lg items-start justify-between"
-        >
-          <div className="text-2xl text-slate-400 bg-slate-50 p-2 rounded-md">
-            <Arrow90degLeft />
-          </div>
-          <p className="text-slate-400 my-4">Ушли после пробного периода</p>
-          <p className="text-slate-500 text-2xl">нет</p>
-        </Link>
+        <StatisticsItem className="col-span-6 md:col-span-2 lg:col-span-1">
+          <Link to="/">
+            <div className="text-2xl text-violet-400 bg-violet-50 p-2 rounded-md max-w-[40px]">
+              <Download />
+            </div>
+            <p className="text-violet-400 my-4">Заявки</p>
+            <p className="text-violet-500 text-2xl">нет</p>
+          </Link>
+        </StatisticsItem>
+        <StatisticsItem className="col-span-6 md:col-span-2 lg:col-span-1">
+          <Link to="/group">
+            <div className="text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md max-w-[40px]">
+              <TeamOutlined />
+            </div>
+            <p className="text-cyan-400 my-4">Группы</p>
+            <p className="text-cyan-500 text-2xl">
+              {groups?.length}
+              {groups?.length > 30 ? "+" : ""}
+            </p>
+          </Link>
+        </StatisticsItem>
+        <StatisticsItem className="col-span-6 md:col-span-2 lg:col-span-1">
+          <Link to="/students">
+            <div className="text-2xl text-cyan-400 bg-cyan-50 p-2 rounded-md max-w-[40px]">
+              <Mortarboard />
+            </div>
+            <p className="text-cyan-400 my-4">Студенты</p>
+            <p className="text-cyan-400 text-2xl">
+              {studentsStatistics?.students}
+            </p>
+          </Link>
+        </StatisticsItem>
+        <StatisticsItem className="col-span-6 md:col-span-2 lg:col-span-1">
+          <Link to="/">
+            <div className="text-2xl text-violet-400 bg-violet-50 p-2 rounded-md max-w-[40px]">
+              <BoxArrowRight />
+              <div />
+            </div>
+            <p className="text-violet-400 my-4">Ушли из активной группы</p>
+            <p className="text-violet-400 text-2xl">нет</p>
+          </Link>
+        </StatisticsItem>
+        <StatisticsItem className="col-span-6 md:col-span-2 lg:col-span-1">
+          <Link to="/finance/debtors">
+            <div className="text-2xl text-red-400 bg-red-50 p-2 rounded-md max-w-[40px]">
+              <ExclamationCircle />
+            </div>
+            <p className="text-red-400 my-4">Должники</p>
+            <p className="text-red-400 text-2xl">
+              {studentsStatistics?.debtStudents}
+            </p>
+          </Link>
+        </StatisticsItem>
+        <StatisticsItem className="col-span-6 md:col-span-2 lg:col-span-1">
+          <Link to="/">
+            <div className="text-2xl text-green-400 bg-green-50 p-2 rounded-md max-w-[40px]">
+              <Hourglass />
+            </div>
+            <p className="text-green-400 my-4">В пробном уроке</p>
+            <p className="text-green-500 text-2xl">нет</p>
+          </Link>
+        </StatisticsItem>
+        <StatisticsItem className="col-span-6 md:col-span-2 lg:col-span-1">
+          <Link to="/">
+            <div className="text-2xl text-sky-400 bg-sky-50 p-2 rounded-md max-w-[40px]">
+              <Cash />
+            </div>
+            <p className="text-sky-400 my-4">Оплатил в текущем месяце</p>
+            <p className="text-sky-500 text-2xl">нет</p>
+          </Link>
+        </StatisticsItem>
+        <StatisticsItem className="col-span-6 md:col-span-2 lg:col-span-1">
+          <Link to="/">
+            <div className="text-2xl text-slate-400 bg-slate-50 p-2 rounded-md max-w-[40px]">
+              <Arrow90degLeft />
+            </div>
+            <p className="text-slate-400 my-4">Ушли после пробного периода</p>
+            <p className="text-slate-500 text-2xl">нет</p>
+          </Link>
+        </StatisticsItem>
       </div>
     </>
   );

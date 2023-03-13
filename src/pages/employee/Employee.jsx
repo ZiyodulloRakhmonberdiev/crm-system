@@ -18,19 +18,33 @@ import {
 import { HeaderItem, HeaderWrapper } from "../../UI/Header.style";
 import MyHeaderButton from "../../UI/MyHeaderButton.style";
 
-export default function Employees() {
+export default function Employees({ notallowedroles = [] }) {
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [visible, setVisible] = useState(false);
 
   const [modalType, setModalType] = useState("add");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [per_page, setPerPage] = useState(30);
-  const [last_page] = useState(1);
-
   const dispatch = useDispatch();
   const { employees, loading, refreshEmployees } = useSelector(
     (state) => state.employees
   );
+  // get CEO
+  const [CEO, setCEO] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "CEO") {
+      setCEO(true);
+    } else {
+      setCEO(false);
+    }
+  });
+  // get TEACHER
+  const [TEACHER, setTEACHER] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "TEACHER") {
+      setTEACHER(true);
+    } else {
+      setTEACHER(false);
+    }
+  });
 
   // employees static data
   let dataSource = [];
@@ -61,8 +75,13 @@ export default function Employees() {
       ),
       phone: item?.phone?.toLocaleString(),
       gender: item?.gender,
-      salary: Number(item?.salary).toLocaleString(),
-      actions: (
+      salary:
+        CEO && !TEACHER
+          ? Number(item?.salary).toLocaleString()
+          : "Доступно только CEO",
+      actions: TEACHER ? (
+        "Недоступно для вас"
+      ) : (
         <div className="flex gap-2">
           <IconButton
             color="primary"
@@ -121,7 +140,6 @@ export default function Employees() {
     {
       key: "6",
       title: "Действие",
-      width: 120,
       dataIndex: "actions",
     },
   ];
@@ -150,14 +168,14 @@ export default function Employees() {
   useEffect(() => {
     dispatch(fetchingEmployees());
     axios
-      .get(`/api/employees?page=${currentPage}`)
+      .get(`/api/employees`)
       .then((res) => {
         dispatch(fetchedEmployees(res?.data?.data));
       })
       .catch((err) => {
         dispatch(fetchedError());
       });
-  }, [refreshEmployees, currentPage]);
+  }, [refreshEmployees]);
   return (
     <div>
       <HeaderWrapper>
@@ -170,10 +188,14 @@ export default function Employees() {
             <p>Количество: </p>
             <p className="header__result"> {employees?.length}</p>
           </div>
-          <MyHeaderButton
-            setModalType={() => setModalType("add")}
-            setVisible={() => setVisible(!visible)}
-          />
+          {TEACHER ? (
+            ""
+          ) : (
+            <MyHeaderButton
+              setModalType={() => setModalType("add")}
+              setVisible={() => setVisible(!visible)}
+            />
+          )}
         </HeaderItem>
       </HeaderWrapper>
       <Drawer
@@ -204,18 +226,6 @@ export default function Employees() {
         rowKey={(record) => record.uid}
         size="small"
       ></Table>
-      <br />
-      <center>
-        <Pagination
-          pageSize={per_page ? per_page : 30}
-          total={last_page * per_page}
-          current={currentPage}
-          onChange={(page, x) => {
-            setCurrentPage(page);
-            setPerPage(x);
-          }}
-        />
-      </center>
     </div>
   );
 }

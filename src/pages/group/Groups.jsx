@@ -38,6 +38,15 @@ export default function Groups() {
     (state) => state.groups
   );
 
+  // get TEACHER
+  const [TEACHER, setTEACHER] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "TEACHER") {
+      setTEACHER(true);
+    } else {
+      setTEACHER(false);
+    }
+  }, []);
   const groupsStatus = [
     "Активные группы",
     "Неактивные группы",
@@ -77,6 +86,8 @@ export default function Groups() {
       .get(`/api/groups?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedGroups(res?.data?.data?.data));
+        setPerPage(res?.data?.data?.per_page);
+        setLastPage(res?.data?.data?.last_page);
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -85,7 +96,7 @@ export default function Groups() {
   const shortDays = [
     {
       id: 1,
-      day: "По",
+      day: "Пн",
     },
     {
       id: 2,
@@ -189,7 +200,9 @@ export default function Groups() {
         </div>
       ),
       student_count: item?.student_count,
-      actions: (
+      actions: TEACHER ? (
+        "Недоступно для вас"
+      ) : (
         <div className="flex gap-2">
           <IconButton
             color="primary"
@@ -321,12 +334,19 @@ export default function Groups() {
           <div className="header__content">
             <p className="header__title">Группы</p>
             <p>Количество: </p>
-            <p className="header__result"> {groups?.length}</p>
+            <p className="header__result">
+              {" "}
+              {groups?.length} {groups?.length > 30 ? "+" : ""}
+            </p>
           </div>
-          <MyHeaderButton
-            setModalType={() => setModalType("add")}
-            setVisible={() => setVisible(!visible)}
-          />
+          {TEACHER ? (
+            ""
+          ) : (
+            <MyHeaderButton
+              setModalType={() => setModalType("add")}
+              setVisible={() => setVisible(!visible)}
+            />
+          )}
         </HeaderItem>
       </HeaderWrapper>
       {/* <div className="flex flex-wrap gap-4 mb-8">
@@ -334,7 +354,7 @@ export default function Groups() {
           mode="multiple"
           maxTagCount={1}
           placeholder="Статус группы"
-          allowClear
+          allowclear
           className="min-w-[200px]"
         >
           {groupsStatus.map((course) => {
@@ -363,7 +383,7 @@ export default function Groups() {
           mode="multiple"
           maxTagCount={1}
           placeholder="По курсам"
-          allowClear
+          allowclear
           className="min-w-[200px]"
         >
           {courses?.map((course) => {
@@ -378,7 +398,7 @@ export default function Groups() {
           mode="multiple"
           placeholder="Дни"
           maxTagCount={1}
-          allowClear
+          allowclear
           className="min-w-[200px]"
         >
           {days?.map((item) => {

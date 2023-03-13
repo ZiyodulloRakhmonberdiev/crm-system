@@ -25,12 +25,32 @@ export default function Teachers() {
   const [modalType, setModalType] = useState("add");
   const [currentPage, setCurrentPage] = useState(1);
   const [per_page, setPerPage] = useState(30);
-  const [last_page] = useState(1);
+  const [last_page, setLastPage] = useState(1);
 
   const dispatch = useDispatch();
   const { teachers, loading, refreshTeachers } = useSelector(
     (state) => state.teachers
   );
+
+  // get CEO
+  const [CEO, setCEO] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "CEO") {
+      setCEO(true);
+    } else {
+      setCEO(false);
+    }
+  });
+
+  // get TEACHER
+  const [TEACHER, setTEACHER] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("crm_role").toUpperCase() === "TEACHER") {
+      setTEACHER(true);
+    } else {
+      setTEACHER(false);
+    }
+  }, []);
   // teachers static data
   let dataSource = [];
   teachers?.data?.map((item) => {
@@ -48,8 +68,13 @@ export default function Teachers() {
       ),
       phone: item?.phone?.toLocaleString(),
       gender: item?.gender,
-      salary_percentage: Number(item?.salary_percentage).toLocaleString(),
-      actions: (
+      salary_percentage:
+        CEO && !TEACHER
+          ? Number(item?.salary_percentage).toLocaleString()
+          : "Доступно только CEO",
+      actions: TEACHER ? (
+        "Недоступно для вас"
+      ) : (
         <div className="flex gap-2">
           <IconButton
             color="primary"
@@ -133,6 +158,8 @@ export default function Teachers() {
       .get(`/api/teachers?page=${currentPage}`)
       .then((res) => {
         dispatch(fetchedTeachers(res?.data?.data));
+        setPerPage(res?.data?.data?.per_page);
+        setLastPage(res?.data?.data?.last_page);
       })
       .catch((err) => {
         dispatch(fetchedError());
@@ -148,12 +175,20 @@ export default function Teachers() {
           <div className="header__content">
             <p className="header__title">Учителя</p>
             <p>Количество: </p>
-            <p className="header__result"> {teachers?.data?.length}</p>
+            <p className="header__result">
+              {" "}
+              {teachers?.data?.length}
+              {teachers?.data?.length > 30 ? "+" : ""}
+            </p>
           </div>
-          <MyHeaderButton
-            setModalType={() => setModalType("add")}
-            setVisible={() => setVisible(!visible)}
-          />
+          {!TEACHER ? (
+            <MyHeaderButton
+              setModalType={() => setModalType("add")}
+              setVisible={() => setVisible(!visible)}
+            />
+          ) : (
+            ""
+          )}
         </HeaderItem>
       </HeaderWrapper>
       <Drawer

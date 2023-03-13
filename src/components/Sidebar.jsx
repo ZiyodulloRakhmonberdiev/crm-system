@@ -18,13 +18,13 @@ import {
 import { Link } from "react-router-dom";
 
 export default function Sidebar() {
-  function getItem(label, key, icon, children, notAllowedRoles = []) {
+  function getItem(label, key, icon, children, notallowedroles = []) {
     return {
       key,
       icon,
       children,
       label,
-      notAllowedRoles
+      notallowedroles,
     };
   }
   const { Sider } = Layout;
@@ -37,36 +37,48 @@ export default function Sidebar() {
       <MicrosoftTeams />
     ),
     getItem(<Link to="/groups">Группы</Link>, "groups", <TeamOutlined />),
-    getItem("Финансы", "finance", <CashStack />, [
-      getItem(
-        <Link
-          className="flex items-center justify-start gap-3"
-          to="/finance/payments"
-        >
-          <Coin /> Все платежи
-        </Link>,
-        "payments"
-      ),
-      getItem(
-        <Link
-          className="flex items-center justify-start gap-3"
-          to="/finance/expenses"
-        >
-          <CurrencyExchange /> Учет расходов
-        </Link>,
-        "expenses"
-      ),
-      getItem(
-        <Link
-          className="flex items-center justify-start gap-3"
-          to="/finance/debtors"
-        >
-          <ExclamationCircle /> Должники
-        </Link>,
-        "debtors"
-      ),
-    ], ["TEACHER"]),
-    // getItem(<Link to="/report">Отчеты</Link>, "report", <PieChartOutlined />),
+    getItem(
+      "Финансы",
+      "finance",
+      <CashStack />,
+      [
+        getItem(
+          <Link
+            className="flex items-center justify-start gap-3"
+            to="/finance/payments"
+          >
+            <Coin /> Все платежи
+          </Link>,
+          "payments"
+        ),
+        getItem(
+          <Link
+            className="flex items-center justify-start gap-3"
+            to="/finance/expenses"
+          >
+            <CurrencyExchange /> Учет расходов
+          </Link>,
+          "expenses"
+        ),
+        getItem(
+          <Link
+            className="flex items-center justify-start gap-3"
+            to="/finance/debtors"
+          >
+            <ExclamationCircle /> Должники
+          </Link>,
+          "debtors"
+        ),
+      ],
+      [
+        "BRANCH DIRECTOR",
+        "ADMINISTRATOR",
+        "LIMITED ADMINISTRATOR",
+        "TEACHER",
+        "MARKETER",
+        "CASHIER",
+      ]
+    ),
     getItem("Дополнительные", "addition", <Wallet2 />, [
       getItem(
         <Link className="flex items-center justify-start gap-3" to="/employees">
@@ -107,7 +119,12 @@ export default function Sidebar() {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={["4"]}
-          items={items.filter(item => !item?.notAllowedRoles?.includes(localStorage.getItem("crm_role")?.toUpperCase()))}
+          items={items.filter(
+            (item) =>
+              !item?.allowedroles?.includes(
+                localStorage.getItem("crm_role")?.toUpperCase()
+              )
+          )}
         />
       </Sider>
     </Layout>

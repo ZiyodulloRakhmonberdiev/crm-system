@@ -11,7 +11,6 @@ import axios from '../axios/axios'
 import Schedule from '../pages/Schedule/Schedule'
 import { Calendar3 } from 'react-bootstrap-icons'
 
-<<<<<<< HEAD
 const Layout = ({ allowedRoles = [], notAllowedRoles = [] }) => {
 	const [scheduleIsOpen, setScheduleIsOpen] = useState(false)
 	const navigate = useNavigate()
@@ -39,35 +38,6 @@ const Layout = ({ allowedRoles = [], notAllowedRoles = [] }) => {
 			return <Navigate replace={true} to={'/'} />
 		}
 	}
-=======
-const Layout = ({ allowedroles = [], notallowedroles = [] }) => {
-  const [scheduleIsOpen, setScheduleIsOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-  useEffect(() => {
-    if (localStorage.getItem("crm_token")) {
-      axios
-        .get("/api/schedule")
-        .then((res) => {})
-        .catch((err) => {
-          navigate("/login", { replace: true });
-          if (err?.message === "Network Error") {
-            message.error("У вас нет подключения к интернету!");
-          }
-        });
-    } else {
-      navigate("/login", { replace: true });
-    }
-  }, []);
-
-  if (notallowedroles) {
-    if (
-      notallowedroles.includes(localStorage.getItem("crm_role")?.toUpperCase())
-    ) {
-      return <Navigate replace={true} to={"/"} />;
-    }
-  }
->>>>>>> f964f707a8ea4c588d12f359e06720bca590aa1d
 
 	return (
 		<div style={{ maxWidth: 1920 }} className='mx-auto'>
